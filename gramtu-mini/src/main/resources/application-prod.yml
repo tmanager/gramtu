@@ -4,7 +4,7 @@ server:
     context-path: /gramtu/ac
 spring:
   application:
-    name: gramtu-ac
+    name: turnin-ac
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://47.111.173.188:3306/gramtu?allowMultiQueries=true&characterEncoding=utf8&useSSL=false&useAffectedRows=true&serverTimezone=UTC
