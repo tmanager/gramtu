@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 @ServletComponentScan
 @EnableTransactionManagement
-@MapperScan("com.frank.gramtu.mini.*.")
+@MapperScan("com.frank.gramtu.web.*.")
 @SpringBootApplication(scanBasePackages = {"com.frank.gramtu.web", "com.frank.gramtu.core"})
 public class GramtuWebApplication {
 
