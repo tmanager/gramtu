@@ -18,9 +18,18 @@ import java.util.Map;
 @Repository
 public interface ArticleRepository {
 
-    // 总条数
+    /**
+     * 查询总条数.
+     */
     int getCnt(Map<String, Object> param);
 
-    // 一览
+    /**
+     * 查询明细.
+     */
     List<Map<String, String>> getArticleList(Map<String, Object> param);
+
+    /**
+     * 新增文章.
+     */
+    int addArticle(Map<String, String> param);
 }

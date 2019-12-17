@@ -1,9 +1,9 @@
 fdfs:
-  # ¶ÁÈ¡³¬Ê±
+  # è¯»å–è¶…æ—¶
   so-timeout: 1501
-  # Á¬½Ó³¬Ê±
+  # è¿æ¥è¶…æ—¶
   connect-timeout: 601
-  # Éú³ÉËõÂÔÍ¼
+  # ç”Ÿæˆç¼©ç•¥å›¾
   thumb-image:
     width: 150
     height: 150

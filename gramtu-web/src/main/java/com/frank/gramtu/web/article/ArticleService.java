@@ -1,10 +1,15 @@
 package com.frank.gramtu.web.article;
 
 import com.alibaba.fastjson.JSON;
+import com.frank.gramtu.core.request.WebRequest;
+import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
+import com.frank.gramtu.core.utils.SdyfCommonUtil;
+import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,12 +52,41 @@ public class ArticleService {
         log.info("查询出的数据条数为：{}", cnt);
 
         WebResponse<ArticleReponse> responseData = new WebResponse<>();
-        ArticleReponse articleReponse=new ArticleReponse();
+        ArticleReponse articleReponse = new ArticleReponse();
         articleReponse.setDraw(0);
         articleReponse.setTotalcount(cnt);
         articleReponse.setArtlist(dataList);
         responseData.setResponse(articleReponse);
 
         return JSON.toJSONString(responseData);
+    }
+
+    /**
+     * 新增文章.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String articleAddService(WebRequest<ArticleRequest> requestData) {
+
+        // 参数
+        Map<String, String> param = new HashMap<>();
+        // id主键
+        param.put("id", SdyfCommonUtil.getUUid());
+        // 用户id
+        param.put("userid", requestData.getUserid());
+        // 更新时间
+        param.put("updtime", SdyfDateTimeUtil.getTimeformat());
+        // 标题
+        param.put("title", requestData.getRequest().getTitle());
+        // 封面
+        param.put("cover", requestData.getRequest().getCoverimage());
+        // 文章内容
+        param.put("article", requestData.getRequest().getContent());
+
+        // 新增
+        int cnt = this.articleRepository.addArticle(param);
+        log.info("新增数据条数为：[{}]", cnt);
+
+        // 返回
+        return new SysResponse().toJsonString();
     }
 }

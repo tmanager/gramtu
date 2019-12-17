@@ -1,35 +1,53 @@
 package com.frank.gramtu.core.fdfs;
 
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
+import com.github.tobato.fastdfs.domain.fdfs.ThumbImageConfig;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * FastDFS操作类.
+ *
+ * @author 张孝党 2019/12/17.
+ * @version V1.00.
+ * <p>
+ * 更新履历： V1.00 2019/12/17 张孝党 创建.
+ */
 @Slf4j
 @Component
 public class FdfsUtil {
 
-    @Resource
+    @Autowired
     private FastFileStorageClient storageClient;
+
+    @Autowired
+    private ThumbImageConfig thumbImageConfig;
 
     /**
      * 上传图片文件.
      */
-    public String uploadImage(MultipartFile multipartFile) throws Exception {
+    public List<String> uploadImage(MultipartFile multipartFile) throws Exception {
 
+        log.info("FastDFS开始上传图片.........................");
         String originalFileName = multipartFile.getOriginalFilename().
                 substring(multipartFile.getOriginalFilename().lastIndexOf(".") + 1);
+        log.info("图片的后缀为：[{}]", originalFileName);
 
         StorePath storePath = this.storageClient.uploadImageAndCrtThumbImage(
                 multipartFile.getInputStream(),
                 multipartFile.getSize(),
                 originalFileName, null);
-
-        return storePath.getFullPath();
+        log.info("上传后的路径为：[{}]", storePath.getFullPath());
+        log.info("FastDFS结束上传图片.........................");
+        // 返回路径
+        return this.convertImagePath(storePath);
     }
 
     /**
@@ -56,5 +74,38 @@ public class FdfsUtil {
         }
 
         return true;
+    }
+
+    /**
+     * 转换图片路径.
+     */
+    private List<String> convertImagePath(StorePath storePath) {
+
+        List<String> pathList = new ArrayList<>();
+
+        // URL
+        String url = "http://www.gramtu.com/";
+
+        // 全路径
+        pathList.add(url + storePath.getFullPath());
+        // 缩略图
+        pathList.add(url + thumbImageConfig.getThumbImagePath(storePath.getFullPath()));
+
+        // 返回
+        return pathList;
+    }
+
+    /**
+     * 转换文件路径.
+     */
+    private String convertFilePath(StorePath storePath) {
+
+        // URL
+        String url = "http://www.gramtu.com/";
+
+        String fullPath = url + storePath.getFullPath();
+
+        // 返回
+        return fullPath;
     }
 }

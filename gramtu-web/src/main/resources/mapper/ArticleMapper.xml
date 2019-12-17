@@ -14,11 +14,11 @@
     <!-- 查询列表 -->
     <select id="getArticleList" parameterType="Map" resultType="Map">
         SELECT
-              a.id
+              a.id as artid
              ,a.title
-             ,a.cover
-             ,a.updtime
-             ,b.uname
+             ,a.cover as coverimage
+             ,a.updtime as time
+             ,b.uname as editor
         FROM
              g_article a
         LEFT JOIN
@@ -47,5 +47,26 @@
             AND title LIKE "%"#{title}"%"
         </if>
     </select>
+
+    <!-- 新增文章 -->
+    <insert id="addArticle" parameterType="Map">
+        INSERT INTO
+            g_article (
+                 id
+                ,title
+                ,cover
+                ,article
+                ,updtime
+                ,upduid
+            )
+        VALUES (
+             #{id}
+            ,#{title}
+            ,#{cover}
+            ,#{article}
+            ,#{updtime}
+            ,#{userid}
+        )
+    </insert>
 
 </mapper>
