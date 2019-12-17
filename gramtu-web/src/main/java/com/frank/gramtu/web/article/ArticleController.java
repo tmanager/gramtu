@@ -40,9 +40,10 @@ public class ArticleController {
     public String query(@RequestBody String requestParam) {
         log.info("查询文章一览开始..................");
 
+        log.info("请求参数为：{}", requestParam);
         WebRequest<ArticleRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<ArticleRequest>>() {
         });
-        log.info("请求参数为：{}", requestData);
+
 
         String responseData = this.articleService.queryService(requestData.getRequest());
 
@@ -83,14 +84,32 @@ public class ArticleController {
     private String articleAdd(@RequestBody String requestParam) {
         log.info("文章新增开始..................");
 
+        log.info("请求参数为：{}", requestParam);
         WebRequest<ArticleRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<ArticleRequest>>() {
         });
-        log.info("请求参数为：{}", requestData);
 
         // 新增
         String responseData = this.articleService.articleAddService(requestData);
         log.info("文章新增结束..................");
-        log.info("返回值为:{}", responseData);
+        log.info("文章新增返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 预览文章.
+     */
+    @RequestMapping(value = "/artdetail")
+    private String artDetail(@RequestBody String requestParam) {
+        log.info("预览文章开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<ArticleRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<ArticleRequest>>() {
+        });
+
+        // 预览
+        String responseData = this.articleService.artDetailService(requestData.getRequest().getArtid());
+        log.info("预览文章结束..................");
+        log.info("预览文章返回值为:{}", responseData);
         return responseData;
     }
 }

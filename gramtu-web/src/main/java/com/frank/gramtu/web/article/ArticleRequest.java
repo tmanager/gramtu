@@ -16,6 +16,9 @@ import lombok.Setter;
 @Setter
 public class ArticleRequest extends BaseRequest {
 
+    // 文章ID
+    private String artid = "";
+
     // 文章标题
     private String title = "";
 

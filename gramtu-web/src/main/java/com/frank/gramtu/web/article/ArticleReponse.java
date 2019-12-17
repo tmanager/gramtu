@@ -22,4 +22,15 @@ public class ArticleReponse extends BaseResponse {
     // 数据列表
     private List<Map<String, String>> artlist;
 
+    // 标题
+    private String title = "";
+
+    // 发布时间
+    private String time = "";
+
+    // 发布人
+    private String editor = "";
+
+    // 内容
+    private String content = "";
 }

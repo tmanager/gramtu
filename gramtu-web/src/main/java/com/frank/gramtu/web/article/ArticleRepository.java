@@ -32,4 +32,9 @@ public interface ArticleRepository {
      * 新增文章.
      */
     int addArticle(Map<String, String> param);
+
+    /**
+     * 获取文章内容.
+     */
+    Map<String, String> getArtDetail(Map<String, String> param);
 }

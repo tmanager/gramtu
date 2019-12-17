@@ -89,4 +89,32 @@ public class ArticleService {
         // 返回
         return new SysResponse().toJsonString();
     }
+
+    /**
+     * 根据文章ID获取文章内容.
+     */
+    public String artDetailService(String artId) {
+
+        // 查询参数
+        Map<String, String> param = new HashMap<>();
+        param.put("artid", artId);
+
+        // 获取文章详细内容
+        Map<String, String> artDetail = this.articleRepository.getArtDetail(param);
+
+        WebResponse<ArticleReponse> responseData = new WebResponse<>();
+        ArticleReponse articleReponse = new ArticleReponse();
+        // 标题
+        articleReponse.setTitle(artDetail.get("title"));
+        // 发布时间
+        articleReponse.setTime(artDetail.get("updtime"));
+        // 发布者
+        articleReponse.setEditor(artDetail.get("uname"));
+        // 文章内容
+        articleReponse.setContent(artDetail.get("article"));
+        responseData.setResponse(articleReponse);
+
+        // 返回
+        return JSON.toJSONString(responseData);
+    }
 }

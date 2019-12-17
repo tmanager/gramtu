@@ -69,4 +69,23 @@
         )
     </insert>
 
+    <!-- 获取文章详细内容 -->
+    <select id="getArtDetail" parameterType="String" resultType="Map">
+        SELECT
+              a.title
+             ,a.updtime
+             ,b.uname
+             ,a.article
+        FROM
+             g_article a
+        LEFT JOIN
+             turnin_user b
+          ON a.upduid = b.uid
+        WHERE
+            1 = 1
+        <if test="artid != null and artid != ''">
+            AND a.id = #{artid}
+        </if>
+    </select>
+
 </mapper>
