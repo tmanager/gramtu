@@ -112,4 +112,22 @@ public class ArticleController {
         log.info("预览文章返回值为:{}", responseData);
         return responseData;
     }
+
+    /**
+     * 删除文章.
+     */
+    @RequestMapping(value = "/delete")
+    private String delArticle(@RequestBody String requestParam) {
+        log.info("删除文章开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<ArticleRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<ArticleRequest>>() {
+        });
+
+        // 删除
+        String responseData = this.articleService.delArticleService(requestData.getRequest().getArtidlist());
+        log.info("删除文章结束..................");
+        log.info("删除文章返回值为:{}", responseData);
+        return responseData;
+    }
 }

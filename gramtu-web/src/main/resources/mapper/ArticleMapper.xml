@@ -87,5 +87,12 @@
             AND a.id = #{artid}
         </if>
     </select>
+    
+    <delete id="deleteArticle" parameterType="Map">
+        DELETE FROM
+            g_article
+        WHERE
+            id = #{artid}
+    </delete>
 
 </mapper>

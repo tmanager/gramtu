@@ -27,4 +27,7 @@ public class ArticleRequest extends BaseRequest {
 
     // 文章内容
     private String content = "";
+
+    // 删除的文章id列表
+    private String[] artidlist;
 }

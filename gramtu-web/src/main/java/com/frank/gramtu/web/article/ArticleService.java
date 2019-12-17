@@ -117,4 +117,21 @@ public class ArticleService {
         // 返回
         return JSON.toJSONString(responseData);
     }
+
+    /**
+     * 删除文章.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String delArticleService(String[] artidList) {
+
+        for (String artId :artidList) {
+            Map<String, String> param = new HashMap<>();
+            param.put("artid", artId);
+            this.articleRepository.deleteArticle(param);
+            log.info("文章[{}]被删除", artId);
+        }
+
+        // 返回
+        return new SysResponse().toJsonString();
+    }
 }
