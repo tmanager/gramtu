@@ -2,13 +2,15 @@ package com.frank.gramtu.web.article;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.frank.gramtu.core.fdfs.FdfsUtil;
 import com.frank.gramtu.core.request.WebRequest;
+import com.frank.gramtu.core.response.SysErrResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 推荐阅读Controller.
@@ -27,6 +29,9 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
+    @Autowired
+    private FdfsUtil fdfsUtil;
+
     /**
      * 查询文章一览.
      */
@@ -44,5 +49,20 @@ public class ArticleController {
         log.info("查询文章一览结束..................");
         log.info("返回值为:{}", responseData);
         return responseData;
+    }
+
+
+    @RequestMapping(value = "/upload/image", headers = "content-type=multipart/form-data")
+    public String uploadImg(@RequestParam("file")MultipartFile file, HttpServletRequest request) {
+
+        try {
+            this.fdfsUtil.upload(file);
+        } catch (Exception ex) {
+            log.error("上传缩略图异常:{}", ex.getMessage());
+            new SysErrResponse("上传缩略图异常!").toJsonString();
+        }
+
+
+        return "index";
     }
 }
