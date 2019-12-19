@@ -157,6 +157,7 @@ public class ArticleService {
         param.put("updtime", SdyfDateTimeUtil.getTimeformat());
         // 更新人
         param.put("upduid", requestData.getUserid());
+        this.articleRepository.updArticle(param);
 
         // 返回
         return new SysResponse().toJsonString();
