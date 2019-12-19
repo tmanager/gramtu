@@ -130,4 +130,14 @@ public class ArticleController {
         log.info("删除文章返回值为:{}", responseData);
         return responseData;
     }
+
+    @RequestMapping(value = "/edit")
+    public String editArticle(@RequestBody String requestParam) {
+        log.info("编辑文章开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<ArticleRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<ArticleRequest>>() {
+        });
+        return "";
+    }
 }
