@@ -141,6 +141,9 @@ public class ArticleController {
         log.info("请求参数为：{}", requestParam);
         WebRequest<ArticleRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<ArticleRequest>>() {
         });
-        return "";
+        String responseData = this.articleService.editArticleService(requestData);
+        log.info("文章编辑结束..................");
+        log.info("文章编辑返回值为:{}", responseData);
+        return responseData;
     }
 }
