@@ -87,12 +87,29 @@
             AND a.id = #{artid}
         </if>
     </select>
-    
+
+    <!-- 删除文章 -->
     <delete id="deleteArticle" parameterType="Map">
         DELETE FROM
             g_article
         WHERE
             id = #{artid}
     </delete>
+
+    <!-- 更新文章 -->
+    <update id="updArticle" parameterType="Map">
+        UPDATE
+            g_article
+        SET
+             title = #{title}
+            ,article = #{article}
+            ,updtime = #{updtime}
+            ,upduid = #{upduid}
+        <if test="cover != null and cover != ''">
+            ,cover = #{cover}
+        </if>
+        WHERE
+            id = #{artid}
+    </update>
 
 </mapper>

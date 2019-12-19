@@ -38,5 +38,13 @@ public interface ArticleRepository {
      */
     Map<String, String> getArtDetail(Map<String, String> param);
 
+    /**
+     * 删除文章.
+     */
     int deleteArticle(Map<String,String> param);
+
+    /**
+     * 更新文章.
+     */
+    int updArticle(Map<String, String> param);
 }

@@ -131,6 +131,9 @@ public class ArticleController {
         return responseData;
     }
 
+    /**
+     * 编辑文章.
+     */
     @RequestMapping(value = "/edit")
     public String editArticle(@RequestBody String requestParam) {
         log.info("编辑文章开始..................");

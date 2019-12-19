@@ -134,4 +134,31 @@ public class ArticleService {
         // 返回
         return new SysResponse().toJsonString();
     }
+
+    /**
+     * 编辑保存文章.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String editArticleService(WebRequest<ArticleRequest> requestData) {
+
+        // 参数
+        Map<String, String> param = new HashMap<>();
+        // ID
+        param.put("artid", requestData.getRequest().getArtid());
+        // 标题
+        param.put("title",requestData.getRequest().getTitle());
+        // 封面
+        if(!requestData.getRequest().getCoverimage().equals(requestData.getRequest().getOldimage())) {
+            param.put("cover", requestData.getRequest().getCoverimage());
+        }
+        // 内容
+        param.put("article",requestData.getRequest().getContent());
+        // 更新时间
+        param.put("updtime", SdyfDateTimeUtil.getTimeformat());
+        // 更新人
+        param.put("upduid", requestData.getUserid());
+
+        // 返回
+        return new SysResponse().toJsonString();
+    }
 }

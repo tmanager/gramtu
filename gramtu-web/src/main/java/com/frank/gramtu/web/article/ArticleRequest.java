@@ -30,4 +30,7 @@ public class ArticleRequest extends BaseRequest {
 
     // 删除的文章id列表
     private String[] artidlist;
+
+    // 旧封面
+    private String oldimage = "";
 }
