@@ -27,4 +27,24 @@ public interface AdvertRepository {
      * 查询明细.
      */
     List<Map<String, String>> getAdvertList(Map<String, Object> param);
+
+    /**
+     * 新增广告.
+     */
+    int addAdvert(Map<String, String> param);
+
+    /**
+     * 删除广告.
+     */
+    int deleteAdvert(Map<String,String> param);
+
+    /**
+     * 更新广告
+     */
+    int updAdvert(Map<String, String> param);
+
+    /**
+     * 获取广告内容.
+     */
+    Map<String, String> getAdvertDetail(Map<String, String> param);
 }

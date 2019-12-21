@@ -50,4 +50,76 @@
         </if>
     </select>
 
+    <!-- 新增文章 -->
+    <insert id="addAdvert" parameterType="Map">
+        INSERT INTO
+            g_advert (
+                 id
+                ,title
+                ,adimage
+                ,adtype
+                ,article
+                ,sort
+                ,updtime
+                ,upduid
+            )
+        VALUES (
+             #{id}
+            ,#{title}
+            ,#{adimage}
+            ,#{adtype}
+            ,#{article}
+            ,#{sort}
+            ,#{updtime}
+            ,#{upduid}
+        )
+    </insert>
+
+    <!-- 删除文章 -->
+    <delete id="deleteAdvert" parameterType="Map">
+        DELETE FROM
+            g_advert
+        WHERE
+            id = #{id}
+    </delete>
+
+    <!-- 更新文章 -->
+    <update id="updAdvert" parameterType="Map">
+        UPDATE
+        g_advert
+        SET
+        title = #{title}
+        ,article = #{article}
+        ,adtype = #{adtype}
+        ,sort = #{sort}
+        ,updtime = #{updtime}
+        ,upduid = #{upduid}
+        <if test="adimage != null and adimage != ''">
+            ,adimage = #{adimage}
+        </if>
+        WHERE
+        id = #{id}
+    </update>
+
+    <!-- 获取文章详细内容 -->
+    <select id="getArtDetail" parameterType="String" resultType="Map">
+        SELECT
+        a.title
+        ,a.updtime
+        ,b.uname
+        ,a.adimage
+        ,a.adtype
+        ,a.article
+        ,a.sort
+        FROM
+        g_advert a
+        LEFT JOIN
+        turnin_user b
+        ON a.upduid = b.uid
+        WHERE
+        1 = 1
+        <if test="id != null and id != ''">
+            AND a.id = #{id}
+        </if>
+    </select>
 </mapper>

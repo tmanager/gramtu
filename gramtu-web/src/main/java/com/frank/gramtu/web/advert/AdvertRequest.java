@@ -10,4 +10,25 @@ public class AdvertRequest extends BaseRequest {
 
     // 广告名称
     private String title = "";
+
+    // 广告ID
+    private String id = "";
+
+    // 预览图片
+    private String adimage = "";
+
+    // 广告类型
+    private String adtype = "";
+
+    // 文章id
+    private String article;
+
+    // 排序号
+    private String sort = "";
+
+    // 旧图片
+    private String oldadimage = "";
+
+    // 删除的广告id列表
+    private String[] advertIdlist;
 }
