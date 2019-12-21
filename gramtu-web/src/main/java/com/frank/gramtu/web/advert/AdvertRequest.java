@@ -7,4 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AdvertRequest extends BaseRequest {
+
+    // 广告名称
+    private String title = "";
 }
