@@ -30,5 +30,5 @@ public class AdvertRequest extends BaseRequest {
     private String oldadimage = "";
 
     // 删除的广告id列表
-    private String[] advertIdlist;
+    private String[] adidlist;
 }

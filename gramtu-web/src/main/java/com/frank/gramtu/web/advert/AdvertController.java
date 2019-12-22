@@ -125,7 +125,7 @@ public class AdvertController {
         });
 
         // 删除
-        String responseData = this.advertService.delAdvertService(requestData.getRequest().getAdvertIdlist());
+        String responseData = this.advertService.delAdvertService(requestData.getRequest().getAdidlist());
         log.info("删除广告结束..................");
         log.info("删除广告返回值为:{}", responseData);
         return responseData;
