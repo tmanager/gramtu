@@ -46,5 +46,5 @@ public interface AdvertRepository {
     /**
      * 获取广告内容.
      */
-    Map<String, String> getAdvertDetail(Map<String, String> param);
+    Map<String, Object> getAdvertDetail(Map<String, String> param);
 }

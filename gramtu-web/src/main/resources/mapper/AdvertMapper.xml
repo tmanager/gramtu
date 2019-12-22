@@ -102,20 +102,21 @@
     </update>
 
     <!-- 获取文章详细内容 -->
-    <select id="getArtDetail" parameterType="String" resultType="Map">
+    <select id="getAdvertDetail" parameterType="Map" resultType="Map">
         SELECT
-        a.title
-        ,a.updtime
-        ,b.uname
-        ,a.adimage
-        ,a.adtype
-        ,a.article
-        ,a.sort
+             a.title
+            ,a.updtime
+            ,b.uname
+            ,a.adimage
+            ,a.adtype
+            ,a.article
+            ,a.sort
+            ,a.innerurl
         FROM
-        g_advert a
+            g_advert a
         LEFT JOIN
-        turnin_user b
-        ON a.upduid = b.uid
+            turnin_user b
+          ON a.upduid = b.uid
         WHERE
         1 = 1
         <if test="id != null and id != ''">

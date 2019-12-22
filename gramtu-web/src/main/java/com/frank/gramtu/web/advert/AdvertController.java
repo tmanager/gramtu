@@ -98,7 +98,7 @@ public class AdvertController {
     /**
      * 预览广告.
      */
-    @RequestMapping(value = "/advdetail")
+    @RequestMapping(value = "/addetail")
     private String advertDetail(@RequestBody String requestParam) {
         log.info("预览广告开始..................");
 
@@ -107,7 +107,7 @@ public class AdvertController {
         });
 
         // 预览
-        String responseData = this.advertService.advertDetailService(requestData.getRequest().getId());
+        String responseData = this.advertService.advertDetailService(requestData.getRequest().getAdid());
         log.info("预览广告结束..................");
         log.info("预览广告返回值为:{}", responseData);
         return responseData;

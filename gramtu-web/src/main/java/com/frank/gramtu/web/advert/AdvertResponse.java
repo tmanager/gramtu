@@ -41,5 +41,8 @@ public class AdvertResponse extends BaseResponse {
     private String content = "";
 
     // 排序号
-    private String sort = "";
+    private int sort = 0;
+
+    // 图片外部链接
+    private String innerurl = "";
 }

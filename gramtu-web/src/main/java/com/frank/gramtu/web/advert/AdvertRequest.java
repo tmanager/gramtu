@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 public class AdvertRequest extends BaseRequest {
 
+    // 广告ID
+    private String adid = "";
+
     // 广告名称
     private String title = "";
-
-    // 广告ID
-    private String id = "";
 
     // 预览图片
     private String adimage = "";

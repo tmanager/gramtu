@@ -6,8 +6,6 @@ import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.SdyfCommonUtil;
 import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
-import com.frank.gramtu.web.article.ArticleReponse;
-import com.frank.gramtu.web.article.ArticleRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,7 +103,7 @@ public class AdvertService {
     @Transactional(rollbackFor = Exception.class)
     public String delAdvertService(String[] advertList) {
 
-        for (String advertId :advertList) {
+        for (String advertId : advertList) {
             Map<String, String> param = new HashMap<>();
             param.put("id", advertId);
             this.advertRepository.deleteAdvert(param);
@@ -125,17 +123,17 @@ public class AdvertService {
         // 参数
         Map<String, String> param = new HashMap<>();
         // ID
-        param.put("id", requestData.getRequest().getId());
+        param.put("id", requestData.getRequest().getAdid());
         // 广告名称
-        param.put("title",requestData.getRequest().getTitle());
+        param.put("title", requestData.getRequest().getTitle());
         // 图片预览
-        if(!requestData.getRequest().getAdimage().equals(requestData.getRequest().getOldadimage())) {
+        if (!requestData.getRequest().getAdimage().equals(requestData.getRequest().getOldadimage())) {
             param.put("adimage", requestData.getRequest().getAdimage());
         }
         // 广告类型
-        param.put("adtype",requestData.getRequest().getAdtype());
+        param.put("adtype", requestData.getRequest().getAdtype());
         // 文章
-        param.put("article",requestData.getRequest().getArticle());
+        param.put("article", requestData.getRequest().getArticle());
         // 排序号
         param.put("sort", requestData.getRequest().getSort());
         // 更新时间
@@ -149,7 +147,7 @@ public class AdvertService {
     }
 
     /**
-     * 根据文章ID获取文章内容.
+     * 根据广告ID获取文章内容.
      */
     public String advertDetailService(String advertId) {
 
@@ -158,24 +156,24 @@ public class AdvertService {
         param.put("id", advertId);
 
         // 获取文章详细内容
-        Map<String, String> advertDetail = this.advertRepository.getAdvertDetail(param);
+        Map<String, Object> advertDetail = this.advertRepository.getAdvertDetail(param);
 
         WebResponse<AdvertResponse> responseData = new WebResponse<>();
         AdvertResponse advertReponse = new AdvertResponse();
         // 标题
-        advertReponse.setTitle(advertDetail.get("title"));
+        advertReponse.setTitle(String.valueOf(advertDetail.get("title")));
         // 发布时间
-        advertReponse.setTime(advertDetail.get("updtime"));
+        advertReponse.setTime(String.valueOf(advertDetail.get("updtime")));
         // 发布者
-        advertReponse.setEditor(advertDetail.get("uname"));
+        advertReponse.setEditor(String.valueOf(advertDetail.get("uname")));
         // 图片
-        advertReponse.setAdimage(advertDetail.get("adimage"));
+        advertReponse.setAdimage(String.valueOf(advertDetail.get("adimage")));
         // 广告类型
-        advertReponse.setAdtype(advertDetail.get("adtype"));
+        advertReponse.setAdtype(String.valueOf(advertDetail.get("adtype")));
         // 排序号
-        advertReponse.setSort(advertDetail.get("sort"));
+        advertReponse.setSort(Integer.parseInt(advertDetail.get("sort").toString()));
         // 文章内容
-        advertReponse.setContent(advertDetail.get("article"));
+        advertReponse.setContent(String.valueOf(advertDetail.get("article")));
         responseData.setResponse(advertReponse);
 
         // 返回
