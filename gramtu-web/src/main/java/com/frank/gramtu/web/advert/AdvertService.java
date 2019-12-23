@@ -81,13 +81,16 @@ public class AdvertService {
         // 广告名称
         param.put("title", requestData.getRequest().getTitle());
         // 预览图片
-        param.put("adimage", requestData.getRequest().getAdimage());
+        param.put("adimage", requestData.getRequest().getAdurl());
         // 预览图片
         param.put("adtype", requestData.getRequest().getAdtype());
         // 文章内容
         param.put("article", requestData.getRequest().getArticle());
         // 排序号
         param.put("sort", requestData.getRequest().getSort());
+        // 外部链接
+        param.put("innerurl", requestData.getRequest().getInnerurl());
+
 
         // 新增
         int cnt = this.advertRepository.addAdvert(param);
@@ -127,8 +130,8 @@ public class AdvertService {
         // 广告名称
         param.put("title", requestData.getRequest().getTitle());
         // 图片预览
-        if (!requestData.getRequest().getAdimage().equals(requestData.getRequest().getOldadimage())) {
-            param.put("adimage", requestData.getRequest().getAdimage());
+        if (!requestData.getRequest().getAdurl().equals(requestData.getRequest().getOldadimage())) {
+            param.put("adimage", requestData.getRequest().getAdurl());
         }
         // 广告类型
         param.put("adtype", requestData.getRequest().getAdtype());
@@ -140,6 +143,8 @@ public class AdvertService {
         param.put("updtime", SdyfDateTimeUtil.getTimeformat());
         // 更新人
         param.put("upduid", requestData.getUserid());
+        // 外部链接
+        param.put("innerurl", requestData.getRequest().getInnerurl());
         this.advertRepository.updAdvert(param);
 
         // 返回
