@@ -21,6 +21,7 @@
              ,a.sort
              ,a.updtime as time
              ,b.uname as editor
+             ,a.innerurl
         FROM
              g_advert a
         LEFT JOIN
