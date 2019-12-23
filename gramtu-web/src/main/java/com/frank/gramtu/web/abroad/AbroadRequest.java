@@ -1,0 +1,27 @@
+package com.frank.gramtu.web.abroad;
+
+import com.frank.gramtu.core.response.BaseRequest;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 海外招聘管理请求报文.
+ *
+ * @author 张孝党 2019/12/23.
+ * @version V1.00.
+ * <p>
+ * 更新履历： V1.00 2019/12/23 张孝党 创建.
+ */
+@Getter
+@Setter
+public class AbroadRequest extends BaseRequest {
+
+    // id
+    private String abroadid = "";
+
+    // 标题
+    private String titile = "";
+
+    // 内容
+    private String content = "";
+}
