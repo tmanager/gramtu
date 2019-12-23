@@ -27,4 +27,24 @@ public interface AbroadRepository {
      * 查询明细.
      */
     List<Map<String, String>> getAbroadList(Map<String, Object> param);
+
+    /**
+     * 新增招募信息.
+     */
+    int addAbroad(Map<String, String> param);
+
+    /**
+     * 删除招募信息.
+     */
+    int deleteAbroad(Map<String,String> param);
+
+    /**
+     * 更新招募信息
+     */
+    int updAbroad(Map<String, String> param);
+
+    /**
+     * 获取招募内容.
+     */
+    Map<String, Object> getAbroadDetail(Map<String, String> param);
 }

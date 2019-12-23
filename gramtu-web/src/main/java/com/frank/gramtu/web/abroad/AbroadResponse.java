@@ -21,4 +21,16 @@ import java.util.Map;
 public class AbroadResponse extends BaseResponse {
 
     private List<Map<String, String>> abroadlist;
+
+    // 招募名称
+    private String title = "";
+
+    // 发布时间
+    private String time = "";
+
+    // 发布人
+    private String editor = "";
+
+    // 招募内容
+    private String content = "";
 }

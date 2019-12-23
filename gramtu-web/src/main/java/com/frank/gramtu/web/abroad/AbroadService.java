@@ -1,12 +1,17 @@
 package com.frank.gramtu.web.abroad;
 
 import com.alibaba.fastjson.JSON;
+import com.frank.gramtu.core.request.WebRequest;
+import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
+import com.frank.gramtu.core.utils.SdyfCommonUtil;
+import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
 import com.frank.gramtu.web.feature.FeatureReponse;
 import com.frank.gramtu.web.feature.FeatureRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +61,102 @@ public class AbroadService {
         abroadResponse.setTotalcount(cnt);
         abroadResponse.setAbroadlist(dataList);
         responseData.setResponse(abroadResponse);
+
+        // 返回
+        return JSON.toJSONString(responseData);
+    }
+
+    /**
+     * 新增特色服务.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String addAbroadService(WebRequest<AbroadRequest> requestData) {
+
+        // 参数
+        Map<String, String> param = new HashMap<>();
+        // id主键
+        param.put("id", SdyfCommonUtil.getUUid());
+        // 用户id
+        param.put("upduid", requestData.getUserid());
+        // 更新时间
+        param.put("updtime", SdyfDateTimeUtil.getTimeformat());
+        // 服务名称
+        param.put("title", requestData.getRequest().getTitile());
+        // 服务内容
+        param.put("article", requestData.getRequest().getContent());
+
+        // 新增
+        int cnt = this.abroadRepository.addAbroad(param);
+        log.info("新增数据条数为：[{}]", cnt);
+
+        // 返回
+        return new SysResponse().toJsonString();
+    }
+
+    /**
+     * 删除招募信息.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String delAbroadService(String[] abroadList) {
+
+        for (String abroadid : abroadList) {
+            Map<String, String> param = new HashMap<>();
+            param.put("id", abroadid);
+            this.abroadRepository.deleteAbroad(param);
+            log.info("广告[{}]被删除", abroadid);
+        }
+
+        // 返回
+        return new SysResponse().toJsonString();
+    }
+
+    /**
+     * 编辑保存招募信息.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String editAbroadService(WebRequest<AbroadRequest> requestData) {
+
+        // 参数
+        Map<String, String> param = new HashMap<>();
+        // ID
+        param.put("id", requestData.getRequest().getAbroadid());
+        // 服务名称
+        param.put("title", requestData.getRequest().getTitile());
+        // 内容
+        param.put("article", requestData.getRequest().getContent());
+        // 更新时间
+        param.put("updtime", SdyfDateTimeUtil.getTimeformat());
+        // 更新人
+        param.put("upduid", requestData.getUserid());
+        this.abroadRepository.updAbroad(param);
+
+        // 返回
+        return new SysResponse().toJsonString();
+    }
+
+    /**
+     * 根据招募ID获取招募内容.
+     */
+    public String abroadDetailService(String abrId) {
+
+        // 查询参数
+        Map<String, String> param = new HashMap<>();
+        param.put("id", abrId);
+
+        // 获取服务详细内容
+        Map<String, Object> abroadDetail = this.abroadRepository.getAbroadDetail(param);
+
+        WebResponse<AbroadResponse> responseData = new WebResponse<>();
+        AbroadResponse abroadReponse = new AbroadResponse();
+        // 服务名
+        abroadReponse.setTitle(String.valueOf(abroadDetail.get("title")));
+        // 发布时间
+        abroadReponse.setTime(String.valueOf(abroadDetail.get("updtime")));
+        // 发布者
+        abroadReponse.setEditor(String.valueOf(abroadDetail.get("uname")));
+        // 内容
+        abroadReponse.setContent(String.valueOf(abroadDetail.get("article")));
+        responseData.setResponse(abroadReponse);
 
         // 返回
         return JSON.toJSONString(responseData);

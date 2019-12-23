@@ -31,6 +31,15 @@ public class FeatureRequest extends BaseRequest {
     // 图片
     private String servimage = "";
 
-    // 文章内容
+    // 服务内容
     private String article = "";
+
+    // 类型
+    private String servtype = "";
+
+    // 旧图片
+    private String oldservimage = "";
+
+    // 删除的服务id列表
+    private String[] servidlist;
 }

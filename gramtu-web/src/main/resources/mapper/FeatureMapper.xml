@@ -51,73 +51,73 @@
         </if>
     </select>
 
-    <!-- 新增文章 -->
-    <insert id="addAdvert" parameterType="Map">
+    <!-- 新增特色服务 -->
+    <insert id="addFeature" parameterType="Map">
         INSERT INTO
-            g_advert (
+            g_feature (
                  id
-                ,title
-                ,adimage
-                ,adtype
+                ,servname
+                ,servimage
+                ,servtype
                 ,article
                 ,sort
                 ,updtime
                 ,upduid
-                ,innerurl
+                ,servlink
             )
         VALUES (
              #{id}
-            ,#{title}
-            ,#{adimage}
-            ,#{adtype}
+            ,#{servname}
+            ,#{servimage}
+            ,#{servtype}
             ,#{article}
             ,#{sort}
             ,#{updtime}
             ,#{upduid}
-            ,#{innerurl}
+            ,#{servlink}
         )
     </insert>
 
     <!-- 删除文章 -->
-    <delete id="deleteAdvert" parameterType="Map">
+    <delete id="deleteFeature" parameterType="Map">
         DELETE FROM
-            g_advert
+            g_feature
         WHERE
             id = #{id}
     </delete>
 
-    <!-- 更新文章 -->
-    <update id="updAdvert" parameterType="Map">
+    <!-- 更新特色服务 -->
+    <update id="updFeature" parameterType="Map">
         UPDATE
-            g_advert
+        g_feature
         SET
-             title = #{title}
+             servname = #{servname}
             ,article = #{article}
-            ,adtype = #{adtype}
+            ,servtype = #{servtype}
             ,sort = #{sort}
             ,updtime = #{updtime}
             ,upduid = #{upduid}
-            ,innerurl = #{innerurl}
-        <if test="adimage != null and adimage != ''">
-            ,adimage = #{adimage}
+            ,servlink = #{servlink}
+        <if test="servimage != null and servimage != ''">
+            ,servimage = #{servimage}
         </if>
         WHERE
             id = #{id}
     </update>
 
-    <!-- 获取文章详细内容 -->
-    <select id="getAdvertDetail" parameterType="Map" resultType="Map">
+    <!-- 获取特色服务详细内容 -->
+    <select id="getFeatureDetail" parameterType="Map" resultType="Map">
         SELECT
-             a.title
+             a.servname
             ,a.updtime
             ,b.uname
-            ,a.adimage
-            ,a.adtype
+            ,a.servimage
+            ,a.servtype
             ,a.article
             ,a.sort
-            ,a.innerurl
+            ,a.servlink
         FROM
-            g_advert a
+            g_feature a
         LEFT JOIN
             turnin_user b
           ON a.upduid = b.uid

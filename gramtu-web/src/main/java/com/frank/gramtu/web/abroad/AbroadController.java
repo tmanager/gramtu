@@ -3,6 +3,7 @@ package com.frank.gramtu.web.abroad;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.frank.gramtu.core.request.WebRequest;
+import com.frank.gramtu.web.feature.FeatureRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,6 +44,76 @@ public class AbroadController {
 
         log.info("查询特色服务结束..................");
         log.info("返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 新增招募信息.
+     */
+    @RequestMapping(value = "/aboradadd")
+    private String addAbroad(@RequestBody String requestParam) {
+        log.info("招募信息新增开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<AbroadRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<AbroadRequest>>() {
+        });
+
+        // 新增
+        String responseData = this.abroadService.addAbroadService(requestData);
+        log.info("招募信息新增结束..................");
+        log.info("招募信息新增返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 预览招募信息.
+     */
+    @RequestMapping(value = "/abroaddetail")
+    private String abroadDetail(@RequestBody String requestParam) {
+        log.info("预览招募信息开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<AbroadRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<AbroadRequest>>() {
+        });
+
+        // 预览
+        String responseData = this.abroadService.abroadDetailService(requestData.getRequest().getAbroadid());
+        log.info("预览招募信息结束..................");
+        log.info("预览招募信息返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 删除招募信息.
+     */
+    @RequestMapping(value = "/delete")
+    private String delAbroad(@RequestBody String requestParam) {
+        log.info("删除招募信息开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<AbroadRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<AbroadRequest>>() {
+        });
+
+        // 删除
+        String responseData = this.abroadService.delAbroadService(requestData.getRequest().getAbroadidlist());
+        log.info("删除招募信息结束..................");
+        log.info("删除招募信息返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 编辑招募信息.
+     */
+    @RequestMapping(value = "/edit")
+    public String editAbroad(@RequestBody String requestParam) {
+        log.info("编辑招募信息开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<AbroadRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<AbroadRequest>>() {
+        });
+        String responseData = this.abroadService.editAbroadService(requestData);
+        log.info("服务招募信息结束..................");
+        log.info("服务招募信息返回值为:{}", responseData);
         return responseData;
     }
 }

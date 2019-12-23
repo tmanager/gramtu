@@ -24,4 +24,7 @@ public class AbroadRequest extends BaseRequest {
 
     // 内容
     private String content = "";
+
+    // 删除的招募信息id列表
+    private String[] abroadidlist;
 }

@@ -27,4 +27,24 @@ public interface FeatureRepository {
      * 查询明细.
      */
     List<Map<String, String>> getServiceList(Map<String, Object> param);
+
+    /**
+     * 新增服务.
+     */
+    int addFeature(Map<String, String> param);
+
+    /**
+     * 删除服务.
+     */
+    int deleteFeature(Map<String,String> param);
+
+    /**
+     * 更新服务
+     */
+    int updFeature(Map<String, String> param);
+
+    /**
+     * 获取服务内容.
+     */
+    Map<String, Object> getFeatureDetail(Map<String, String> param);
 }

@@ -21,4 +21,28 @@ public class FeatureReponse extends BaseResponse {
 
     // 数据列表
     private List<Map<String, String>> servlist;
+
+    // 广告名称
+    private String servname = "";
+
+    // 发布时间
+    private String time = "";
+
+    // 发布人
+    private String editor = "";
+
+    // 图片
+    private String servimage = "";
+
+    // 广告类型
+    private String servtype = "";
+
+    // 广告内容
+    private String content = "";
+
+    // 排序号
+    private int sort = 0;
+
+    // 图片外部链接
+    private String servlink = "";
 }
