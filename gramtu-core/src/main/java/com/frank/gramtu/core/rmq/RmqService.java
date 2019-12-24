@@ -32,5 +32,6 @@ public class RmqService {
         log.info("*****************发送给grammarly的返回消息为：[{}]*****************", response);
 
         return response;
+        //this.rabbitTemplate.convertAndSend(RmqConst.QUEUE_NAME_GRAMMARLY_CLIENT, msg);
     }
 }
