@@ -27,4 +27,10 @@ public class NewBornReponse extends BaseResponse {
 
     // 内容
     private String content = "";
+
+    // 发布人
+    private String editor = "";
+
+    // 发布时间
+    private String time = "";
 }

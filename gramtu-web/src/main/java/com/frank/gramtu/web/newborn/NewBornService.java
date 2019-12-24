@@ -1,10 +1,17 @@
 package com.frank.gramtu.web.newborn;
 
 import com.alibaba.fastjson.JSON;
+import com.frank.gramtu.core.request.WebRequest;
+import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
+import com.frank.gramtu.core.utils.SdyfCommonUtil;
+import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
+import com.frank.gramtu.web.abroad.AbroadRequest;
+import com.frank.gramtu.web.abroad.AbroadResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +60,102 @@ public class NewBornService {
         newBornReponse.setTotalcount(cnt);
         newBornReponse.setNewbornlist(dataList);
         responseData.setResponse(newBornReponse);
+
+        // 返回
+        return JSON.toJSONString(responseData);
+    }
+
+    /**
+     * 新增新人专区信息.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String addNewBornService(WebRequest<NewBornRequest> requestData) {
+
+        // 参数
+        Map<String, String> param = new HashMap<>();
+        // id主键
+        param.put("id", SdyfCommonUtil.getUUid());
+        // 用户id
+        param.put("upduid", requestData.getUserid());
+        // 更新时间
+        param.put("updtime", SdyfDateTimeUtil.getTimeformat());
+        // 服务名称
+        param.put("title", requestData.getRequest().getTitle());
+        // 服务内容
+        param.put("article", requestData.getRequest().getContent());
+
+        // 新增
+        int cnt = this.newBornRepository.addNewBorn(param);
+        log.info("新增数据条数为：[{}]", cnt);
+
+        // 返回
+        return new SysResponse().toJsonString();
+    }
+
+    /**
+     * 删除新人专区信息.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String delNewBornService(String[] newbornList) {
+
+        for (String newbornid : newbornList) {
+            Map<String, String> param = new HashMap<>();
+            param.put("id", newbornid);
+            this.newBornRepository.deleteNewBorn(param);
+            log.info("新人专区信息[{}]被删除", newbornid);
+        }
+
+        // 返回
+        return new SysResponse().toJsonString();
+    }
+
+    /**
+     * 编辑保存新人专区信息.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String editNewBornService(WebRequest<NewBornRequest> requestData) {
+
+        // 参数
+        Map<String, String> param = new HashMap<>();
+        // ID
+        param.put("id", requestData.getRequest().getNewbornid());
+        // 标题
+        param.put("title", requestData.getRequest().getTitle());
+        // 内容
+        param.put("article", requestData.getRequest().getContent());
+        // 更新时间
+        param.put("updtime", SdyfDateTimeUtil.getTimeformat());
+        // 更新人
+        param.put("upduid", requestData.getUserid());
+        this.newBornRepository.updNewBorn(param);
+
+        // 返回
+        return new SysResponse().toJsonString();
+    }
+
+    /**
+     * 根据新人专区ID获取新人专区内容.
+     */
+    public String newBornDetailService(String abrId) {
+
+        // 查询参数
+        Map<String, String> param = new HashMap<>();
+        param.put("id", abrId);
+
+        // 获取服务详细内容
+        Map<String, Object> abroadDetail = this.newBornRepository.getNewBornDetail(param);
+
+        WebResponse<NewBornReponse> responseData = new WebResponse<>();
+        NewBornReponse newbornReponse = new NewBornReponse();
+        // 标题
+        newbornReponse.setTitle(String.valueOf(abroadDetail.get("title")));
+        // 发布时间
+        newbornReponse.setTime(String.valueOf(abroadDetail.get("updtime")));
+        // 发布者
+        newbornReponse.setEditor(String.valueOf(abroadDetail.get("uname")));
+        // 内容
+        newbornReponse.setContent(String.valueOf(abroadDetail.get("article")));
+        responseData.setResponse(newbornReponse);
 
         // 返回
         return JSON.toJSONString(responseData);

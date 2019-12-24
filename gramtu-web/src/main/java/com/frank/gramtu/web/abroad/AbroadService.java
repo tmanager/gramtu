@@ -103,7 +103,7 @@ public class AbroadService {
             Map<String, String> param = new HashMap<>();
             param.put("id", abroadid);
             this.abroadRepository.deleteAbroad(param);
-            log.info("广告[{}]被删除", abroadid);
+            log.info("招募信息[{}]被删除", abroadid);
         }
 
         // 返回

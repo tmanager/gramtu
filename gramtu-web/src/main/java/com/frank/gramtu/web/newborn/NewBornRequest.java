@@ -26,5 +26,5 @@ public class NewBornRequest extends BaseRequest {
     private String content = "";
 
     // 删除id列表
-    private String[] newbornlist;
+    private String[] newbornidlist;
 }

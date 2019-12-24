@@ -48,10 +48,10 @@
         </if>
     </select>
 
-    <!-- 新增招募信息 -->
-    <insert id="addAbroad" parameterType="Map">
+    <!-- 新增新人专区信息 -->
+    <insert id="addNewBorn" parameterType="Map">
         INSERT INTO
-            g_abroad (
+            g_newborn (
                  id
                 ,title
                 ,article
@@ -67,18 +67,18 @@
         )
     </insert>
 
-    <!-- 删除招募信息 -->
-    <delete id="deleteAbroad" parameterType="Map">
+    <!-- 删除新人专区信息 -->
+    <delete id="deleteNewBorn" parameterType="Map">
         DELETE FROM
-            g_abroad
+            g_newborn
         WHERE
             id = #{id}
     </delete>
 
-    <!-- 更新招募信息 -->
-    <update id="updAbroad" parameterType="Map">
+    <!-- 更新新人专区信息 -->
+    <update id="updNewBorn" parameterType="Map">
         UPDATE
-            g_abroad
+            g_newborn
         SET
              title = #{title}
             ,article = #{article}
@@ -88,18 +88,18 @@
             id = #{id}
     </update>
 
-    <!-- 获取招募详细内容 -->
-    <select id="getAbroadDetail" parameterType="Map" resultType="Map">
+    <!-- 获取新人专区详细内容 -->
+    <select id="getNewBornDetail" parameterType="Map" resultType="Map">
         SELECT
-             a.title
-            ,a.updtime
-            ,b.uname
-            ,a.article
+        a.title
+        ,a.updtime
+        ,b.uname
+        ,a.article
         FROM
-            g_abroad a
+        g_newborn a
         LEFT JOIN
-            turnin_user b
-          ON a.upduid = b.uid
+        turnin_user b
+        ON a.upduid = b.uid
         WHERE
         1 = 1
         <if test="id != null and id != ''">

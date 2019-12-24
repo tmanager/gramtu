@@ -27,4 +27,24 @@ public interface NewBornRepository {
      * 查询明细.
      */
     List<Map<String, String>> getDataList(Map<String, Object> param);
+
+    /**
+     * 新增新人专区信息.
+     */
+    int addNewBorn(Map<String, String> param);
+
+    /**
+     * 删除新人专区信息.
+     */
+    int deleteNewBorn(Map<String,String> param);
+
+    /**
+     * 更新新人专区信息
+     */
+    int updNewBorn(Map<String, String> param);
+
+    /**
+     * 获取新人专区内容.
+     */
+    Map<String, Object> getNewBornDetail(Map<String, String> param);
 }
