@@ -1,0 +1,6 @@
+JSONObject json = new JSONObject();
+json.put("jym", "jy_01");
+json.put("ddbh", String.valueOf(i));
+json.put("ext", "docx");
+json.put("file_url", "http://www.gramtu.com/group1/M00/00/00/rBBVI14AtTuAOcwCAAB1p0N5Vwg55.docx");
+json.put("result_path", "/home/gramtu/src/datafile/grammarly/report/" + String.valueOf(i) + ".pdf");
