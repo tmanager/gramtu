@@ -38,7 +38,7 @@ public class AbroadService {
     public String queryService(AbroadRequest requestData) {
 
         // 名称
-        String title = requestData.getTitile();
+        String title = requestData.getTitle();
 
         // 查询参数
         Map<String, Object> param = new HashMap<>();
@@ -81,7 +81,7 @@ public class AbroadService {
         // 更新时间
         param.put("updtime", SdyfDateTimeUtil.getTimeformat());
         // 服务名称
-        param.put("title", requestData.getRequest().getTitile());
+        param.put("title", requestData.getRequest().getTitle());
         // 服务内容
         param.put("article", requestData.getRequest().getContent());
 
@@ -121,7 +121,7 @@ public class AbroadService {
         // ID
         param.put("id", requestData.getRequest().getAbroadid());
         // 服务名称
-        param.put("title", requestData.getRequest().getTitile());
+        param.put("title", requestData.getRequest().getTitle());
         // 内容
         param.put("article", requestData.getRequest().getContent());
         // 更新时间

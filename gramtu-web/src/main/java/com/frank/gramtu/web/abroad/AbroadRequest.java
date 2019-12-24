@@ -20,7 +20,7 @@ public class AbroadRequest extends BaseRequest {
     private String abroadid = "";
 
     // 标题
-    private String titile = "";
+    private String title = "";
 
     // 内容
     private String content = "";

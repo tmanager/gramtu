@@ -117,7 +117,7 @@ public class FeatureController {
     /**
      * 删除服务.
      */
-    @RequestMapping(value = "/delete")
+    @RequestMapping(value = "/servdelete")
     private String delFeature(@RequestBody String requestParam) {
         log.info("删除服务开始..................");
 
@@ -135,7 +135,7 @@ public class FeatureController {
     /**
      * 编辑服务.
      */
-    @RequestMapping(value = "/edit")
+    @RequestMapping(value = "/servedit")
     public String editFeature(@RequestBody String requestParam) {
         log.info("编辑服务开始..................");
 

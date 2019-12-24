@@ -50,7 +50,7 @@ public class AbroadController {
     /**
      * 新增招募信息.
      */
-    @RequestMapping(value = "/aboradadd")
+    @RequestMapping(value = "/add")
     private String addAbroad(@RequestBody String requestParam) {
         log.info("招募信息新增开始..................");
 
@@ -68,7 +68,7 @@ public class AbroadController {
     /**
      * 预览招募信息.
      */
-    @RequestMapping(value = "/abroaddetail")
+    @RequestMapping(value = "/detail")
     private String abroadDetail(@RequestBody String requestParam) {
         log.info("预览招募信息开始..................");
 
