@@ -8,10 +8,10 @@
         <version>0.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <groupId>com.frank</groupId>
     <artifactId>gramtu-mini</artifactId>
     <version>0.0.1</version>
+
     <name>gramtu-mini</name>
     <description>小程序后台</description>
 

@@ -52,7 +52,6 @@ public class AdvertService {
         int cnt = this.advertRepository.getCnt(param);
         log.info("查询出的数据条数为：{}", cnt);
 
-
         WebResponse<AdvertResponse> responseData = new WebResponse<>();
         AdvertResponse advertReponse = new AdvertResponse();
         advertReponse.setDraw(0);

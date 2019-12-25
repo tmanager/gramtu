@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Copyright(C) ShanDongYinFang 2019.
- * <p>
  * 认证中心系统应用入口.
  *
  * @author 张明亮 2019/08/08.
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * 更新履历： V0.0.1 2019/08/08. 张明亮 创建.
  */
-
 @Slf4j
 @RestController
 @CrossOrigin(origins = "*")

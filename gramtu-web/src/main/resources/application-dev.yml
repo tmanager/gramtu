@@ -43,7 +43,6 @@ mybatis:
   mapper-locations: classpath*:mapper/*.xml
   configuration:
     call-setters-on-nulls: true
-
 fdfs:
   # 读取超时
   so-timeout: 1501
