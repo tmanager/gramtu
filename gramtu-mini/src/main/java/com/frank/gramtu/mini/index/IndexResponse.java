@@ -25,6 +25,12 @@ public class IndexResponse extends BaseResponse {
     // 特色服务列表
     private List<Map<String, String>> servlist;
 
-    // 海外招聘
+    // 新人专区列表
+    private List<Map<String, String>> newbornlist;
+
+    // 海外招聘列表
     private List<Map<String, String>> abroadlist;
+
+    // 推荐阅读列表
+    private List<Map<String, String>> artlist;
 }

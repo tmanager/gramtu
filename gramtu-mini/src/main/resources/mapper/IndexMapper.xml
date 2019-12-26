@@ -12,7 +12,7 @@
      -->
 
     <!-- 查询列表 -->
-    <select id="getAdvertList" parameterType="Map" resultType="Map">
+    <select id="getAdvertList" resultType="Map">
         SELECT
               id as adid
              ,title
@@ -23,6 +23,65 @@
         FROM
              g_advert
         ORDER BY sort
+    </select>
+
+    <!-- 特色服务数据 -->
+    <select id="getServiceList" resultType="Map">
+        SELECT
+              id as servid
+             ,servname
+             ,servimage
+             ,servlink
+             ,servtype
+             ,sort
+        FROM
+             g_feature
+        ORDER BY sort
+    </select>
+
+    <!-- 新人专区数据 -->
+    <select id="getNewbornList" resultType="Map">
+        SELECT
+              id as newbornid
+             ,title
+        FROM
+             g_newborn
+        ORDER BY updtime DESC
+        LIMIT 0, 2
+    </select>
+
+    <!-- 海外招募 -->
+    <select id="getAbroadList" resultType="Map">
+        SELECT
+              id as abroadid
+             ,title
+        FROM
+             g_abroad
+        ORDER BY updtime DESC
+        LIMIT 0, 2
+    </select>
+
+    <!-- 推荐阅读列表 -->
+    <select id="getArticleList" resultType="Map">
+        SELECT
+             id as artid
+            ,title
+            ,cover as coverimage
+            ,'0' as readcount
+        FROM
+            g_article
+        ORDER BY updtime DESC
+        <if test="pagingOrNot != null and pagingOrNot != ''">
+            LIMIT #{startindex}, #{pagesize};
+        </if>
+    </select>
+
+    <!-- 查询推荐阅读条数 -->
+    <select id="getArticlCnt" resultType="int">
+        SELECT
+            count(*) as cnt
+        FROM
+            g_article
     </select>
 
 </mapper>

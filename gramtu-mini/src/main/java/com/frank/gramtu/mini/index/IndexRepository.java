@@ -22,4 +22,29 @@ public interface IndexRepository {
      * 查询广告数据.
      */
     List<Map<String, String>> getAdvertList();
+
+    /**
+     * 查询特色服务数据.
+     */
+    List<Map<String, String>> getServiceList();
+
+    /**
+     * 查询新人专区数据.
+     */
+    List<Map<String, String>> getNewbornList();
+
+    /**
+     * 查询海外招募数据.
+     */
+    List<Map<String, String>> getAbroadList();
+
+    /**
+     * 查询推荐阅读数据.
+     */
+    List<Map<String ,String>> getArticleList();
+
+    /**
+     * 查询推荐阅读条数.
+     */
+    int getArticlCnt();
 }
