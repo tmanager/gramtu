@@ -84,7 +84,7 @@ public class FdfsUtil {
         List<String> pathList = new ArrayList<>();
 
         // URL
-        String url = "http://www.gramtu.com/";
+        String url = "https://www.gramtu.com/";
 
         // 全路径
         pathList.add(url + storePath.getFullPath());
@@ -101,7 +101,7 @@ public class FdfsUtil {
     private String convertFilePath(StorePath storePath) {
 
         // URL
-        String url = "http://www.gramtu.com/";
+        String url = "https://www.gramtu.com/";
 
         String fullPath = url + storePath.getFullPath();
 
