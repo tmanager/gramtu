@@ -20,6 +20,13 @@ import java.util.Arrays;
  */
 public class WechatDecryptDataUtil {
 
+    public static void main(String[] args) {
+        String data = "aJjQZK7yNyK/Xih4TMiVcnX0orqwdm8nA9qT07aaNCStRmlw3BwesP5KZ+JyiFYXOlJiipHMflF15QC1syRwiKupATEAlURLw2EJ7CayJtqQYUQbHmmZSHk83GXuwogF02sU2QW0/vW8PCZcjWJqKQz86dQBLy1j/KhIw+O5OM8RWLyAbcPi0oQ1lGZ2FOxE1fx09z0U734W9YbFf9HZLQ==";
+
+        String result = decryptData(data, "iW/jnAnZsQAkaYVUyTFFMg==", "1k5XY4fM2A3sNN/ZT+yaZQ==");
+        System.out.println(result);
+    }
+
     private static final String KEY_ALGORITHM = "AES";
     private static final String ALGORITHM_STR = "AES/CBC/PKCS7Padding";
     private static Key key;

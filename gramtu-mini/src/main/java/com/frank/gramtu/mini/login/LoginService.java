@@ -114,8 +114,13 @@ public class LoginService {
         if (requestData.getIsRegister().equals("0")) {
             // 新增
             param.put("id", CommonUtil.getUUid());
+            int cnt = this.loginRepository.insWxUserInfo(param);
+            ;
+            log.info("新增微信用户条数：{}", cnt);
         } else {
             // 已注册时更新
+            int cnt = this.loginRepository.updWxUserInfo(param);
+            log.info("更新用户信息条数：{}", cnt);
         }
 
         // 返回
