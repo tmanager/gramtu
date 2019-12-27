@@ -8,8 +8,8 @@ import com.frank.gramtu.ac.userpower.UserPowerRepository;
 import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
-import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
+import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.core.utils.SdyfJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -124,8 +124,8 @@ public class FunctionService {
     public String functionAdd(WebRequest<FunctionRequest> requestData) {
         //对象转换成map集合 并给dao传值
         HashMap map = SdyfJsonUtil.beanToMap(requestData.getRequest());
-        map.put("uuid", SdyfCommonUtil.getUUid());
-        map.put("addTime", SdyfDateTimeUtil.getTimeformat());
+        map.put("uuid", CommonUtil.getUUid());
+        map.put("addTime", DateTimeUtil.getTimeformat());
         map.put("operator", requestData.getUserid());
         functionRepository.functionAdd(map);
         return new SysResponse().toJsonString();
@@ -141,7 +141,7 @@ public class FunctionService {
     public String functionUpdate(WebRequest<FunctionRequest> requestData) {
         //对象转换成map集合 并给dao传值
         HashMap map = SdyfJsonUtil.beanToMap(requestData.getRequest());
-        map.put("updateTime",SdyfDateTimeUtil.getTimeformat());
+        map.put("updateTime", DateTimeUtil.getTimeformat());
         map.put("operator", requestData.getUserid());
         functionRepository.functionUpdate(map);
         return new SysResponse().toJsonString();

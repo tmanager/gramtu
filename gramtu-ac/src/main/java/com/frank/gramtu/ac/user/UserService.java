@@ -11,8 +11,8 @@ import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.Md5Util;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
-import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
+import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.core.utils.SdyfJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,13 +64,13 @@ public class UserService {
         int Only = userRepository.userOnly(requestData.getRequest().getUserid());
         if (Only == 0) {
             //定义用户id
-            String userId = SdyfCommonUtil.getUUid();
+            String userId = CommonUtil.getUUid();
             map.put("operator", requestData.getUserid());
             //添加用户给其默认密码123456  md5加密
             map.put("passwd", Md5Util.MD5Encode("123456", "utf8"));
             map.put("usid", userId);
-            map.put("addTime", SdyfDateTimeUtil.getTimeformat());
-            map.put("uuid", SdyfCommonUtil.getUUid());
+            map.put("addTime", DateTimeUtil.getTimeformat());
+            map.put("uuid", CommonUtil.getUUid());
             //添加用户信息
             userRepository.userAdd(map);
             //添加用户和机构关联信息
@@ -78,7 +78,7 @@ public class UserService {
             //定义角色，分割后循环添加用户和角色的关联信息
             String[] rolelist = requestData.getRequest().getRolelist();
             for (int i = 0; i < rolelist.length; i++) {
-                map.put("uuid", SdyfCommonUtil.getUUid());
+                map.put("uuid", CommonUtil.getUUid());
                 map.put("role", rolelist[i]);
                 userRepository.userRoleAdd(map);
             }
@@ -86,8 +86,8 @@ public class UserService {
             List<Map<String, Object>> rolePower = rolePowerRepository.rolePowerQuerys(rolelist);
             for (int i = 0; i < rolePower.size(); i++) {
                 map.put("userid", userId);
-                map.put("addTime", SdyfDateTimeUtil.getTimeformat());
-                map.put("uuid", SdyfCommonUtil.getUUid());
+                map.put("addTime", DateTimeUtil.getTimeformat());
+                map.put("uuid", CommonUtil.getUUid());
                 map.put("menuid", rolePower.get(i).get("menuid"));
                 map.put("roleid", rolePower.get(i).get("roleid"));
                 userPowerRepository.userPowerAdd(map);
@@ -138,9 +138,9 @@ public class UserService {
         String userId = (String) userRepository.userQuery(requestData.getRequest().getUserid()).get("id");
         //对象转换成map集合 并给dao传值
         HashMap map = SdyfJsonUtil.beanToMap(requestData.getRequest());
-        map.put("updateTime", SdyfDateTimeUtil.getTimeformat());
+        map.put("updateTime", DateTimeUtil.getTimeformat());
         map.put("operator", requestData.getUserid());
-        map.put("addTime", SdyfDateTimeUtil.getTimeformat());
+        map.put("addTime", DateTimeUtil.getTimeformat());
         map.put("usid", userId);
         //修改用户信息
         userRepository.userUpdate(map);
@@ -153,7 +153,7 @@ public class UserService {
             userRepository.userRoleDelete(userId);
             userRepository.userFunctionDelete(userId);
             for (int i = 0; i < rolelist.length; i++) {
-                map.put("uuid", SdyfCommonUtil.getUUid());
+                map.put("uuid", CommonUtil.getUUid());
                 map.put("role", rolelist[i]);
                 userRepository.userRoleAdd(map);
             }
@@ -163,8 +163,8 @@ public class UserService {
             List<Map<String, Object>> rolePower = rolePowerRepository.rolePowerQuerys(rolelist);
             for (int i = 0; i < rolePower.size(); i++) {
                 map.put("userid", userId);
-                map.put("addTime", SdyfDateTimeUtil.getTimeformat());
-                map.put("uuid", SdyfCommonUtil.getUUid());
+                map.put("addTime", DateTimeUtil.getTimeformat());
+                map.put("uuid", CommonUtil.getUUid());
                 map.put("menuid", rolePower.get(i).get("menuid"));
                 map.put("roleid", rolePower.get(i).get("roleid"));
                 userPowerRepository.userPowerAdd(map);
@@ -217,7 +217,7 @@ public class UserService {
         for (int i = 0; i < Userid.length; i++) {
             //获取报文体并转换成map集合 方便给dao传值
             HashMap map = SdyfJsonUtil.beanToMap(requestData.getRequest());
-            map.put("updateTime", SdyfDateTimeUtil.getTimeformat());
+            map.put("updateTime", DateTimeUtil.getTimeformat());
             map.put("operator", requestData.getUserid());
             map.put("userid", Userid[i]);
             userRepository.passWordRest(map);
@@ -241,7 +241,7 @@ public class UserService {
             if (passwd.equals(Md5Util.MD5Encode((String) map.get("newpassword"), "utf8"))) {
                 return new SysErrResponse("新老密码相同，无需修改").toJsonString();
             }
-            map.put("updateTime", SdyfDateTimeUtil.getTimeformat());
+            map.put("updateTime", DateTimeUtil.getTimeformat());
             map.put("operator", requestData.getUserid());
             map.put("password", Md5Util.MD5Encode((String) map.get("newpassword"), "utf8"));
             map.put("userid", requestData.getUserid());

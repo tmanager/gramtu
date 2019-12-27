@@ -6,8 +6,8 @@ import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
-import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
+import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.core.utils.SdyfJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,9 +80,9 @@ public class OrganService {
         HashMap map = SdyfJsonUtil.beanToMap(requestData.getRequest());
         HashMap<String, Object> hashMap = new HashMap<>();
         // 查询机构名称是否存在
-        map.put("uuid", SdyfCommonUtil.getUUid());
-        map.put("organcode", SdyfCommonUtil.getUUid());
-        map.put("addTime", SdyfDateTimeUtil.getTimeformat());
+        map.put("uuid", CommonUtil.getUUid());
+        map.put("organcode", CommonUtil.getUUid());
+        map.put("addTime", DateTimeUtil.getTimeformat());
         map.put("operator", requestData.getUserid());
         //机构类型 1父机构2子机构
         if (requestData.getRequest().getParentorganid() != null && !"".equals(requestData.getRequest().getParentorganid())) {
@@ -119,7 +119,7 @@ public class OrganService {
     public String organUpdate(WebRequest<OrganRequest> requestData) {
         //对象转换成map集合 并给dao传值
         HashMap map = SdyfJsonUtil.beanToMap(requestData.getRequest());
-        map.put("updateTime", SdyfDateTimeUtil.getTimeformat());
+        map.put("updateTime", DateTimeUtil.getTimeformat());
         map.put("operator", requestData.getUserid());
         String uname = organRepository.organNameById(requestData.getRequest().getOrganid());
         if (uname.equals(requestData.getRequest().getOrganname())) {

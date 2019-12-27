@@ -4,10 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
-import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
-import com.frank.gramtu.web.advert.AdvertRequest;
-import com.frank.gramtu.web.advert.AdvertResponse;
+import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,11 +73,11 @@ public class FeatureService {
         // 参数
         Map<String, String> param = new HashMap<>();
         // id主键
-        param.put("id", SdyfCommonUtil.getUUid());
+        param.put("id", CommonUtil.getUUid());
         // 用户id
         param.put("upduid", requestData.getUserid());
         // 更新时间
-        param.put("updtime", SdyfDateTimeUtil.getTimeformat());
+        param.put("updtime", DateTimeUtil.getTimeformat());
         // 服务名称
         param.put("servname", requestData.getRequest().getServname());
         // 预览图片
@@ -141,7 +139,7 @@ public class FeatureService {
         // 排序号
         param.put("sort", String.valueOf(requestData.getRequest().getSort()));
         // 更新时间
-        param.put("updtime", SdyfDateTimeUtil.getTimeformat());
+        param.put("updtime", DateTimeUtil.getTimeformat());
         // 更新人
         param.put("upduid", requestData.getUserid());
         // 外部链接

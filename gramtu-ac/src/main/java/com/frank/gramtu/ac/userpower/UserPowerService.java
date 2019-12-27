@@ -9,8 +9,8 @@ import com.frank.gramtu.ac.user.UserRepository;
 import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
-import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
+import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.core.utils.SdyfJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -100,8 +100,8 @@ public class UserPowerService {
         map.put("userid", userid);
         map.put("operator", requestData.getUserid());
         for (int i = 0; i < menuidlist.length; i++) {
-            map.put("addTime", SdyfDateTimeUtil.getTimeformat());
-            map.put("uuid", SdyfCommonUtil.getUUid());
+            map.put("addTime", DateTimeUtil.getTimeformat());
+            map.put("uuid", CommonUtil.getUUid());
             map.put("menuid", menuidlist[i]);
             userPowerRepository.userPowerAdd(map);
         }
@@ -176,8 +176,8 @@ public class UserPowerService {
         map.put("menuid", requestData.getRequest().getParentmenuid());
         map.put("operator", requestData.getUserid());
         for (int i = 0; i < functionidlist.length; i++) {
-            map.put("addTime", SdyfDateTimeUtil.getTimeformat());
-            map.put("uuid", SdyfCommonUtil.getUUid());
+            map.put("addTime", DateTimeUtil.getTimeformat());
+            map.put("uuid", CommonUtil.getUUid());
             map.put("functionid", functionidlist[i]);
             userPowerRepository.userfunctionAdd(map);
         }
@@ -198,8 +198,8 @@ public class UserPowerService {
         map.put("menuid",menuid);
         map.put("operator",operator);
         for (int i = 0; i < functionidlist.size(); i++) {
-            map.put("addTime", SdyfDateTimeUtil.getTimeformat());
-            map.put("uuid", SdyfCommonUtil.getUUid());
+            map.put("addTime", DateTimeUtil.getTimeformat());
+            map.put("uuid", CommonUtil.getUUid());
             map.put("functionid",functionidlist.get(i).get("functionid"));
             userPowerRepository.userfunctionAdd(map);
         }

@@ -6,8 +6,8 @@ import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
-import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
+import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.core.utils.SdyfJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,8 +82,8 @@ public class MenuService {
         // 查询code是否存在
         int number = menuRepository.menuOnly(requestData.getRequest().getMenucode());
         if (number <= 0) {
-            map.put("uuid", SdyfCommonUtil.getUUid());
-            map.put("addTime", SdyfDateTimeUtil.getTimeformat());
+            map.put("uuid", CommonUtil.getUUid());
+            map.put("addTime", DateTimeUtil.getTimeformat());
             map.put("operator", requestData.getUserid());
             menuRepository.menuAdd(map);
             return new SysResponse().toJsonString();
@@ -102,7 +102,7 @@ public class MenuService {
     public String menuUpdate(WebRequest<MenuRequest> requestData) {
         //对象转换成map集合 并给dao传值
         HashMap map = SdyfJsonUtil.beanToMap(requestData.getRequest());
-        map.put("updateTime", SdyfDateTimeUtil.getTimeformat());
+        map.put("updateTime", DateTimeUtil.getTimeformat());
         map.put("operator", requestData.getUserid());
         menuRepository.menuUpdate(map);
         return new SysResponse().toJsonString();

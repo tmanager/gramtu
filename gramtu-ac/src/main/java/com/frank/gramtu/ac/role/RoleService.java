@@ -6,8 +6,8 @@ import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
-import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
+import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.core.utils.SdyfJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,8 +73,8 @@ public class RoleService {
         if (roleOnly == 0) {
             //code 随机6位数
             Random rand = new Random();
-            map.put("uuid", SdyfCommonUtil.getUUid());
-            map.put("addTime", SdyfDateTimeUtil.getTimeformat());
+            map.put("uuid", CommonUtil.getUUid());
+            map.put("addTime", DateTimeUtil.getTimeformat());
             map.put("operator", requestData.getUserid());
             roleRepository.roleAdd(map);
             return new SysResponse().toJsonString();
@@ -93,7 +93,7 @@ public class RoleService {
     public String roleUpdate(WebRequest<RoleRequest> requestData) {
         //对象转换成map集合 并给dao传值
         HashMap map = SdyfJsonUtil.beanToMap(requestData.getRequest());
-        map.put("updateTime",SdyfDateTimeUtil.getTimeformat());
+        map.put("updateTime", DateTimeUtil.getTimeformat());
         map.put("operator", requestData.getUserid());
         roleRepository.roleUpdate(map);
         return new SysResponse().toJsonString();

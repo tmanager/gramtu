@@ -95,6 +95,7 @@ public class IndexService {
         indexResponse.setTotalcount(cnt);
 
         // 返回
+        log.info("返回的数据为：{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
         return JSON.toJSONString(responseData);
     }
 }

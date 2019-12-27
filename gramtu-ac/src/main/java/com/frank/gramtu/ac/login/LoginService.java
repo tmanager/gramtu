@@ -6,7 +6,7 @@ import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.Md5Util;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
+import com.frank.gramtu.core.utils.CommonUtil;
 import com.frank.gramtu.core.utils.SdyfJsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ public class LoginService {
             }else {
                 loginResponse.setRepassword ( "1" );
             }
-            String token = SdyfCommonUtil.getUUid().toUpperCase();
+            String token = CommonUtil.getUUid().toUpperCase();
             loginResponse.setToken(token);
             loginResponse.setUserid(hashMap.get("uid").toString());
             //loginResponse.setImage(hashMap.get("image").toString());
@@ -108,7 +108,7 @@ public class LoginService {
     public String tokenquery(WebRequest<LoginRequest> requestData){
         WebResponse<LoginResponse> web=new WebResponse<>();
         LoginResponse loginResponse=new LoginResponse();
-        String token = SdyfCommonUtil.getUUid().toUpperCase();
+        String token = CommonUtil.getUUid().toUpperCase();
         loginResponse.setToken(token);
         web.setResponse(loginResponse);
         return JSONObject.toJSON(web).toString();

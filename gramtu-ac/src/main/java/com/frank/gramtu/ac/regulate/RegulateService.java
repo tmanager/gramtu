@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
+import com.frank.gramtu.core.utils.CommonUtil;
 import com.frank.gramtu.core.utils.SdyfJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,7 +64,7 @@ public class RegulateService {
         //获取报文体
         HashMap map = SdyfJsonUtil.beanToMap(requestData.getRequest());
         //生成服务商id
-        String uid = SdyfCommonUtil.getUUid();
+        String uid = CommonUtil.getUUid();
         map.put("uid", uid);
         regulateRepository.regulateAdd(map);
         return new SysResponse().toJsonString();

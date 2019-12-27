@@ -15,7 +15,7 @@ import java.util.Set;
  * <p>
  * 更新履历： V0.0.1 2019/06/03 张孝党 创建.
  */
-public class SdyfRequestUtil {
+public class RequestUtil {
 
     /**
      * 获取所有request请求参数key-value

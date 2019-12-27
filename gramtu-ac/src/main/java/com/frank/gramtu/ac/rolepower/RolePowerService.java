@@ -11,8 +11,8 @@ import com.frank.gramtu.ac.userpower.UserPowerService;
 import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.SdyfCommonUtil;
-import com.frank.gramtu.core.utils.SdyfDateTimeUtil;
+import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.core.utils.SdyfJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -107,8 +107,8 @@ public class RolePowerService {
         map.put("roleid",requestData.getRequest().getRoleid());
         map.put("operator", requestData.getUserid());
         for (int i = 0; i < menuidlist.length; i++) {
-            map.put("addTime", SdyfDateTimeUtil.getTimeformat());
-            map.put("uuid", SdyfCommonUtil.getUUid());
+            map.put("addTime", DateTimeUtil.getTimeformat());
+            map.put("uuid", CommonUtil.getUUid());
             map.put("menuid", menuidlist[i]);
             rolePowerRepository.rolePowerAdd(map);
         }
@@ -116,9 +116,9 @@ public class RolePowerService {
         if (rolegetuser.size()!=0){
             for (int i = 0; i < rolegetuser.size(); i++) {
                 HashMap maps=new HashMap();
-                maps.put("updateTime",SdyfDateTimeUtil.getTimeformat());
+                maps.put("updateTime", DateTimeUtil.getTimeformat());
                 maps.put("operator", requestData.getUserid());
-                maps.put("addTime",SdyfDateTimeUtil.getTimeformat());
+                maps.put("addTime", DateTimeUtil.getTimeformat());
                 maps.put("usid", (String) rolegetuser.get(i).get("userid"));
                 List<Map<String, String>> rolenum=rolePowerRepository.usergetrolenum((String) rolegetuser.get(i).get("userid"));
                 userRepository.userRoleDelete((String) rolegetuser.get(i).get("userid"));
@@ -126,7 +126,7 @@ public class RolePowerService {
                 // 清除已有的权限
                 userPowerRepository.userPowerDelete((String) rolegetuser.get(i).get("userid"));
                 for (int j = 0; j <rolenum.size(); j++) {
-                    maps.put("uuid", SdyfCommonUtil.getUUid());
+                    maps.put("uuid", CommonUtil.getUUid());
                     maps.put("role", rolenum.get(j).get("roleid"));
                     userRepository.userRoleAdd(maps);
                 }
@@ -138,8 +138,8 @@ public class RolePowerService {
                 List<Map<String, Object>> rolePower = rolePowerRepository.rolePowerQuerys(rolelist);
                 for (int j = 0; j <rolePower.size() ; j++) {
                     maps.put("userid",(String) rolegetuser.get(i).get("userid"));
-                    maps.put("addTime", SdyfDateTimeUtil.getTimeformat());
-                    maps.put("uuid", SdyfCommonUtil.getUUid());
+                    maps.put("addTime", DateTimeUtil.getTimeformat());
+                    maps.put("uuid", CommonUtil.getUUid());
                     maps.put("menuid", rolePower.get(j).get("menuid"));
                     maps.put("roleid", rolePower.get(j).get("roleid"));
                     userPowerRepository.userPowerAdd(maps);
@@ -220,8 +220,8 @@ public class RolePowerService {
         map.put("menuid",requestData.getRequest().getMenuid());
         map.put("operator", requestData.getUserid());
         for (int i = 0; i < functionidlist.length; i++) {
-            map.put("addTime",SdyfDateTimeUtil.getTimeformat());
-            map.put("uuid", SdyfCommonUtil.getUUid());
+            map.put("addTime", DateTimeUtil.getTimeformat());
+            map.put("uuid", CommonUtil.getUUid());
             map.put("functionid", functionidlist[i]);
             rolePowerRepository.rolefunctionAdd(map);
         }
@@ -229,9 +229,9 @@ public class RolePowerService {
         if (rolegetuser.size()!=0){
             for (int i = 0; i < rolegetuser.size(); i++) {
                 HashMap maps=new HashMap();
-                maps.put("updateTime",SdyfDateTimeUtil.getTimeformat());
+                maps.put("updateTime", DateTimeUtil.getTimeformat());
                 maps.put("operator", requestData.getUserid());
-                maps.put("addTime",SdyfDateTimeUtil.getTimeformat());
+                maps.put("addTime", DateTimeUtil.getTimeformat());
                 maps.put("usid", (String) rolegetuser.get(i).get("userid"));
                 List<Map<String, String>> rolenum=rolePowerRepository.usergetrolenum((String) rolegetuser.get(i).get("userid"));
                 userRepository.userRoleDelete((String) rolegetuser.get(i).get("userid"));
@@ -239,7 +239,7 @@ public class RolePowerService {
                 // 清除已有的权限
                 userPowerRepository.userPowerDelete((String) rolegetuser.get(i).get("userid"));
                 for (int j = 0; j <rolenum.size(); j++) {
-                    maps.put("uuid", SdyfCommonUtil.getUUid());
+                    maps.put("uuid", CommonUtil.getUUid());
                     maps.put("role", rolenum.get(j).get("roleid"));
                     userRepository.userRoleAdd(maps);
                 }
@@ -251,8 +251,8 @@ public class RolePowerService {
                 List<Map<String, Object>> rolePower = rolePowerRepository.rolePowerQuerys(rolelist);
                 for (int j = 0; j <rolePower.size() ; j++) {
                     maps.put("userid",(String) rolegetuser.get(i).get("userid"));
-                    maps.put("addTime", SdyfDateTimeUtil.getTimeformat());
-                    maps.put("uuid", SdyfCommonUtil.getUUid());
+                    maps.put("addTime", DateTimeUtil.getTimeformat());
+                    maps.put("uuid", CommonUtil.getUUid());
                     maps.put("menuid", rolePower.get(j).get("menuid"));
                     maps.put("roleid", rolePower.get(j).get("roleid"));
                     userPowerRepository.userPowerAdd(maps);
