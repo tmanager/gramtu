@@ -60,7 +60,7 @@ public class LoginController {
         });
 
         // 查询数据
-        String responseData = this.loginService.checkService(requestData.getRequest());
+        String responseData = this.loginService.updUserInfoService(requestData.getRequest());
         log.info("返回小程序更新用户信息的数据为:\n{}", responseData);
 
         log.info("小程序更新用户信息结束................");

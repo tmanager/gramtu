@@ -60,8 +60,8 @@ public class LoginRequest extends BaseRequest {
     private String countryCode = "";
 
     // 是否注册,0:未注册,1:已注册
-    @Value("${isregister}")
-    private String isRegister = "";
+    @Value("${register}")
+    private String register = "";
 
     // 会话密钥
     @Value("${sessionkey}")

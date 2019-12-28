@@ -11,6 +11,7 @@ import com.frank.gramtu.mini.weixin.WxApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,6 +86,7 @@ public class LoginService {
     /**
      * 更新用户信息.
      */
+    @Transactional(rollbackFor = Exception.class)
     public String updUserInfoService(LoginRequest requestData) {
 
         // 参数
@@ -96,10 +98,9 @@ public class LoginService {
         param.put("city", requestData.getCity());
         param.put("province", requestData.getProvince());
         param.put("country", requestData.getCountry());
-        param.put("openid", requestData.getOpenId());
 
         // 用户未注册时
-        if (requestData.getIsRegister().equals("0")) {
+        if (requestData.getRegister().equals("0")) {
             // 手机号数据解密
             String phoneInfo = WechatDecryptDataUtil.decryptData(requestData.getEncryptedData(), requestData.getSessionKey(), requestData.getIv());
             log.info("手机号数据解密为：{}", phoneInfo);
@@ -108,10 +109,7 @@ public class LoginService {
             param.put("phonenumber", jsonPhoneInfo.getString("phoneNumber"));
             param.put("pure_phone_number", jsonPhoneInfo.getString("purePhoneNumber"));
             param.put("country_code", jsonPhoneInfo.getString("countryCode"));
-        }
 
-        // 未注册
-        if (requestData.getIsRegister().equals("0")) {
             // 新增
             param.put("id", CommonUtil.getUUid());
             int cnt = this.loginRepository.insWxUserInfo(param);
