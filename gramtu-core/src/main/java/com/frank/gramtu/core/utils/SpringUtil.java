@@ -1,10 +1,12 @@
 package com.frank.gramtu.core.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class SpringUtil implements ApplicationContextAware {
 
@@ -15,15 +17,10 @@ public class SpringUtil implements ApplicationContextAware {
         if (SpringUtil.applicationContext == null) {
             SpringUtil.applicationContext = applicationContext;
         }
-        System.out.println("---------------------------------------------------------------------");
-
-        System.out.println("---------------------------------------------------------------------");
-
-        System.out.println("---------------me.shijunjie.util.SpringUtil------------------------------------------------------");
-
-        System.out.println("========ApplicationContext配置成功,在普通类可以通过调用SpringUtils.getAppContext()获取applicationContext对象,applicationContext=" + SpringUtil.applicationContext + "========");
-
-        System.out.println("---------------------------------------------------------------------");
+        log.info("---------------------------------------------------------------------");
+        log.info("---------------------------------------------------------------------");
+        log.info("========ApplicationContext配置成功,在普通类可以通过调用SpringUtils.getAppContext()获取applicationContext对象,applicationContext=" + SpringUtil.applicationContext + "========");
+        log.info("---------------------------------------------------------------------");
     }
 
     //获取applicationContext
