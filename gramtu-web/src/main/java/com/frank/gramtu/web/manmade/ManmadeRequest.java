@@ -23,5 +23,5 @@ public class ManmadeRequest extends BaseRequest {
     private String title = "";
 
     // 服务内容
-    private String article = "";
+    private String content = "";
 }

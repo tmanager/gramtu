@@ -77,7 +77,7 @@ public class ManmadeService {
         // 服务名称
         param.put("title", requestData.getRequest().getTitle());
         // 文章
-        param.put("article", requestData.getRequest().getArticle());
+        param.put("article", requestData.getRequest().getContent());
         // 更新时间
         param.put("updtime", DateTimeUtil.getTimeformat());
         // 更新人
