@@ -28,7 +28,7 @@
         <if test="title != null and title != ''">
             AND title LIKE "%"#{title}"%"
         </if>
-        ORDER BY a.sort
+        ORDER BY a.updtime desc
         <if test="pagingOrNot != null and pagingOrNot != ''">
             LIMIT #{startindex}, #{pagesize};
         </if>
