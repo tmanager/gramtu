@@ -20,7 +20,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource(value = "classpath:/config/wxpay.yml")
 @ConfigurationProperties(prefix = "wxpay")
-public class WxPayConfig {
+public class WxPayConfigBean {
 
     // AppID
     @Value("${appid}")

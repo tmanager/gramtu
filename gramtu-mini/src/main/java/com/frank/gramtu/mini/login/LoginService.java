@@ -6,8 +6,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.CommonUtil;
-import com.frank.gramtu.mini.weixin.WechatDecryptDataUtil;
-import com.frank.gramtu.mini.weixin.WxApi;
+import com.frank.gramtu.mini.weixin.WeixinDecryptDataUtil;
+import com.frank.gramtu.mini.weixin.WeixinApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class LoginService {
         String mark = "0";
 
         // 获取微信用户openid
-        WxApi api = new WxApi();
+        WeixinApi api = new WeixinApi();
         JSONObject result = JSON.parseObject(api.getAuthCode2Session(requestData.getCode()));
         // 成功
         if (!result.containsKey("errcode")) {
@@ -102,7 +102,7 @@ public class LoginService {
         // 用户未注册时
         if (requestData.getRegister().equals("0")) {
             // 手机号数据解密
-            String phoneInfo = WechatDecryptDataUtil.decryptData(requestData.getEncryptedData(), requestData.getSessionKey(), requestData.getIv());
+            String phoneInfo = WeixinDecryptDataUtil.decryptData(requestData.getEncryptedData(), requestData.getSessionKey(), requestData.getIv());
             log.info("手机号数据解密为：{}", phoneInfo);
             JSONObject jsonPhoneInfo = JSONObject.parseObject(phoneInfo);
 
