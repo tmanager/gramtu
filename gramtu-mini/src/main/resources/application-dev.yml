@@ -43,6 +43,7 @@ mybatis:
   mapper-locations: classpath*:mapper/*.xml
   configuration:
     call-setters-on-nulls: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 fdfs:
   # 读取超时
   so-timeout: 1501
