@@ -58,16 +58,17 @@
     <update id="updWxUserInfo" parameterType="Map">
         UPDATE
             g_wx_user
-        SET
-             avatarurl = #{avatarurl}
-            ,nick_name = #{nick_name}
-            ,phonenumber = #{phonenumber}
-            ,pure_phone_number = #{pure_phone_number}
-            ,country_code = #{country_code}
-            ,gender = #{gender}
-            ,city = #{city}
-            ,province = #{province}
-            ,country = #{country}
+        <trim prefix="set" suffixOverrides=",">
+            <if test="avatarurl != null and avatarurl != ''">avatarurl = #{avatarurl},</if>
+            <if test="nick_name != null and nick_name != ''">nick_name = #{nick_name},</if>
+            <if test="phonenumber != null and phonenumber != ''">phonenumber = #{phonenumber},</if>
+            <if test="pure_phone_number != null and pure_phone_number != ''">pure_phone_number = #{pure_phone_number},</if>
+            <if test="country_code != null and country_code != ''">country_code = #{country_code},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="city != null and city != ''">city = #{city},</if>
+            <if test="province != null and province != ''">province = #{province},</if>
+            <if test="country != null and country != ''">country = #{country},</if>
+        </trim>
         WHERE
             openid = #{openid}
     </update>
