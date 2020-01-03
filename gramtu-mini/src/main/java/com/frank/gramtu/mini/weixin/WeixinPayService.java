@@ -1,5 +1,9 @@
 package com.frank.gramtu.mini.weixin;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.frank.gramtu.core.response.SysErrResponse;
+import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.CommonUtil;
 import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.mini.config.WxPayConfigBean;
@@ -8,6 +12,7 @@ import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
+import com.github.binarywang.wxpay.util.SignUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +50,7 @@ public class WeixinPayService implements InitializingBean {
     /**
      * 统一下单.
      */
-    public void unifiedOrderService() throws Exception {
+    public String unifiedOrderService(WeixinPayRequest requestData) throws Exception {
 
         // 返回报文.
         Map<String, String> rspMap = new HashMap<>();
@@ -57,7 +62,8 @@ public class WeixinPayService implements InitializingBean {
         // 商户号
         orderRequest.setMchId(this.wxPayConfigBean.getMchId());
         // 随机字符串
-        orderRequest.setNonceStr(CommonUtil.getUUid());
+        String nonceStr = CommonUtil.getUUid();
+        orderRequest.setNonceStr(nonceStr);
         // 商品描述
         orderRequest.setBody("查重费用");
         // 商户订单号
@@ -75,24 +81,50 @@ public class WeixinPayService implements InitializingBean {
         // 交易类型
         orderRequest.setTradeType("JSAPI");
         // 用户标识
-        orderRequest.setOpenid("oroId5J-0u5KQYS6EgMyDgPNDGHY");
-
-        log.info("签名>>>>>>>>>>[{}]", orderRequest.getSign());
+        orderRequest.setOpenid(requestData.getOpenId());
 
         // 调用服务
         WxPayService wxPayService = new WxPayServiceImpl();
         wxPayService.setConfig(this.wxPayConfig);
         // 后台请求
         WxPayUnifiedOrderResult orderResult = wxPayService.unifiedOrder(orderRequest);
+        log.info("统一下载返回的信息为：\n{}", JSON.toJSONString(orderRequest, SerializerFeature.PrettyFormat));
 
         if (orderResult.getReturnCode().equals("SUCCESS") && orderResult.getResultCode().equals("SUCCESS")) {
             // 下单成功
             log.info("微信支付统一下单成功");
             log.info(orderResult.getSign());
             log.info(orderResult.getPrepayId());
+
+            // 返回值
+            WebResponse<WeixinPayResponse> responseData = new WebResponse<>();
+            WeixinPayResponse weixinPayResponse = new WeixinPayResponse();
+            weixinPayResponse.setNoncestr(nonceStr);
+            // 获取时间戳除以千变字符串
+            Long s = System.currentTimeMillis() / 1000;
+            String timeStamp = String.valueOf(s);
+            weixinPayResponse.setTimestamp(timeStamp);
+            weixinPayResponse.setPaypackage("prepay_id=" + orderResult.getPrepayId());
+
+            // 二次签名
+            Map<String, String> map = new HashMap<>();
+            map.put("appId", this.wxPayConfigBean.getAppID());
+            map.put("timeStamp", timeStamp);
+            map.put("nonceStr", nonceStr);
+            map.put("package", "prepay_id=" + orderResult.getPrepayId());
+            map.put("signType", "MD5");
+            String sign = SignUtils.createSign(map, "MD5", this.wxPayConfigBean.getMchKey(), null);
+            weixinPayResponse.setPaysign(sign);
+
+            responseData.setResponse(weixinPayResponse);
+            log.info("返回信息为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
+
+            // 返回
+            return JSON.toJSONString(responseData);
         } else {
             // 下单失败
             log.info("微信支付统一下单失败");
+            return new SysErrResponse("微信支付统一下单失败!").toJsonString();
         }
     }
 
