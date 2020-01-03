@@ -16,11 +16,11 @@ import java.text.MessageFormat;
  * 更新履历： V1.00 2019/12/27. 张孝党 创建.
  */
 @Slf4j
-public class WxApi {
+public class WeixinApi {
 
     private WeixinMiniConfigBean weixinMiniConfigBean;
 
-    public WxApi() {
+    public WeixinApi() {
         this.weixinMiniConfigBean = SpringUtil.getBean(WeixinMiniConfigBean.class);
     }
 

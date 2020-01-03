@@ -18,7 +18,7 @@ import java.util.Arrays;
  * <p>
  * 更新履历： V1.00 2019/12/27. 张孝党 创建.
  */
-public class WechatDecryptDataUtil {
+public class WeixinDecryptDataUtil {
 
     public static void main(String[] args) {
         String data = "aJjQZK7yNyK/Xih4TMiVcnX0orqwdm8nA9qT07aaNCStRmlw3BwesP5KZ+JyiFYXOlJiipHMflF15QC1syRwiKupATEAlURLw2EJ7CayJtqQYUQbHmmZSHk83GXuwogF02sU2QW0/vW8PCZcjWJqKQz86dQBLy1j/KhIw+O5OM8RWLyAbcPi0oQ1lGZ2FOxE1fx09z0U734W9YbFf9HZLQ==";
