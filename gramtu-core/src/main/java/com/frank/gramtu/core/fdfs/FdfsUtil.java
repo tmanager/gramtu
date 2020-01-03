@@ -34,8 +34,8 @@ public class FdfsUtil {
      * 上传图片文件.
      */
     public List<String> uploadImage(MultipartFile multipartFile) throws Exception {
-
         log.info("FastDFS开始上传图片.........................");
+
         String originalFileName = multipartFile.getOriginalFilename().
                 substring(multipartFile.getOriginalFilename().lastIndexOf(".") + 1);
         log.info("图片的后缀为：[{}]", originalFileName);
@@ -54,14 +54,20 @@ public class FdfsUtil {
      * 上传文件.
      */
     public String uploadFile(MultipartFile multipartFile) throws Exception {
+        log.info("FastDFS开始上传文档.........................");
 
         String originalFileName = multipartFile.getOriginalFilename().
                 substring(multipartFile.getOriginalFilename().lastIndexOf(".") + 1);
+        log.info("文档的后缀为：[{}]", originalFileName);
+
         StorePath storePath = this.storageClient.uploadFile(multipartFile.getInputStream(),
                 multipartFile.getSize(),
                 originalFileName, null);
+        log.info("上传文档后的路径为：[{}]", storePath.getFullPath());
+        log.info("FastDFS结束上传文档.........................");
 
-        return storePath.getFullPath();
+        // 返回路径
+        return this.convertFilePath(storePath);
     }
 
     /**

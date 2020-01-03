@@ -1,9 +1,15 @@
 package com.frank.gramtu.web.turninparam;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.frank.gramtu.core.bean.RequestTurnitinBean;
+import com.frank.gramtu.core.bean.TurnitinConst;
+import com.frank.gramtu.core.redis.RedisService;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +32,9 @@ public class TurninParamService {
 
     @Autowired
     private TurninParamRepository turninParamRepository;
+
+    @Autowired
+    private RedisService redisService;
 
     /**
      * 获取国际版参数.
@@ -91,6 +100,22 @@ public class TurninParamService {
         this.updDict("in_sub_aid", requestData.getSubaid());
         this.updDict("in_thesis_path", requestData.getThesispath());
         this.updDict("in_report_path", requestData.getReportpath());
+
+        // 保存到redis
+        if (StringUtils.isEmpty(this.redisService.getStringValue(TurnitinConst.TURN_IN_KEY))) {
+            // 删除原有的信息
+            this.redisService.removeKey(TurnitinConst.TURN_IN_KEY);
+        }
+        RequestTurnitinBean bean = new RequestTurnitinBean();
+        bean.setUname(requestData.getUname());
+        bean.setPasswd(requestData.getPassword());
+        bean.setClassid(requestData.getClassid());
+        bean.setAid(requestData.getAid());
+        bean.setSubAid(requestData.getSubaid());
+        bean.setThesisVpnPath(requestData.getThesispath());
+        bean.setReportVpnPath(requestData.getReportpath());
+        this.redisService.setStringValue(TurnitinConst.TURN_IN_KEY, JSON.toJSONString(bean));
+        log.info("保存到redis中图际版的参数为:\n{}", JSON.toJSONString(bean, SerializerFeature.PrettyFormat));
 
         return new SysResponse().toJsonString();
     }

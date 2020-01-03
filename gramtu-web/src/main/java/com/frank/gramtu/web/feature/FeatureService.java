@@ -52,7 +52,6 @@ public class FeatureService {
         int cnt = this.featureRepository.getCnt(param);
         log.info("查询出的数据条数为：{}", cnt);
 
-
         WebResponse<FeatureReponse> responseData = new WebResponse<>();
         FeatureReponse advertReponse = new FeatureReponse();
         advertReponse.setDraw(0);
