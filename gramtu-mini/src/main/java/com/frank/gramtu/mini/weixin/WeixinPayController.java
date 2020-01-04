@@ -51,4 +51,18 @@ public class WeixinPayController {
         }
     }
 
+    /**
+     * 支付异步通知.
+     */
+    @RequestMapping("/callback")
+    public String callbackNotify(@RequestBody String xmlData) {
+        log.info("微信支付异步通知..............");
+        log.info("微信支付成功后异步通知的数据为：\n{}", xmlData);
+
+        // 更新信息
+        this.weixinPayService.callbackNotifyService(xmlData);
+
+        // 返回
+        return "success";
+    }
 }

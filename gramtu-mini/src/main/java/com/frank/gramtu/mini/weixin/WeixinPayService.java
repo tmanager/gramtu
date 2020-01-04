@@ -5,8 +5,9 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.CommonUtil;
-import com.frank.gramtu.core.utils.DateTimeUtil;
+import com.frank.gramtu.core.utils.IdGeneratorUtils;
 import com.frank.gramtu.mini.config.WxPayConfigBean;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.config.WxPayConfig;
@@ -17,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +35,9 @@ import java.util.Map;
 @Slf4j
 @Service
 public class WeixinPayService implements InitializingBean {
+
+    @Autowired
+    private WeixinPayRepository weixinPayRepository;
 
     @Autowired
     private WxPayConfigBean wxPayConfigBean;
@@ -50,6 +56,7 @@ public class WeixinPayService implements InitializingBean {
     /**
      * 统一下单.
      */
+    @Transactional(rollbackFor = Exception.class)
     public String unifiedOrderService(WeixinPayRequest requestData) throws Exception {
 
         // 返回报文.
@@ -66,12 +73,21 @@ public class WeixinPayService implements InitializingBean {
         orderRequest.setNonceStr(nonceStr);
         // 商品描述
         orderRequest.setBody("查重费用");
+
         // 商户订单号
-        String tradeNo = DateTimeUtil.getCurrentTime();
+        IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils(0, 0);
+        String tradeNo = String.valueOf(idGeneratorUtils.nextId());
         log.info("微信支付下单商户订单号为：" + tradeNo);
         orderRequest.setOutTradeNo(tradeNo);
-        // 标价金额
+
+        // 金额
+        DecimalFormat df = new DecimalFormat("#");
+        String amount = String.valueOf(df.format(Double.valueOf(requestData.getAmount()) * 100));
+        log.info("支付金额为：{}", amount);
+        // 标价金额-TODO
+        //orderRequest.setTotalFee(Integer.valueOf(amount));
         orderRequest.setTotalFee(Integer.valueOf("1"));
+
         // 终端IP
         String ip = "127.0.0.1";
         log.info("取得的终端IP为：" + ip);
@@ -93,8 +109,6 @@ public class WeixinPayService implements InitializingBean {
         if (orderResult.getReturnCode().equals("SUCCESS") && orderResult.getResultCode().equals("SUCCESS")) {
             // 下单成功
             log.info("微信支付统一下单成功");
-            log.info(orderResult.getSign());
-            log.info(orderResult.getPrepayId());
 
             // 返回值
             WebResponse<WeixinPayResponse> responseData = new WebResponse<>();
@@ -116,6 +130,9 @@ public class WeixinPayService implements InitializingBean {
             String sign = SignUtils.createSign(map, "MD5", this.wxPayConfigBean.getMchKey(), null);
             weixinPayResponse.setPaysign(sign);
 
+            // 根据订单号更新支付流程中的商户订单号
+            this.updOrderByOrderId(requestData.getOrderIdList(), tradeNo);
+
             responseData.setResponse(weixinPayResponse);
             log.info("返回信息为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
 
@@ -128,4 +145,67 @@ public class WeixinPayService implements InitializingBean {
         }
     }
 
+    /**
+     * 微信支付异步通知.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void callbackNotifyService(String xmlData) {
+
+        try {
+            WxPayService wxPayService = new WxPayServiceImpl();
+            wxPayService.setConfig(this.wxPayConfig);
+
+            // 解析返回数据
+            WxPayOrderNotifyResult notifyResult = wxPayService.parseOrderNotifyResult(xmlData);
+            log.info("解析的微信支付异步通知数据为：\n{}", JSON.toJSONString(notifyResult, SerializerFeature.PrettyFormat));
+
+            // 新增一条支付订单
+            Map<String, String> param = new HashMap<>();
+            param.put("id", CommonUtil.getUUid());
+            // 商户订单号
+            param.put("tradeno", notifyResult.getOutTradeNo());
+            // 微信支付订单号
+            param.put("transactionid", notifyResult.getTransactionId());
+            // 交易类型
+            param.put("tradetype", notifyResult.getTradeType());
+            // 付款银行
+            param.put("banktype", notifyResult.getBankType());
+            // 货币种类
+            param.put("feetype", notifyResult.getFeeType());
+            // openid
+            param.put("openid", notifyResult.getOpenid());
+            // 支付完成时间
+            param.put("timeend", notifyResult.getTimeEnd());
+            // 订单金额
+            param.put("totalfee", String.valueOf(notifyResult.getTotalFee()));
+            // 状态为2
+            param.put("status", "2");
+            int cnt = this.weixinPayRepository.insJyLs(param);
+            log.info("新增支付流水结果为：[{}]", cnt);
+
+            // 更新订单表的中状态为检测中
+            int cnt2 = this.weixinPayRepository.updOrderByTradeNo(param);
+            log.info("更新原订单流水结果为：[{}]", cnt2);
+
+            // TODO：发起异步检测
+        } catch (Exception ex) {
+            log.info("微信支付异步通知异常：" + ex.getMessage());
+        }
+    }
+
+    /**
+     * 更新订单信息.
+     */
+    private void updOrderByOrderId(String[] orderList, String tradeNo) {
+
+        log.info("共有{}个订单需要更新", orderList.length);
+
+        for (int i = 0; i < orderList.length; i++) {
+            Map<String, String> param = new HashMap<>();
+            param.put("orderid", orderList[i]);
+            param.put("tradeno", tradeNo);
+            this.weixinPayRepository.updOrderByOrderId(param);
+        }
+
+    }
 }

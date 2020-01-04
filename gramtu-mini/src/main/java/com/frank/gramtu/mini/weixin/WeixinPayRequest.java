@@ -17,9 +17,9 @@ public class WeixinPayRequest extends BaseRequest {
     @Value("${amount}")
     private String amount = "";
 
-    // 订单ID
-    @Value("${orderid}")
-    private String orderId = "";
+    // 订单ID列表
+    @Value("${orderidlist}")
+    private String[] orderIdList;
 
     // 优惠券ID
     @Value("${coupid}")
