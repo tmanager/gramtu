@@ -1,0 +1,149 @@
+package com.frank.gramtu.web.coupon;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.frank.gramtu.core.fdfs.FdfsUtil;
+import com.frank.gramtu.core.request.WebRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+/**
+ * 优惠券阅读Controller.
+ *
+ * @author 张孝党 2020/01/07.
+ * @version V1.00.
+ * <p>
+ * 更新履历： V1.00 2020/01/07 张孝党 创建.
+ */
+@Slf4j
+@RestController
+@CrossOrigin(origins = "*")
+@RequestMapping("/coupon")
+public class CouponController {
+
+    @Autowired
+    private CouponService couponService;
+
+    @Autowired
+    private FdfsUtil fdfsUtil;
+
+    /**
+     * 查询文章一览.
+     */
+    @RequestMapping("/query")
+    public String query(@RequestBody String requestParam) {
+        log.info("查询优惠券一览开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<CouponRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<CouponRequest>>() {
+        });
+
+
+        String responseData = this.couponService.queryService(requestData.getRequest());
+
+        log.info("查询优惠券一览结束..................");
+        log.info("返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 上传封面图.
+     */
+    @RequestMapping(value = "/upload/image", headers = "content-type=multipart/form-data")
+    public String uploadImg(@RequestParam("image") MultipartFile file, HttpServletRequest request) {
+        log.info("上传封面开始.....................");
+
+        JSONObject result = new JSONObject();
+        try {
+            List<String> imgPath = this.fdfsUtil.uploadImage(file);
+            log.info("上传到文件服务器返回的信息为：[{}]", imgPath);
+
+            result.put("ret", "0000");
+            result.put("url", imgPath.get(0));
+        } catch (Exception ex) {
+            log.error("上传缩略图异常:{}", ex.getMessage());
+            result.put("ret", "0004");
+            result.put("msg", ex.getMessage());
+        }
+
+        log.info("上传封面结束.....................");
+        // 上传封面结束
+        return result.toJSONString();
+    }
+
+    /**
+     * 新增优惠券.
+     */
+    @RequestMapping(value = "/add")
+    private String couponAdd(@RequestBody String requestParam) {
+        log.info("优惠券新增开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<CouponRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<CouponRequest>>() {
+        });
+
+        // 新增
+        String responseData = this.couponService.couponAddService(requestData);
+        log.info("优惠券新增结束..................");
+        log.info("优惠券新增返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 预览优惠券.
+     */
+    @RequestMapping(value = "/coupondetail")
+    private String couponDetail(@RequestBody String requestParam) {
+        log.info("预览优惠券开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<CouponRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<CouponRequest>>() {
+        });
+
+        // 预览
+        String responseData = this.couponService.artDetailService(requestData.getRequest().getArtid());
+        log.info("预览优惠券结束..................");
+        log.info("预览优惠券返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 删除优惠券.
+     */
+    @RequestMapping(value = "/delete")
+    private String delArticle(@RequestBody String requestParam) {
+        log.info("删除优惠券开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<CouponRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<CouponRequest>>() {
+        });
+
+        // 删除
+        String responseData = this.couponService.delCouponService(requestData.getRequest().getArtidlist());
+        log.info("删除优惠券结束..................");
+        log.info("删除优惠券返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 编辑优惠券.
+     */
+    @RequestMapping(value = "/edit")
+    public String editCoupon(@RequestBody String requestParam) {
+        log.info("编辑优惠券开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<CouponRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<CouponRequest>>() {
+        });
+        String responseData = this.couponService.editCouponService(requestData);
+        log.info("优惠券编辑结束..................");
+        log.info("优惠券编辑返回值为:{}", responseData);
+        return responseData;
+    }
+}

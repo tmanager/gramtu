@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.frank.gramtu.web.article.CouponRepository">
+
+    <!--
+         web端优惠券操作Mapper.
+         @author 张孝党 2020/01/07.
+         @version V0.0.1.
+         <p>
+         更新履历： V0.0.1 2020/01/07 张孝党 创建.
+     -->
+
+    <!-- 查询列表 -->
+    <select id="getCouponList" parameterType="Map" resultType="Map">
+        SELECT
+              a.id as couponid
+             ,a.couponname
+             ,a.couponbak
+             ,a.usemark
+             ,a.upfee
+             ,a.numbers
+             ,a.enddate
+             ,a.type
+             ,a.amount
+             ,a.status
+             ,a.updtime as time
+             ,b.uname as editor
+        FROM
+            g_coupon a
+        LEFT JOIN
+             turnin_user b
+          ON a.upduid = b.uid
+        WHERE
+            1 = 1
+        <if test="couponname != null and couponname != ''">
+            AND couponname LIKE "%"#{couponname}"%"
+        </if>
+        <if test="type != null and type != ''">
+            AND type = #{type}
+        </if>
+        ORDER BY a.updtime DESC
+        <if test="pagingOrNot != null and pagingOrNot != ''">
+            LIMIT #{startindex}, #{pagesize};
+        </if>
+    </select>
+
+    <!-- 查询数据条数 -->
+    <select id="getCnt" parameterType="Map" resultType="int">
+        SELECT
+            count(*) as cnt
+        FROM
+            g_coupon
+        WHERE
+            1 = 1
+        <if test="couponname != null and couponname != ''">
+            AND couponname LIKE "%"#{couponname}"%"
+        </if>
+    </select>
+
+    <!-- 新增优惠券 -->
+    <insert id="addCoupon" parameterType="Map">
+        INSERT INTO
+            g_coupon (
+                 id
+                ,couponname
+                ,couponbak
+                ,updtime
+                ,upduid
+                ,usemark
+                ,upfee
+                ,numbers
+                ,enddate
+                ,type
+                ,amount
+                ,status
+            )
+        VALUES (
+             #{id}
+            ,#{couponname}
+            ,#{couponbak}
+            ,#{updtime}
+            ,#{userid}
+            ,#{usemark}
+            ,#{upfee}
+            ,#{numbers}
+            ,#{enddate}
+            ,#{type}
+            ,#{amount}
+            ,#{status}
+        )
+    </insert>
+
+    <!-- 获取优惠券详细内容 -->
+    <select id="getCouponDetail" parameterType="String" resultType="Map">
+        SELECT
+              a.couponname
+             ,a.couponbak
+             ,a.updtime
+             ,b.uname
+             ,a.usemark
+             ,a.usemark
+             ,a.upfee
+             ,a.numbers
+             ,a.enddate
+             ,a.type
+             ,a.amount
+             ,a.status
+             ,a.article
+        FROM
+            g_coupon a
+        LEFT JOIN
+             turnin_user b
+          ON a.upduid = b.uid
+        WHERE
+            1 = 1
+        <if test="id != null and id != ''">
+            AND a.id = #{id}
+        </if>
+    </select>
+
+    <!-- 删除优惠券 -->
+    <delete id="deleteCoupon" parameterType="Map">
+        DELETE FROM
+            g_coupon
+        WHERE
+            id = #{id}
+    </delete>
+
+    <!-- 更新优惠券 -->
+    <update id="updCoupon" parameterType="Map">
+        UPDATE
+            g_coupon
+        SET
+             couponname = #{couponname}
+            ,couponbak = #{couponbak}
+            ,updtime = #{updtime}
+            ,upduid = #{upduid}
+            ,usemark = #{usemark}
+            ,upfee = #{upfee}
+            ,numbers = #{numbers}
+            ,enddate = #{enddate}
+            ,type = #{type}
+            ,amount = #{amount}
+            ,status = #{status}
+        WHERE
+            id = #{id}
+    </update>
+
+</mapper>
