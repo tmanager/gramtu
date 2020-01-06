@@ -6,8 +6,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.CommonUtil;
-import com.frank.gramtu.mini.weixin.WeixinDecryptDataUtil;
 import com.frank.gramtu.mini.weixin.WeixinApi;
+import com.frank.gramtu.mini.weixin.WeixinDecryptDataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,9 @@ public class LoginService {
 
     @Autowired
     private LoginRepository loginRepository;
+
+    @Autowired
+    private LoginAsync loginAsync;
 
     /**
      * 账号校验.
@@ -113,8 +116,11 @@ public class LoginService {
             // 新增
             param.put("id", CommonUtil.getUUid());
             int cnt = this.loginRepository.insWxUserInfo(param);
-            ;
             log.info("新增微信用户条数：{}", cnt);
+
+            // 赠送2个语法免费检测优惠券
+            this.loginAsync.addGrammarlyCoupon(requestData.getOpenId());
+
         } else {
             // 已注册时更新
             int cnt = this.loginRepository.updWxUserInfo(param);

@@ -188,6 +188,9 @@ public class WeixinPayService implements InitializingBean {
             log.info("更新原订单流水结果为：[{}]", cnt2);
 
             // TODO：发起异步检测
+
+            // TODO：增加积分
+
         } catch (Exception ex) {
             log.info("微信支付异步通知异常：" + ex.getMessage());
         }

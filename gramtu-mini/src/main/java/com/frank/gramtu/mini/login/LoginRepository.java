@@ -31,4 +31,9 @@ public interface LoginRepository {
      * 更新微信用户信息.
      */
     int updWxUserInfo(Map<String, String> param);
+
+    /**
+     * 新增优惠券.
+     */
+    int insWxUserCoupon(Map<String, String> param);
 }

@@ -73,4 +73,25 @@
             openid = #{openid}
     </update>
 
+    <!-- 赠送2个语法免费检测优惠券 -->
+    <insert id="insWxUserCoupon" parameterType="Map">
+        INSERT INTO
+             g_coupon_his (
+                     id
+                    ,openid
+                    ,couponid
+                    ,updtime
+                    ,couponstatus
+                    ,couponsource
+             )
+        VALUES (
+                     #{id}
+                    ,#{openid}
+                    ,#{couponid}
+                    ,#{updtime}
+                    ,#{couponstatus}
+                    ,#{couponsource}
+        )
+    </insert>
+
 </mapper>
