@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.frank.gramtu.web.article.CouponRepository">
+<mapper namespace="com.frank.gramtu.web.coupon.CouponRepository">
 
     <!--
          web端优惠券操作Mapper.
@@ -14,23 +14,16 @@
     <!-- 查询列表 -->
     <select id="getCouponList" parameterType="Map" resultType="Map">
         SELECT
-              a.id as couponid
+              a.id
              ,a.couponname
-             ,a.couponbak
+             ,a.amount
              ,a.usemark
              ,a.upfee
              ,a.numbers
              ,a.enddate
              ,a.type
-             ,a.amount
-             ,a.status
-             ,a.updtime as time
-             ,b.uname as editor
         FROM
             g_coupon a
-        LEFT JOIN
-             turnin_user b
-          ON a.upduid = b.uid
         WHERE
             1 = 1
         <if test="couponname != null and couponname != ''">
@@ -56,6 +49,9 @@
         <if test="couponname != null and couponname != ''">
             AND couponname LIKE "%"#{couponname}"%"
         </if>
+        <if test="type != null and type != ''">
+            AND type = #{type}
+        </if>
     </select>
 
     <!-- 新增优惠券 -->
@@ -80,7 +76,7 @@
             ,#{couponname}
             ,#{couponbak}
             ,#{updtime}
-            ,#{userid}
+            ,#{upduid}
             ,#{usemark}
             ,#{upfee}
             ,#{numbers}

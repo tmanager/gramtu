@@ -34,7 +34,7 @@ public class CouponController {
     private FdfsUtil fdfsUtil;
 
     /**
-     * 查询文章一览.
+     * 查询优惠券一览.
      */
     @RequestMapping("/query")
     public String query(@RequestBody String requestParam) {
@@ -44,37 +44,11 @@ public class CouponController {
         WebRequest<CouponRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<CouponRequest>>() {
         });
 
-
         String responseData = this.couponService.queryService(requestData.getRequest());
 
         log.info("查询优惠券一览结束..................");
         log.info("返回值为:{}", responseData);
         return responseData;
-    }
-
-    /**
-     * 上传封面图.
-     */
-    @RequestMapping(value = "/upload/image", headers = "content-type=multipart/form-data")
-    public String uploadImg(@RequestParam("image") MultipartFile file, HttpServletRequest request) {
-        log.info("上传封面开始.....................");
-
-        JSONObject result = new JSONObject();
-        try {
-            List<String> imgPath = this.fdfsUtil.uploadImage(file);
-            log.info("上传到文件服务器返回的信息为：[{}]", imgPath);
-
-            result.put("ret", "0000");
-            result.put("url", imgPath.get(0));
-        } catch (Exception ex) {
-            log.error("上传缩略图异常:{}", ex.getMessage());
-            result.put("ret", "0004");
-            result.put("msg", ex.getMessage());
-        }
-
-        log.info("上传封面结束.....................");
-        // 上传封面结束
-        return result.toJSONString();
     }
 
     /**
@@ -107,7 +81,7 @@ public class CouponController {
         });
 
         // 预览
-        String responseData = this.couponService.artDetailService(requestData.getRequest().getArtid());
+        String responseData = this.couponService.couponDetailService(requestData.getRequest().getId());
         log.info("预览优惠券结束..................");
         log.info("预览优惠券返回值为:{}", responseData);
         return responseData;
@@ -117,7 +91,7 @@ public class CouponController {
      * 删除优惠券.
      */
     @RequestMapping(value = "/delete")
-    private String delArticle(@RequestBody String requestParam) {
+    private String delCoupon(@RequestBody String requestParam) {
         log.info("删除优惠券开始..................");
 
         log.info("请求参数为：{}", requestParam);
@@ -125,7 +99,7 @@ public class CouponController {
         });
 
         // 删除
-        String responseData = this.couponService.delCouponService(requestData.getRequest().getArtidlist());
+        String responseData = this.couponService.delCouponService(requestData.getRequest().getCoupidlist());
         log.info("删除优惠券结束..................");
         log.info("删除优惠券返回值为:{}", responseData);
         return responseData;

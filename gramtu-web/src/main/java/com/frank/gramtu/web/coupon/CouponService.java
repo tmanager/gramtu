@@ -31,15 +31,17 @@ public class CouponService {
     private CouponRepository couponRepository;
 
     /**
-     * 查询文章一览.
+     * 查询优惠券一览.
      */
     public String queryService(CouponRequest requestData) {
 
-        String title = requestData.getTitle();
+        String couponname = requestData.getCouponname();
+        String type = requestData.getType();
 
         // 查询参数
         Map<String, Object> param = new HashMap<>();
-        param.put("title", title);
+        param.put("couponname", couponname);
+        param.put("type", type);
         param.put("startindex", requestData.getStartindex());
         param.put("pagesize", requestData.getPagesize());
         param.put("pagingOrNot", "1");
@@ -55,14 +57,14 @@ public class CouponService {
         CouponReponse couponReponse = new CouponReponse();
         couponReponse.setDraw(0);
         couponReponse.setTotalcount(cnt);
-        couponReponse.setCouponList(dataList);
+        couponReponse.setCouplist(dataList);
         responseData.setResponse(couponReponse);
 
         return JSON.toJSONString(responseData);
     }
 
     /**
-     * 新增文章.
+     * 新增优惠券.
      */
     @Transactional(rollbackFor = Exception.class)
     public String couponAddService(WebRequest<CouponRequest> requestData) {
@@ -71,16 +73,28 @@ public class CouponService {
         Map<String, String> param = new HashMap<>();
         // id主键
         param.put("id", CommonUtil.getUUid());
-        // 用户id
-        param.put("userid", requestData.getUserid());
+        // 优惠券名称
+        param.put("couponname",requestData.getRequest().getCouponname());
+        // 优惠券描述
+        param.put("couponbak",requestData.getRequest().getCouponbak());
+        // 需要兑换的积分
+        param.put("usemark",requestData.getRequest().getUsemark());
+        // 满多少元可用
+        param.put("upfee",requestData.getRequest().getUpfee());
+        // 发行个数
+        param.put("numbers",requestData.getRequest().getNumbers());
+        // 有效结束日期
+        param.put("enddate",requestData.getRequest().getEnddate());
+        // 分类
+        param.put("type",requestData.getRequest().getType());
+        // 抵用多少钱
+        param.put("amount",requestData.getRequest().getAmount());
+        // 状态
+        param.put("status",requestData.getRequest().getStatus());
         // 更新时间
         param.put("updtime", DateTimeUtil.getTimeformat());
-        // 标题
-        param.put("title", requestData.getRequest().getTitle());
-        // 封面
-        param.put("cover", requestData.getRequest().getCoverimage());
-        // 文章内容
-        param.put("article", requestData.getRequest().getContent());
+        // 更新人
+        param.put("upduid", requestData.getUserid());
 
         // 新增
         int cnt = this.couponRepository.addCoupon(param);
@@ -91,27 +105,37 @@ public class CouponService {
     }
 
     /**
-     * 根据文章ID获取文章内容.
+     * 根据优惠券ID获取文章内容.
      */
-    public String artDetailService(String artId) {
+    public String couponDetailService(String couponId) {
 
         // 查询参数
         Map<String, String> param = new HashMap<>();
-        param.put("artid", artId);
+        param.put("id", couponId);
 
-        // 获取文章详细内容
-        Map<String, String> artDetail = this.couponRepository.getCouponDetail(param);
+        // 获取优惠券详细内容
+        Map<String, String> couponDetail = this.couponRepository.getCouponDetail(param);
 
         WebResponse<CouponReponse> responseData = new WebResponse<>();
         CouponReponse couponReponse = new CouponReponse();
-        // 标题
-        couponReponse.setTitle(artDetail.get("title"));
-        // 发布时间
-        couponReponse.setTime(artDetail.get("updtime"));
-        // 发布者
-        couponReponse.setEditor(artDetail.get("uname"));
+        // 优惠券名称
+        couponReponse.setCouponname(couponDetail.get("couponname"));
+        // 优惠券描述
+        couponReponse.setCouponbak(couponDetail.get("couponbak"));
+        // 满多少元可用
+        couponReponse.setUsemark(couponDetail.get("usemark"));
         // 文章内容
-        couponReponse.setContent(artDetail.get("article"));
+        couponReponse.setUpfee(couponDetail.get("upfee"));
+        // 发行个数
+        couponReponse.setNumbers(couponDetail.get("numbers"));
+        // 有效结束日期
+        couponReponse.setEnddate(couponDetail.get("enddate"));
+        // 分类
+        couponReponse.setType(couponDetail.get("type"));
+        // 地用多少钱
+        couponReponse.setAmount(couponDetail.get("amount"));
+        // 状态
+        couponReponse.setStatus(couponDetail.get("status"));
         responseData.setResponse(couponReponse);
 
         // 返回
@@ -119,16 +143,16 @@ public class CouponService {
     }
 
     /**
-     * 删除文章.
+     * 删除优惠券.
      */
     @Transactional(rollbackFor = Exception.class)
-    public String delCouponService(String[] artidList) {
+    public String delCouponService(String[] couponIdList) {
 
-        for (String artId :artidList) {
+        for (String couponId :couponIdList) {
             Map<String, String> param = new HashMap<>();
-            param.put("artid", artId);
+            param.put("id", couponId);
             this.couponRepository.deleteCoupon(param);
-            log.info("文章[{}]被删除", artId);
+            log.info("优惠券[{}]被删除", couponId);
         }
 
         // 返回
@@ -136,7 +160,7 @@ public class CouponService {
     }
 
     /**
-     * 编辑保存文章.
+     * 编辑保存优惠券.
      */
     @Transactional(rollbackFor = Exception.class)
     public String editCouponService(WebRequest<CouponRequest> requestData) {
@@ -144,15 +168,25 @@ public class CouponService {
         // 参数
         Map<String, String> param = new HashMap<>();
         // ID
-        param.put("artid", requestData.getRequest().getArtid());
-        // 标题
-        param.put("title",requestData.getRequest().getTitle());
-        // 封面
-        if(!requestData.getRequest().getCoverimage().equals(requestData.getRequest().getOldimage())) {
-            param.put("cover", requestData.getRequest().getCoverimage());
-        }
-        // 内容
-        param.put("article",requestData.getRequest().getContent());
+        param.put("id", requestData.getRequest().getId());
+        // 优惠券名称
+        param.put("couponname",requestData.getRequest().getCouponname());
+        // 优惠券描述
+        param.put("couponbak",requestData.getRequest().getCouponbak());
+        // 需要兑换的积分
+        param.put("usemark",requestData.getRequest().getUsemark());
+        // 满多少元可用
+        param.put("upfee",requestData.getRequest().getUpfee());
+        // 发行个数
+        param.put("numbers",requestData.getRequest().getNumbers());
+        // 有效结束日期
+        param.put("enddate",requestData.getRequest().getEnddate());
+        // 分类
+        param.put("type",requestData.getRequest().getType());
+        // 抵用多少钱
+        param.put("amount",requestData.getRequest().getAmount());
+        // 状态
+        param.put("status",requestData.getRequest().getStatus());
         // 更新时间
         param.put("updtime", DateTimeUtil.getTimeformat());
         // 更新人

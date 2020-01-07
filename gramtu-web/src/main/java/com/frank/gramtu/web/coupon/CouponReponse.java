@@ -20,17 +20,32 @@ import java.util.Map;
 public class CouponReponse extends BaseResponse {
 
     // 数据列表
-    private List<Map<String, String>> couponList;
+    private List<Map<String, String>> couplist;
 
-    // 标题
-    private String title = "";
+    // 分类
+    private String type = "";
 
-    // 发布时间
-    private String time = "";
+    // 优惠券名称
+    private String couponname = "";
 
-    // 发布人
-    private String editor = "";
+    // 优惠券描述
+    private String couponbak = "";
 
-    // 内容
-    private String content = "";
+    // 需要兑换的积分
+    private String usemark = "";
+
+    // 满多少元可用
+    private String upfee = "";
+
+    // 发行个数
+    private String numbers = "";
+
+    // 有效结束日期
+    private String enddate = "";
+
+    // 抵用多少钱
+    private String amount = "";
+
+    // 状态
+    private String status = "";
 }

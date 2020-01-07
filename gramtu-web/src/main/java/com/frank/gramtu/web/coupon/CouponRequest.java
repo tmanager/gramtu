@@ -16,21 +16,36 @@ import lombok.Setter;
 @Setter
 public class CouponRequest extends BaseRequest {
 
-    // 文章ID
-    private String artid = "";
+    // 优惠券ID
+    private String id = "";
 
-    // 文章标题
-    private String title = "";
+    // 优惠券名称
+    private String couponname = "";
 
-    // 封面url
-    private String coverimage = "";
+    // 优惠券描述
+    private String couponbak = "";
 
-    // 文章内容
-    private String content = "";
+    // 需要兑换的积分
+    private String usemark = "";
 
-    // 删除的文章id列表
-    private String[] artidlist;
+    // 满多少元可用
+    private String upfee = "";
 
-    // 旧封面
-    private String oldimage = "";
+    // 发行个数
+    private String numbers = "";
+
+    // 有效结束日期
+    private String enddate = "";
+
+    // 分类
+    private String type = "";
+
+    // 地用多少钱
+    private String amount = "";
+
+    // 状态
+    private String status = "";
+
+    // 删除的优惠券id列表
+    private String[] coupidlist;
 }
