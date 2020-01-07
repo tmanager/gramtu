@@ -1,30 +1,8 @@
 package com.frank.gramtu.mini.weixin;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.frank.gramtu.core.response.SysErrResponse;
-import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.CommonUtil;
-import com.frank.gramtu.core.utils.IdGeneratorUtils;
-import com.frank.gramtu.mini.config.WxPayConfigBean;
-import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
-import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
-import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
-import com.github.binarywang.wxpay.config.WxPayConfig;
-import com.github.binarywang.wxpay.service.WxPayService;
-import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
-import com.github.binarywang.wxpay.util.SignUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -53,4 +31,19 @@ public interface WeixinPayRepository {
      * 更新订单的商户订单号.
      */
     int updOrderByTradeNo(Map<String, String> param);
+
+    /**
+     * 根据商户订单号获取优惠券ID.
+     */
+    Map<String, String> getCouponByTradeNo(Map<String, String> param);
+
+    /**
+     * 根据优惠券ID更新状态.
+     */
+    int updCouponStatus(Map<String, String> param);
+
+    /**
+     * 增加个人积分.
+     */
+    int insMarkHis(Map<String, String> param);
 }

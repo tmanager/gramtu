@@ -66,6 +66,15 @@ public class LoginService {
             } else {
                 // 已注册
                 isRegister = "1";
+
+                // 获取积分信息
+                Map<String, Object> markMap = this.loginRepository.getMarkByOpenId(param);
+                log.info("获取到的个人积分信息为：[{}]", JSON.toJSONString(markMap, SerializerFeature.PrettyFormat));
+                if (markMap == null || markMap.isEmpty()) {
+                    mark = "0";
+                } else {
+                    mark = String.valueOf(markMap.get("mark"));
+                }
             }
         }
 
@@ -129,5 +138,49 @@ public class LoginService {
 
         // 返回
         return new SysResponse().toJsonString();
+    }
+
+    /**
+     * 查询个人积分.
+     */
+    public String queryUserMarkService(String openId) {
+
+        // 积分
+        String mark = "0";
+
+        if (openId.isEmpty()) {
+            mark = "0";
+        } else {
+            // 判断用户是否注册
+            Map<String, String> param = new HashMap<>();
+            param.put("openid", openId);
+            Map<String, String> wxUserInfo = this.loginRepository.getWxUserCnt(param);
+            if (wxUserInfo == null || wxUserInfo.isEmpty()) {
+                // 未注册
+                mark = "0";
+            } else {
+                // 获取积分信息
+                Map<String, Object> markMap = this.loginRepository.getMarkByOpenId(param);
+                log.info("获取到的个人积分信息为：[{}]", JSON.toJSONString(markMap, SerializerFeature.PrettyFormat));
+                if (markMap == null || markMap.isEmpty()) {
+                    mark = "0";
+                } else {
+                    mark = String.valueOf(markMap.get("mark"));
+                }
+            }
+        }
+
+        // 返回报文
+        WebResponse<LoginResponse> responseData = new WebResponse<>();
+        LoginResponse loginResponse = new LoginResponse();
+        responseData.setResponse(loginResponse);
+
+        // 返回数据
+        loginResponse.setOpenid(openId);
+        loginResponse.setMark(mark);
+
+        // 返回
+        log.info("返回的数据为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
+        return JSON.toJSONString(responseData);
     }
 }

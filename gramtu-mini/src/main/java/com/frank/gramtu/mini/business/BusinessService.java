@@ -10,10 +10,7 @@ import com.frank.gramtu.core.fdfs.FdfsUtil;
 import com.frank.gramtu.core.redis.RedisService;
 import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.CommonUtil;
-import com.frank.gramtu.core.utils.FileUtils;
-import com.frank.gramtu.core.utils.IdGeneratorUtils;
-import com.frank.gramtu.core.utils.SocketClient;
+import com.frank.gramtu.core.utils.*;
 import com.frank.gramtu.mini.constant.CheckType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +35,6 @@ import java.util.Map;
 public class BusinessService {
 
     @Autowired
-    private FdfsUtil fdfsUtil;
-
-    @Autowired
     private RedisService redisService;
 
     @Autowired
@@ -50,12 +44,8 @@ public class BusinessService {
      * 上传文件.
      */
     @Transactional(rollbackFor = Exception.class)
-    public String uploadService(BusinessRequest requestData, MultipartFile file) throws Exception {
+    public String uploadService(BusinessRequest requestData, String filePath) throws Exception {
         log.info("上传论文服务开始..........................");
-
-        // 上传至FDFS
-        String filePath = this.fdfsUtil.uploadFile(file);
-        log.info("[{}]上传至文件服务器后的路径为[{}]", requestData.getOrgFileName(), filePath);
 
         // 保存至数据库
         Map<String, String> param = new HashMap<>();
@@ -80,6 +70,14 @@ public class BusinessService {
         param.put("originalurl", filePath);
         // 检测类型
         param.put("checktype", requestData.getCheckType());
+        // 更新时间
+        param.put("updtime", DateTimeUtil.getTimeformat());
+
+        // 文件扩展名
+        String fileExt = requestData.getOrgFileName().
+                substring(requestData.getOrgFileName().lastIndexOf(".") + 1);
+        log.info("文档的后缀为：[{}]", fileExt);
+        param.put("ext", fileExt);
 
         // 新增数据
         int cnt = this.businessRepository.insOrderInfo(param);
@@ -123,7 +121,9 @@ public class BusinessService {
         log.info("查询出的国际版账户信息为：\n{}", JSON.toJSONString(turnBean, SerializerFeature.PrettyFormat));
 
         // 保存论文信息
-        boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), orderInfo.get("filename"));
+        String thesisName = orderInfo.get("orderid") + "." + orderInfo.get("ext");
+        log.info("保存的论文名称为：[{}]", thesisName);
+        boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
         if (!dowloadResult) {
             this.removeOrderByOrderId(param);
             return new SysErrResponse("从FDFS下载论文时异常").toJsonString();
@@ -133,7 +133,7 @@ public class BusinessService {
         turnBean.setFirstName(orderInfo.get("firstname"));
         turnBean.setLastName(orderInfo.get("lastname"));
         turnBean.setTitle(orderInfo.get("titile"));
-        turnBean.setThesisName(orderInfo.get("filename"));
+        turnBean.setThesisName(thesisName);
 
         // 调用Socket
         String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,

@@ -2,6 +2,7 @@ package com.frank.gramtu.mini.business;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.frank.gramtu.core.fdfs.FdfsUtil;
 import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysErrResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin(value = "*")
 @RequestMapping(value = "/busi")
 public class BusinessController {
+
+    @Autowired
+    private FdfsUtil fdfsUtil;
 
     @Autowired
     private BusinessService businessService;
@@ -55,8 +59,12 @@ public class BusinessController {
         requestData.setOrgFileName(fileName);
 
         try {
+            // 上传至FDFS
+            String filePath = this.fdfsUtil.uploadFile(file);
+            log.info("[{}]上传至文件服务器后的路径为[{}]", requestData.getOrgFileName(), filePath);
+
             // 调用服务
-            responseData = this.businessService.uploadService(requestData, file);
+            responseData = this.businessService.uploadService(requestData, filePath);
             log.info("返回小程序的数据为:\n{}", responseData);
         } catch (Exception ex) {
             log.error("上传文档时异常结束,异常信息：\n{}", ex.getMessage());

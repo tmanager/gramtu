@@ -37,6 +37,9 @@ import java.util.Map;
 public class WeixinPayService implements InitializingBean {
 
     @Autowired
+    private WeixinPayAsync weixinPayAsync;
+
+    @Autowired
     private WeixinPayRepository weixinPayRepository;
 
     @Autowired
@@ -84,9 +87,9 @@ public class WeixinPayService implements InitializingBean {
         DecimalFormat df = new DecimalFormat("#");
         String amount = String.valueOf(df.format(Double.valueOf(requestData.getAmount()) * 100));
         log.info("支付金额为：{}", amount);
-        // 标价金额-TODO
+        // TODO：标价金额
         //orderRequest.setTotalFee(Integer.valueOf(amount));
-        orderRequest.setTotalFee(Integer.valueOf("1"));
+        orderRequest.setTotalFee(Integer.valueOf("100"));
 
         // 终端IP
         String ip = "127.0.0.1";
@@ -130,8 +133,8 @@ public class WeixinPayService implements InitializingBean {
             String sign = SignUtils.createSign(map, "MD5", this.wxPayConfigBean.getMchKey(), null);
             weixinPayResponse.setPaysign(sign);
 
-            // 根据订单号更新支付流程中的商户订单号
-            this.updOrderByOrderId(requestData.getOrderIdList(), tradeNo);
+            // 根据订单号更新支付流程中的商户订单号,订单状态修改为1:待支付
+            this.updOrderByOrderId(requestData.getOrderIdList(), requestData.getCoupId(), tradeNo);
 
             responseData.setResponse(weixinPayResponse);
             log.info("返回信息为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
@@ -190,6 +193,10 @@ public class WeixinPayService implements InitializingBean {
             // TODO：发起异步检测
 
             // TODO：增加积分
+            this.weixinPayAsync.writeOffMark(notifyResult);
+
+            // TODO：消费优惠券
+            this.weixinPayAsync.writeOffCoupon(notifyResult.getOutTradeNo());
 
         } catch (Exception ex) {
             log.info("微信支付异步通知异常：" + ex.getMessage());
@@ -199,16 +206,18 @@ public class WeixinPayService implements InitializingBean {
     /**
      * 更新订单信息.
      */
-    private void updOrderByOrderId(String[] orderList, String tradeNo) {
+    private void updOrderByOrderId(String[] orderList, String couponId, String tradeNo) {
 
         log.info("共有{}个订单需要更新", orderList.length);
 
         for (int i = 0; i < orderList.length; i++) {
             Map<String, String> param = new HashMap<>();
             param.put("orderid", orderList[i]);
+            param.put("couponid", couponId);
             param.put("tradeno", tradeNo);
+            // 待支付状态
+            param.put("status", "1");
             this.weixinPayRepository.updOrderByOrderId(param);
         }
-
     }
 }

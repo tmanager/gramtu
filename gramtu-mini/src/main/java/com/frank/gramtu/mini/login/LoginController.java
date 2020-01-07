@@ -68,4 +68,25 @@ public class LoginController {
         // 返回
         return responseData;
     }
+
+    /**
+     * 查询个人积分.
+     */
+    @RequestMapping(value = "/query/mark")
+    public String queryUserMark(@RequestBody String requestParam) {
+        log.info("小程序查询个人积分开始................");
+
+        log.info("更新用户信息请求参数为：{}", requestParam);
+        WebRequest<LoginRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<LoginRequest>>() {
+        });
+
+        // 查询数据
+        String responseData = this.loginService.queryUserMarkService(requestData.getRequest().getOpenId());
+        log.info("返回小程序查询个人积分的数据为:\n{}", responseData);
+
+        log.info("小程序查询个人积分结束................");
+
+        // 返回
+        return responseData;
+    }
 }

@@ -36,4 +36,9 @@ public interface LoginRepository {
      * 新增优惠券.
      */
     int insWxUserCoupon(Map<String, String> param);
+
+    /**
+     * 根据openid获取积分.
+     */
+    Map<String, Object> getMarkByOpenId(Map<String, String> param);
 }

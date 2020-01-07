@@ -24,6 +24,8 @@
                 ,filename
                 ,originalurl
                 ,checktype
+                ,ext
+                ,updtime
             )
         VALUES (
                  #{id}
@@ -35,6 +37,8 @@
                 ,#{filename}
                 ,#{originalurl}
                 ,#{checktype}
+                ,#{ext}
+                ,#{updtime}
         )
     </insert>
 
@@ -48,6 +52,8 @@
             ,filename
             ,originalurl
             ,checktype
+            ,orderid
+            ,ext
         FROM
              g_order
         WHERE
