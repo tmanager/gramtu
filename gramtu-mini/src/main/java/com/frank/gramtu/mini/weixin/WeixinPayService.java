@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -219,5 +220,32 @@ public class WeixinPayService implements InitializingBean {
             param.put("status", "1");
             this.weixinPayRepository.updOrderByOrderId(param);
         }
+    }
+
+    /**
+     * 查询个人消费记录.
+     */
+    public String queryJyls(WeixinPayRequest requestData) {
+
+        // openid
+        String openId = requestData.getOpenId();
+
+        Map<String, String> param = new HashMap<>();
+        param.put("openid", requestData.getOpenId());
+
+        // 查询
+        List<Map<String, String>> consumeList = this.weixinPayRepository.queryConsumeListByOpenId(param);
+        log.info("查询出的个人消费记录为：\n{}", JSON.toJSONString(consumeList, SerializerFeature.PrettyFormat));
+
+        WebResponse<WeixinPayResponse> responseData = new WebResponse<>();
+        WeixinPayResponse weixinPayResponse = new WeixinPayResponse();
+        responseData.setResponse(weixinPayResponse);
+        // 消费记录
+        weixinPayResponse.setConsumelist(consumeList);
+
+        log.info("返回信息为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
+
+        // 返回
+        return JSON.toJSONString(responseData);
     }
 }

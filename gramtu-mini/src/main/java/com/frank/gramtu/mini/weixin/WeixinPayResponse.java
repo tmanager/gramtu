@@ -4,6 +4,9 @@ import com.frank.gramtu.core.response.BaseResponse;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+import java.util.Map;
+
 @Getter
 @Setter
 public class WeixinPayResponse extends BaseResponse {
@@ -19,4 +22,7 @@ public class WeixinPayResponse extends BaseResponse {
 
     // paySign
     private String paysign = "";
+
+    // 消费记录
+    private List<Map<String, String>> consumelist;
 }

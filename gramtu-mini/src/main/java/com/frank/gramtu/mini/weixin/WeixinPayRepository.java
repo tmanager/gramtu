@@ -3,6 +3,7 @@ package com.frank.gramtu.mini.weixin;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,4 +47,9 @@ public interface WeixinPayRepository {
      * 增加个人积分.
      */
     int insMarkHis(Map<String, String> param);
+
+    /**
+     * 查询个人消费记录.
+     */
+    List<Map<String, String>> queryConsumeListByOpenId(Map<String, String> param);
 }

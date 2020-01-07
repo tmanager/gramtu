@@ -105,4 +105,19 @@
                 ,#{updtime}
         )
     </insert>
+
+    <!-- 查询个人消费记录 -->
+    <select id="queryConsumeListByOpenId" parameterType="Map" resultType="Map">
+        SELECT
+             id
+            ,tradeno
+            ,transactionid
+            ,timeend
+            ,totalfee
+        FROM
+            g_jy_ls
+        WHERE
+            openid = #{openid}
+        ORDER BY timeend DESC
+    </select>
 </mapper>

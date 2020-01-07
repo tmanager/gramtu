@@ -65,4 +65,24 @@ public class WeixinPayController {
         // 返回
         return "success";
     }
+
+    /**
+     * 查询消费记录流水.
+     */
+    @RequestMapping("/query/ls")
+    public String queryJyls(@RequestBody String requestParam) {
+        log.info("查询消费记录流水开始................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<WeixinPayRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<WeixinPayRequest>>() {
+        });
+
+        // 查询
+        //String responseData = this.weixinPayService.unifiedOrderService(requestData.getRequest());
+        String responseData = "";
+        log.info("查询消费记录流水返回的信息为：{}", requestData);
+
+        log.info("查询消费记录流水结束................");
+        return responseData;
+    }
 }
