@@ -69,7 +69,7 @@ public class WeixinPayController {
     /**
      * 查询消费记录流水.
      */
-    @RequestMapping("/query/ls")
+    @RequestMapping("/consumelist")
     public String queryJyls(@RequestBody String requestParam) {
         log.info("查询消费记录流水开始................");
 
@@ -78,9 +78,8 @@ public class WeixinPayController {
         });
 
         // 查询
-        //String responseData = this.weixinPayService.unifiedOrderService(requestData.getRequest());
-        String responseData = "";
-        log.info("查询消费记录流水返回的信息为：{}", requestData);
+        String responseData = this.weixinPayService.queryJyls(requestData.getRequest());
+        log.info("查询消费记录流水返回的信息为：{}", responseData);
 
         log.info("查询消费记录流水结束................");
         return responseData;

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.frank.gramtu.mini.mark.MarkRepository">
+
+    <!--
+         小程序积分Mapper.
+         @author 张孝党 2020/01/08.
+         @version V0.0.1.
+         <p>
+         更新履历： V0.0.1 2020/01/08 张孝党 创建.
+     -->
+
+    <!-- 根据openid获取积分总数 -->
+    <select id="getMarkByOpenId" parameterType="Map" resultType="Map">
+        SELECT
+            SUM(mark) as mark
+        FROM(
+            SELECT
+                CASE
+                    WHEN entry = '0' THEN CAST(mark AS SIGNED)
+                    WHEN entry = '1' THEN CAST(mark AS SIGNED) * -1
+                    WHEN entry = '2' THEN CAST(mark AS SIGNED) * -1
+                    ELSE CAST(mark AS SIGNED)
+                END AS mark
+            FROM
+                g_mark_his
+            WHERE
+                openid = #{openid}
+        ) a
+    </select>
+
+    <!-- 根据openid获取积分列表 -->
+    <select id="getMarkListByOpenId" parameterType="Map" resultType="Map">
+        SELECT
+             CASE
+                  WHEN entry = '0' THEN '成功支付订单'
+                  WHEN entry = '1' THEN '积分兑换'
+                  WHEN entry = '2' THEN '转增他人'
+                  ELSE '他人赠与'
+             END AS entry
+            ,CASE
+                  WHEN entry = '0' THEN CAST(mark AS SIGNED)
+                  WHEN entry = '1' THEN CAST(mark AS SIGNED) * -1
+                  WHEN entry = '2' THEN CAST(mark AS SIGNED) * -1
+                  ELSE CAST(mark AS SIGNED)
+             END AS mark
+            ,updtime
+        FROM
+            g_mark_his
+        WHERE
+            openid = #{openid}
+        ORDER BY updtime DESC
+        <if test="pagingOrNot != null and pagingOrNot != ''">
+            LIMIT #{startindex}, #{pagesize};
+        </if>
+    </select>
+</mapper>

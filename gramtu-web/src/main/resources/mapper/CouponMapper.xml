@@ -15,13 +15,14 @@
     <select id="getCouponList" parameterType="Map" resultType="Map">
         SELECT
               a.id
-             ,a.couponname
+             ,ifnull(a.couponname, '　') as couponname
              ,a.amount
              ,a.usemark
              ,a.upfee
              ,a.numbers
              ,a.enddate
-             ,a.type
+             ,ifnull(a.type, '　') as type
+             ,ifnull(a.status, '　') as status
         FROM
             g_coupon a
         WHERE

@@ -21,5 +21,5 @@ public interface CouponRepository {
     /**
      * 根据openid查询可用优惠券.
      */
-    List<Map<String, String>> getCouponList(Map<String, String> param);
+    List<Map<String, String>> getCouponList(Map<String, Object> param);
 }

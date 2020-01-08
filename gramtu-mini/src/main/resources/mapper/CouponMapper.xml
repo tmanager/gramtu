@@ -18,6 +18,8 @@
             ,b.couponname as name
             ,b.upfee as upfee
             ,b.amount as amount
+            ,a.couponstatus as status
+            ,b.enddate
         FROM
              g_coupon_his a
         LEFT JOIN
@@ -29,6 +31,9 @@
          AND a.couponstatus = '0'
         ORDER BY
             a.updtime DESC
+        <if test="pagingOrNot != null and pagingOrNot != ''">
+            LIMIT #{startindex}, #{pagesize};
+        </if>
     </select>
 
 </mapper>

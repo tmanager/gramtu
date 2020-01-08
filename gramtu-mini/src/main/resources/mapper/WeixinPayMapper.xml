@@ -109,15 +109,29 @@
     <!-- 查询个人消费记录 -->
     <select id="queryConsumeListByOpenId" parameterType="Map" resultType="Map">
         SELECT
-             id
-            ,tradeno
-            ,transactionid
-            ,timeend
-            ,totalfee
+             a.id
+            ,a.tradeno
+            ,a.transactionid
+            ,a.timeend
+            ,a.totalfee
+            ,CASE
+                WHEN b.checktype = '2' THEN '语法检测费用'
+                ELSE '查重费用'
+             END AS feename
         FROM
-            g_jy_ls
+            g_jy_ls a
+        LEFT JOIN (
+            SELECT DISTINCT(tradeno), checktype
+            FROM g_order
+            WHERE
+                 openid = #{openid}
+             AND status in ('2','3')
+        ) b ON a.tradeno = b.tradeno
         WHERE
-            openid = #{openid}
-        ORDER BY timeend DESC
+            a.openid = #{openid}
+        ORDER BY a.timeend DESC
+        <if test="pagingOrNot != null and pagingOrNot != ''">
+            LIMIT #{startindex}, #{pagesize};
+        </if>
     </select>
 </mapper>

@@ -51,5 +51,5 @@ public interface WeixinPayRepository {
     /**
      * 查询个人消费记录.
      */
-    List<Map<String, String>> queryConsumeListByOpenId(Map<String, String> param);
+    List<Map<String, String>> queryConsumeListByOpenId(Map<String, Object> param);
 }

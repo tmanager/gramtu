@@ -6,6 +6,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.mini.mark.MarkRepository;
 import com.frank.gramtu.mini.weixin.WeixinApi;
 import com.frank.gramtu.mini.weixin.WeixinDecryptDataUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,10 @@ public class LoginService {
 
     @Autowired
     private LoginRepository loginRepository;
+
+    // 积分信息Repository
+    @Autowired
+    private MarkRepository markRepository;
 
     @Autowired
     private LoginAsync loginAsync;
@@ -57,7 +62,7 @@ public class LoginService {
             //unionid = result.getString("unionid");
 
             // 判断用户是否注册
-            Map<String, String> param = new HashMap<>();
+            Map<String, Object> param = new HashMap<>();
             param.put("openid", openId);
             Map<String, String> wxUserInfo = this.loginRepository.getWxUserCnt(param);
             if (wxUserInfo == null || wxUserInfo.isEmpty()) {
@@ -68,7 +73,7 @@ public class LoginService {
                 isRegister = "1";
 
                 // 获取积分信息
-                Map<String, Object> markMap = this.loginRepository.getMarkByOpenId(param);
+                Map<String, String> markMap = this.markRepository.getMarkByOpenId(param);
                 log.info("获取到的个人积分信息为：[{}]", JSON.toJSONString(markMap, SerializerFeature.PrettyFormat));
                 if (markMap == null || markMap.isEmpty()) {
                     mark = "0";
@@ -152,7 +157,7 @@ public class LoginService {
             mark = "0";
         } else {
             // 判断用户是否注册
-            Map<String, String> param = new HashMap<>();
+            Map<String, Object> param = new HashMap<>();
             param.put("openid", openId);
             Map<String, String> wxUserInfo = this.loginRepository.getWxUserCnt(param);
             if (wxUserInfo == null || wxUserInfo.isEmpty()) {
@@ -160,7 +165,7 @@ public class LoginService {
                 mark = "0";
             } else {
                 // 获取积分信息
-                Map<String, Object> markMap = this.loginRepository.getMarkByOpenId(param);
+                Map<String, String> markMap = this.markRepository.getMarkByOpenId(param);
                 log.info("获取到的个人积分信息为：[{}]", JSON.toJSONString(markMap, SerializerFeature.PrettyFormat));
                 if (markMap == null || markMap.isEmpty()) {
                     mark = "0";

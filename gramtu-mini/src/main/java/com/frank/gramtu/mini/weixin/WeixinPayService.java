@@ -230,8 +230,12 @@ public class WeixinPayService implements InitializingBean {
         // openid
         String openId = requestData.getOpenId();
 
-        Map<String, String> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
         param.put("openid", requestData.getOpenId());
+        // 分页信息
+        param.put("startindex", requestData.getStartindex());
+        param.put("pagesize", requestData.getPagesize());
+        param.put("pagingOrNot", "1");
 
         // 查询
         List<Map<String, String>> consumeList = this.weixinPayRepository.queryConsumeListByOpenId(param);

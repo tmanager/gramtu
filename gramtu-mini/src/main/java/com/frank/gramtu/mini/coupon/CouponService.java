@@ -33,7 +33,7 @@ public class CouponService {
     public String queryCouponService(CouponRequest requestData) {
 
         // 根据openid查询优惠券列表
-        Map<String, String> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
         param.put("openid", requestData.getOpenId());
         // 语法检测
         if (requestData.getCheckType().equals(CheckType.GRAMMARLY.getValue())) {
@@ -42,6 +42,11 @@ public class CouponService {
             // 查重
             param.put("type", "0");
         }
+
+        // 分页信息
+        param.put("startindex", requestData.getStartindex());
+        param.put("pagesize", requestData.getPagesize());
+        param.put("pagingOrNot", "1");
 
         List<Map<String, String>> couponList = this.couponRepository.getCouponList(param);
         log.info("查询出的个人优惠券信息为：{}", couponList);

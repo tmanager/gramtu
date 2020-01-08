@@ -20,7 +20,7 @@ public interface LoginRepository {
     /**
      * 根据openId判断是否已注册.
      */
-    Map<String, String> getWxUserCnt(Map<String, String> param);
+    Map<String, String> getWxUserCnt(Map<String, Object> param);
 
     /**
      * 新增微信用户信息.
@@ -36,9 +36,4 @@ public interface LoginRepository {
      * 新增优惠券.
      */
     int insWxUserCoupon(Map<String, String> param);
-
-    /**
-     * 根据openid获取积分.
-     */
-    Map<String, Object> getMarkByOpenId(Map<String, String> param);
 }
