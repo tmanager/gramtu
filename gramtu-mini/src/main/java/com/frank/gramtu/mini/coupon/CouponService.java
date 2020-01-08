@@ -2,11 +2,13 @@ package com.frank.gramtu.mini.coupon;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.mini.constant.CheckType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,5 +63,25 @@ public class CouponService {
 
         // 返回
         return JSON.toJSONString(responseData);
+    }
+
+    /**
+     * 优惠券转赠.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String givenService(CouponRequest requestData) {
+        log.info("优惠券转赠开始.................");
+
+        // 判断手机号是否存在
+
+        // 判断优惠券的状态
+
+        // 新增一条优惠券信息
+
+        // 更新原有优惠券状态
+
+
+        // 返回
+        return new SysResponse("操作成功").toJsonString();
     }
 }

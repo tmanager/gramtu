@@ -22,4 +22,12 @@ public class CouponRequest extends BaseRequest {
 
     @Value("${checktype}")
     private String checkType = "";
+
+    // 接收者手机号
+    @Value("${phonenumber}")
+    private String phoneNumber = "";
+
+    // 转赠的优惠券ID
+    @Value("${couponid}")
+    private String couponId = "";
 }
