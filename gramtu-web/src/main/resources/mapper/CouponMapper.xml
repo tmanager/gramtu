@@ -89,30 +89,41 @@
     </insert>
 
     <!-- 获取优惠券详细内容 -->
-    <select id="getCouponDetail" parameterType="String" resultType="Map">
+    <select id="getCouponDetail" parameterType="Map" resultType="Map">
         SELECT
-              a.couponname
-             ,a.couponbak
-             ,a.updtime
-             ,b.uname
-             ,a.usemark
-             ,a.usemark
-             ,a.upfee
-             ,a.numbers
-             ,a.enddate
-             ,a.type
-             ,a.amount
-             ,a.status
-             ,a.article
+              ifnull(a.givedphone,' ') as phone
+             ,ifnull(a.updtime,' ') as updtime
+             ,ifnull(a.couponsource,' ') as couponsource
+             ,ifnull(a.couponstatus,' ') as couponstatus
         FROM
-            g_coupon a
-        LEFT JOIN
-             turnin_user b
-          ON a.upduid = b.uid
+            g_coupon_his a
         WHERE
             1 = 1
-        <if test="id != null and id != ''">
-            AND a.id = #{id}
+        <if test="couponid != null and couponid != ''">
+            AND a.couponid = #{couponid}
+        </if>
+        <if test="phone != null and phone != ''">
+            AND a.givedphone = #{phone}
+        </if>
+        ORDER BY a.updtime DESC
+        <if test="pagingOrNot != null and pagingOrNot != ''">
+            LIMIT #{startindex}, #{pagesize};
+        </if>
+    </select>
+
+    <!-- 查询数据条数 -->
+    <select id="getHisCnt" parameterType="Map" resultType="int">
+        SELECT
+        count(*) as cnt
+        FROM
+        g_coupon_his
+        WHERE
+        1 = 1
+        <if test="couponid != null and couponid != ''">
+            AND couponid = #{couponid}
+        </if>
+        <if test="phone != null and phone != ''">
+            AND givedphone = #{phone}
         </if>
     </select>
 
@@ -143,5 +154,34 @@
         WHERE
             id = #{id}
     </update>
+
+    <!-- 新增优惠券赠送详细 -->
+    <insert id="addCouponHis" parameterType="Map">
+        INSERT INTO
+            g_coupon_his (
+                 id
+                ,openid
+                ,couponid
+                ,updtime
+                ,usemark
+                ,couponstatus
+                ,couponsource
+                ,givedopenid
+                ,givedphone
+                ,usetime
+            )
+        VALUES (
+             #{id}
+            ,' '
+            ,#{couponid}
+            ,#{updtime}
+            ,' '
+            ,'0'
+            ,'3'
+            ,' '
+            ,#{givedphone}
+            ,' '
+        )
+    </insert>
 
 </mapper>

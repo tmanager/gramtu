@@ -48,4 +48,7 @@ public class CouponRequest extends BaseRequest {
 
     // 删除的优惠券id列表
     private String[] coupidlist;
+
+    // 手机号码
+    private String phone = "";
 }

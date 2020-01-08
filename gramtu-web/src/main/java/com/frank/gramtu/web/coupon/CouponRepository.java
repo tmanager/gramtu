@@ -34,9 +34,19 @@ public interface CouponRepository {
     int addCoupon(Map<String, String> param);
 
     /**
+     * 新增优惠券赠送情报.
+     */
+    int addCouponHis(Map<String, String> param);
+
+    /**
      * 获取优惠券内容.
      */
-    Map<String, String> getCouponDetail(Map<String, String> param);
+    List<Map<String, String>> getCouponDetail(Map<String, Object> param);
+
+    /**
+     * 查询总条数.
+     */
+    int getHisCnt(Map<String, Object> param);
 
     /**
      * 删除优惠券.

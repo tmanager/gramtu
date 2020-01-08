@@ -85,7 +85,7 @@ public class CouponService {
         // 发行个数
         param.put("numbers",requestData.getRequest().getNumbers());
         // 有效结束日期
-        param.put("enddate",requestData.getRequest().getEnddate());
+        param.put("enddate",requestData.getRequest().getEnddate().replace("-",""));
         // 分类
         param.put("type",requestData.getRequest().getType());
         // 抵用多少钱
@@ -106,37 +106,31 @@ public class CouponService {
     }
 
     /**
-     * 根据优惠券ID获取文章内容.
+     * 根据优惠券ID获取优惠券详细内容.
      */
-    public String couponDetailService(String couponId) {
+    public String couponDetailService(CouponRequest requestData) {
 
         // 查询参数
-        Map<String, String> param = new HashMap<>();
-        param.put("id", couponId);
+        Map<String, Object> param = new HashMap<>();
+        param.put("couponid", requestData.getId());
+        param.put("phone", requestData.getPhone());
+        param.put("startindex", requestData.getStartindex());
+        param.put("pagesize", requestData.getPagesize());
+        param.put("pagingOrNot", "1");
 
         // 获取优惠券详细内容
-        Map<String, String> couponDetail = this.couponRepository.getCouponDetail(param);
+        List<Map<String, String>> dataList = this.couponRepository.getCouponDetail(param);
+
+        log.info("查询出的结果为：{}", dataList);
+        // 条数
+        int cnt = this.couponRepository.getHisCnt(param);
+        log.info("查询出的数据条数为：{}", cnt);
 
         WebResponse<CouponReponse> responseData = new WebResponse<>();
         CouponReponse couponReponse = new CouponReponse();
-        // 优惠券名称
-        couponReponse.setCouponname(couponDetail.get("couponname"));
-        // 优惠券描述
-        couponReponse.setCouponbak(couponDetail.get("couponbak"));
-        // 满多少元可用
-        couponReponse.setUsemark(couponDetail.get("usemark"));
-        // 文章内容
-        couponReponse.setUpfee(couponDetail.get("upfee"));
-        // 发行个数
-        couponReponse.setNumbers(couponDetail.get("numbers"));
-        // 有效结束日期
-        couponReponse.setEnddate(couponDetail.get("enddate"));
-        // 分类
-        couponReponse.setType(couponDetail.get("type"));
-        // 地用多少钱
-        couponReponse.setAmount(couponDetail.get("amount"));
-        // 状态
-        couponReponse.setStatus(couponDetail.get("status"));
+        couponReponse.setDraw(0);
+        couponReponse.setTotalcount(cnt);
+        couponReponse.setCouphislist(dataList);
         responseData.setResponse(couponReponse);
 
         // 返回
@@ -181,7 +175,7 @@ public class CouponService {
         // 发行个数
         param.put("numbers",requestData.getRequest().getNumbers());
         // 有效结束日期
-        param.put("enddate",requestData.getRequest().getEnddate());
+        param.put("enddate",requestData.getRequest().getEnddate().replace("-",""));
         // 分类
         param.put("type",requestData.getRequest().getType());
         // 抵用多少钱
@@ -193,6 +187,31 @@ public class CouponService {
         // 更新人
         param.put("upduid", requestData.getUserid());
         this.couponRepository.updCoupon(param);
+
+        // 返回
+        return new SysResponse().toJsonString();
+    }
+
+    /**
+     * 新增优惠券赠送新增.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String couponHisAddService(WebRequest<CouponRequest> requestData) {
+
+        // 参数
+        Map<String, String> param = new HashMap<>();
+        // id主键
+        param.put("id", CommonUtil.getUUid());
+        // 优惠券id
+        param.put("couponid",requestData.getRequest().getId());
+        // 转赠人手机号
+        param.put("givedphone",requestData.getRequest().getPhone());
+        // 更新时间
+        param.put("updtime", DateTimeUtil.getTimeformat());
+
+        // 新增
+        int cnt = this.couponRepository.addCouponHis(param);
+        log.info("新增数据条数为：[{}]", cnt);
 
         // 返回
         return new SysResponse().toJsonString();

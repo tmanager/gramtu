@@ -22,6 +22,9 @@ public class CouponReponse extends BaseResponse {
     // 数据列表
     private List<Map<String, String>> couplist;
 
+    // 数据详细列表
+    private List<Map<String, String>> couphislist;
+
     // 分类
     private String type = "";
 
@@ -48,4 +51,5 @@ public class CouponReponse extends BaseResponse {
 
     // 状态
     private String status = "";
+
 }

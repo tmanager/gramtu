@@ -81,7 +81,7 @@ public class CouponController {
         });
 
         // 预览
-        String responseData = this.couponService.couponDetailService(requestData.getRequest().getId());
+        String responseData = this.couponService.couponDetailService(requestData.getRequest());
         log.info("预览优惠券结束..................");
         log.info("预览优惠券返回值为:{}", responseData);
         return responseData;
@@ -118,6 +118,24 @@ public class CouponController {
         String responseData = this.couponService.editCouponService(requestData);
         log.info("优惠券编辑结束..................");
         log.info("优惠券编辑返回值为:{}", responseData);
+        return responseData;
+    }
+
+    /**
+     * 新增优惠券赠送情报.
+     */
+    @RequestMapping(value = "/give")
+    private String couponHisAdd(@RequestBody String requestParam) {
+        log.info("优惠券赠送情报新增开始..................");
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<CouponRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<CouponRequest>>() {
+        });
+
+        // 新增
+        String responseData = this.couponService.couponHisAddService(requestData);
+        log.info("优惠券赠送情报新增结束..................");
+        log.info("优惠券赠送情报新增返回值为:{}", responseData);
         return responseData;
     }
 }
