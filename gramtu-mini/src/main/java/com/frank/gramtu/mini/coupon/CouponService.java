@@ -49,9 +49,11 @@ public class CouponService {
         }
 
         // 分页信息
-        param.put("startindex", requestData.getStartindex());
-        param.put("pagesize", requestData.getPagesize());
-        param.put("pagingOrNot", "1");
+        if(requestData.getStartindex() != 0 && requestData.getPagesize() != 0) {
+            param.put("startindex", requestData.getStartindex());
+            param.put("pagesize", requestData.getPagesize());
+            param.put("pagingOrNot", "1");
+        }
 
         List<Map<String, String>> couponList = this.couponRepository.getCouponList(param);
         log.info("查询出的个人优惠券信息为：{}", couponList);

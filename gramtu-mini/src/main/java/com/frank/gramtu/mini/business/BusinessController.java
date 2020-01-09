@@ -1,16 +1,24 @@
 package com.frank.gramtu.mini.business;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.frank.gramtu.core.bean.RequestTurnitinBean;
+import com.frank.gramtu.core.bean.TurnitinConst;
 import com.frank.gramtu.core.fdfs.FdfsUtil;
+import com.frank.gramtu.core.redis.RedisService;
 import com.frank.gramtu.core.request.WebRequest;
 import com.frank.gramtu.core.response.SysErrResponse;
+import com.frank.gramtu.core.utils.IdGeneratorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileWriter;
 
 /**
  * 上传文件及价格计算Controller.
@@ -28,6 +36,9 @@ public class BusinessController {
 
     @Autowired
     private FdfsUtil fdfsUtil;
+
+    @Autowired
+    private RedisService redisService;
 
     @Autowired
     private BusinessService businessService;
@@ -48,7 +59,10 @@ public class BusinessController {
         String subTitle = request.getParameter("subtitle");
         String checkType = request.getParameter("checktype");
         String fileName = request.getParameter("filename");
-        log.info("接收到的参数为：{}-{}-{},上传类型为：{}", firstName, lastName, subTitle, checkType);
+        String uploadType = request.getParameter("type");
+        // 论文内容
+        String content = request.getParameter("content");
+        log.info("接收到的参数为：{}-{}-{},检测类型为：{},上传类型为：{}", firstName, lastName, subTitle, checkType, uploadType);
 
         BusinessRequest requestData = new BusinessRequest();
         requestData.setOpenId(openId);
@@ -57,11 +71,18 @@ public class BusinessController {
         requestData.setSubTitle(subTitle);
         requestData.setCheckType(checkType);
         requestData.setOrgFileName(fileName);
+        requestData.setType(uploadType);
 
         try {
-            // 上传至FDFS
-            String filePath = this.fdfsUtil.uploadFile(file);
-            log.info("[{}]上传至文件服务器后的路径为[{}]", requestData.getOrgFileName(), filePath);
+            String filePath = "";
+            if (uploadType.equals("0")) {
+                // 上传至FDFS
+                filePath = this.fdfsUtil.uploadFile(file);
+                log.info("[{}]上传至文件服务器后的路径为[{}]", requestData.getOrgFileName(), filePath);
+            } else {
+                log.error("上传文档与传入内容不匹配!");
+                return new SysErrResponse("上传文档与传入内容不匹配").toJsonString();
+            }
 
             // 调用服务
             responseData = this.businessService.uploadService(requestData, filePath);
@@ -72,6 +93,62 @@ public class BusinessController {
         }
 
         log.info("小程序上传文件结束................");
+
+        // 返回
+        return responseData;
+    }
+
+    /**
+     * 上传文件内容.
+     */
+    @RequestMapping("/upload/content")
+    public String uploadFileContent(@RequestBody String requestParam) {
+        log.info("小程序上传文件内容开始................");
+
+        String responseData = "";
+
+        log.info("请求参数为：{}", requestParam);
+        WebRequest<BusinessRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<BusinessRequest>>() {
+        });
+        log.info("接收到的参数为：{}-{}-{},检测类型为：{},上传类型为：{}",
+                requestData.getRequest().getFirstName(),
+                requestData.getRequest().getLastName(),
+                requestData.getRequest().getSubTitle(),
+                requestData.getRequest().getCheckType(),
+                requestData.getRequest().getType());
+
+        try {
+            String filePath = "";
+
+            // 加载turnitin国际版账户信息
+            RequestTurnitinBean turnBean = JSONObject.parseObject(this.redisService.getStringValue(TurnitinConst.TURN_IN_KEY),
+                    RequestTurnitinBean.class);
+            log.info("查询出的国际版账户信息为：\n{}", JSON.toJSONString(turnBean, SerializerFeature.PrettyFormat));
+
+            // 保存文件到本地
+            IdGeneratorUtils id = new IdGeneratorUtils(1, 1);
+            String saveFileName = String.valueOf(id.nextId()) + ".txt";
+            requestData.getRequest().setOrgFileName(saveFileName);
+            log.info("保存的论文文件为：[{}]", saveFileName);
+            File localFile = new File(turnBean.getThesisVpnPath() + File.separator + saveFileName);
+            FileWriter fileWriter = new FileWriter(localFile);
+            fileWriter.write(requestData.getRequest().getContent());
+            fileWriter.flush();
+            fileWriter.close();
+
+            // 上传至FDFS
+            filePath = this.fdfsUtil.uploadLocalFile(localFile);
+            log.info("[{}]上传至文件服务器后的路径为[{}]", requestData.getRequest().getOrgFileName(), filePath);
+
+            // 调用服务
+            responseData = this.businessService.uploadService(requestData.getRequest(), filePath);
+            log.info("返回小程序的数据为:\n{}", responseData);
+        } catch (Exception ex) {
+            log.error("上传文档内容时异常结束,异常信息：\n{}", ex.getMessage());
+            return new SysErrResponse("上传文档内容时异常结束").toJsonString();
+        }
+
+        log.info("小程序上传文件内容结束................");
 
         // 返回
         return responseData;

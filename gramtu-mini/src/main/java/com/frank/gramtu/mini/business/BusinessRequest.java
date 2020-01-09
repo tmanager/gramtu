@@ -29,11 +29,21 @@ public class BusinessRequest extends BaseRequest {
     @Value("${filename}")
     private String orgFileName = "";
 
-    // 上传类型
+    // 检测类型,0:国际查重,1:UK查重,3:语法检测
     @Value("${checktype}")
     private String checkType = "";
 
     // 订单编号
     @Value("${orderid}")
     private String orderId = "";
+
+    // 上传类型,0文件上传,1:剪贴上传
+    @Value("${type}")
+    private String type = "";
+
+    /**
+     * 论文内容.
+     */
+    @Value("${content}")
+    private String content = "";
 }

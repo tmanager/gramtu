@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +64,28 @@ public class FdfsUtil {
 
         StorePath storePath = this.storageClient.uploadFile(multipartFile.getInputStream(),
                 multipartFile.getSize(),
+                originalFileName, null);
+        log.info("上传文档后的路径为：[{}]", storePath.getFullPath());
+        log.info("FastDFS结束上传文档.........................");
+
+        // 返回路径
+        return this.convertFilePath(storePath);
+    }
+
+    /**
+     * 上传文件.
+     */
+    public String uploadLocalFile(File localFile) throws Exception {
+        log.info("FastDFS开始上传文档.........................");
+
+        FileInputStream inputStream = new FileInputStream(localFile);
+
+        String originalFileName = localFile.getName().
+                substring(localFile.getName().lastIndexOf(".") + 1);
+        log.info("文档的后缀为：[{}]", originalFileName);
+
+        StorePath storePath = this.storageClient.uploadFile(inputStream,
+                localFile.length(),
                 originalFileName, null);
         log.info("上传文档后的路径为：[{}]", storePath.getFullPath());
         log.info("FastDFS结束上传文档.........................");
