@@ -30,4 +30,7 @@ public class CouponRequest extends BaseRequest {
     // 转赠的优惠券ID
     @Value("${couponid}")
     private String couponId = "";
+
+    @Value("${id}")
+    private String id = "";
 }

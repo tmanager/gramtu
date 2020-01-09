@@ -58,7 +58,7 @@ public class CouponController {
         });
 
         // 调用服务
-        String responseData = this.couponService.queryCouponService(requestData.getRequest());
+        String responseData = this.couponService.givenService(requestData.getRequest());
         log.info("返回小程序端优惠券转赠的数据为:\n{}", responseData);
 
         log.info("小程序端优惠券转赠结束............");

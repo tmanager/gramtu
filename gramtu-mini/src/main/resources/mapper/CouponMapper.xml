@@ -14,7 +14,8 @@
     <!-- 查询优惠券 -->
     <select id="getCouponList" parameterType="Map" resultType="Map">
         SELECT
-             b.id as id
+             a.id as id
+            ,b.id as couponid
             ,b.couponname as name
             ,b.upfee as upfee
             ,b.amount as amount
@@ -28,7 +29,6 @@
         WHERE
              a.openid = #{openid}
          AND b.type = #{type}
-         AND a.couponstatus = '0'
         ORDER BY
             a.updtime DESC
         <if test="pagingOrNot != null and pagingOrNot != ''">
@@ -36,4 +36,56 @@
         </if>
     </select>
 
+    <!-- 判断转赠人的手机号是否存在 -->
+    <select id="wxUserPhoneExists" parameterType="Map" resultType="Map">
+        SELECT
+             openid
+        FROM
+            g_wx_user
+        WHERE
+            pure_phone_number = #{phonenumber}
+    </select>
+
+    <select id="getCouponInfo" parameterType="Map" resultType="Map">
+        SELECT
+            couponstatus
+        FROM
+            g_coupon_his
+        WHERE
+            id = #{id}
+    </select>
+
+    <insert id="insNewCouponHis" parameterType="Map">
+        INSERT INTO
+            g_coupon_his (
+                     id
+                    ,openid
+                    ,couponid
+                    ,updtime
+                    ,couponstatus
+                    ,couponsource
+                    ,givedopenid
+            )
+        VALUES (
+                     #{id}
+                    ,#{openid}
+                    ,#{couponid}
+                    ,#{updtime}
+                    ,#{couponstatus}
+                    ,#{couponsource}
+                    ,#{givedopenid}
+        )
+    </insert>
+
+    <update id="updCouponHis" parameterType="Map">
+        UPDATE
+            g_coupon_his
+        SET
+             givedopenid = #{givedopenid}
+            ,givedphone = #{givedphone}
+            ,couponstatus = #{couponstatus}
+            ,usetime = #{usetime}
+        WHERE
+            id = #{id}
+    </update>
 </mapper>

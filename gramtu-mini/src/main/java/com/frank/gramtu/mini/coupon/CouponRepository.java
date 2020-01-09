@@ -22,4 +22,24 @@ public interface CouponRepository {
      * 根据openid查询可用优惠券.
      */
     List<Map<String, String>> getCouponList(Map<String, Object> param);
+
+    /**
+     * 判断转赠人的手机号是否存在.
+     */
+    Map<String, String> wxUserPhoneExists(Map<String, String> param);
+
+    /**
+     * 获取优惠券现有的状态.
+     */
+    Map<String, String> getCouponInfo(Map<String, String> param);
+
+    /**
+     * 新增一条转增记录.
+     */
+    int insNewCouponHis(Map<String, String> param);
+
+    /**
+     * 更新原有记录.
+     */
+    int updCouponHis(Map<String, String> param);
 }
