@@ -90,7 +90,7 @@ public class WeixinPayService implements InitializingBean {
         log.info("支付金额为：{}", amount);
         // TODO：标价金额
         //orderRequest.setTotalFee(Integer.valueOf(amount));
-        orderRequest.setTotalFee(Integer.valueOf("100"));
+        orderRequest.setTotalFee(Integer.valueOf("1"));
 
         // 终端IP
         String ip = "127.0.0.1";
@@ -192,12 +192,15 @@ public class WeixinPayService implements InitializingBean {
             log.info("更新原订单流水结果为：[{}]", cnt2);
 
             // TODO：发起异步检测
-
+            log.info("发起异步检测....................");
+            this.weixinPayAsync.submitThesis(notifyResult.getOutTradeNo());
 
             // 增加积分
+            log.info("发起异步增加积分..................");
             this.weixinPayAsync.writeOffMark(notifyResult);
 
             // 消费优惠券
+            log.info("发起异步优惠券核销................");
             this.weixinPayAsync.writeOffCoupon(notifyResult.getOutTradeNo());
 
         } catch (Exception ex) {

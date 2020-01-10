@@ -136,7 +136,27 @@
     </select>
     
     <!-- 查询个人消费记录 -->
-    <select id="queryConsumeListByOpenId" parameterType="Map" resultType="Map">
-    	
+    <select id="getOrderInfoByTradeno" parameterType="Map" resultType="Map">
+    	SELECT
+    	     checktype
+    	    ,firstname
+    	    ,lastname
+    	    ,titile
+    	    ,originalurl
+    	    ,tradeno
+    	FROM
+    	    g_order
+    	WHERE
+    	    tradeno = #{tradeno}
     </select>
+    
+    <!-- 据支付商户订单号更新论文ID -->
+    <update id="updThesisIdByTradeNo" parameterType="Map">
+        UPDATE
+            g_order
+        SET
+            thesisid = #{thesisid}
+        WHERE
+            tradeno = #{tradeno}
+    </update>
 </mapper>

@@ -52,4 +52,14 @@ public interface WeixinPayRepository {
      * 查询个人消费记录.
      */
     List<Map<String, String>> queryConsumeListByOpenId(Map<String, Object> param);
+
+    /**
+     * 根据支付商户订单号查询订单信息.
+     */
+    Map<String, String> getOrderInfoByTradeno(Map<String, String> param);
+
+    /**
+     * 根据支付商户订单号更新论文ID.
+     */
+    int updThesisIdByTradeNo(Map<String, String> param);
 }

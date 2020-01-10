@@ -1,12 +1,21 @@
 package com.frank.gramtu.mini.weixin;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.frank.gramtu.core.bean.RequestTurnitinBean;
+import com.frank.gramtu.core.bean.ResponseTurnitinBean;
+import com.frank.gramtu.core.bean.TurnitinConst;
+import com.frank.gramtu.core.redis.RedisService;
 import com.frank.gramtu.core.utils.CommonUtil;
 import com.frank.gramtu.core.utils.DateTimeUtil;
+import com.frank.gramtu.core.utils.FileUtils;
+import com.frank.gramtu.core.utils.SocketClient;
+import com.frank.gramtu.mini.constant.CheckType;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +36,15 @@ import java.util.Map;
 public class WeixinPayAsync {
 
     @Autowired
+    private RedisService redisService;
+
+    @Autowired
     private WeixinPayRepository weixinPayRepository;
 
     /**
      * 根据商户订单号核销优惠券.
      */
+    @Async
     @Transactional(rollbackFor = Exception.class)
     public void writeOffCoupon(String tradeNo) {
         log.info("商户订单号[{}]核销优惠券开始.................", tradeNo);
@@ -66,6 +79,7 @@ public class WeixinPayAsync {
     /**
      * 根据商户订单号增加用户积分.
      */
+    @Async
     @Transactional(rollbackFor = Exception.class)
     public void writeOffMark(WxPayOrderNotifyResult notifyResult) {
 
@@ -97,10 +111,107 @@ public class WeixinPayAsync {
      *
      * @param tradeNo 商户订单号.
      */
+    @Async
+    @Transactional(rollbackFor = Exception.class)
     public void submitThesis(String tradeNo) {
 
+        // 查询订单信息
+        Map<String, String> param = new HashMap<>();
+        param.put("tradeno", tradeNo);
+        Map<String, String> orderInfo = this.weixinPayRepository.getOrderInfoByTradeno(param);
+        if (orderInfo == null) {
+            log.error(">>>>>>>>>>>>>>商户订单号[{}]未找到,请联系管理员!!!>>>>>>>>>>>>>>", tradeNo);
+        }
+        log.info("商户订单号[{}]的信息为：\n{}", tradeNo, JSON.toJSONString(orderInfo, SerializerFeature.PrettyFormat));
 
+        // 判断提交的类型
+        String checkType = orderInfo.get("checktype");
+        if (checkType.equals(CheckType.TURNITIN.getValue())) {
+            // 国际版
+            this.submitInThesis(orderInfo);
+        } else if (checkType.equals(CheckType.TURNITINUK.getValue())) {
+            // UK版
+            this.submitUKThesis(orderInfo);
+        } else if (checkType.equals(CheckType.GRAMMARLY.getValue())) {
+            // Grammarly
+        } else {
+            log.error("提交类型不符合,无法检测!!!");
+        }
+    }
+
+    /**
+     * 提交国际版.
+     */
+    private void submitInThesis(Map<String, String> orderInfo) {
+        log.info("提交国际版论文开始......................");
+
+        try {
+            RequestTurnitinBean turnBean = JSONObject.parseObject(this.redisService.getStringValue(TurnitinConst.TURN_IN_KEY),
+                    RequestTurnitinBean.class);
+            log.info("查询出的国际版账户信息为：\n{}", JSON.toJSONString(turnBean, SerializerFeature.PrettyFormat));
+
+            // 保存论文信息
+            String thesisName = orderInfo.get("orderid") + "." + orderInfo.get("ext");
+            log.info("保存的论文名称为：[{}]", thesisName);
+            boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
+            if (!dowloadResult) {
+                log.error("从FDFS下载论文时异常");
+                return;
+            }
+
+            // 设计参数
+            turnBean.setFirstName(orderInfo.get("firstname"));
+            turnBean.setLastName(orderInfo.get("lastname"));
+            turnBean.setTitle(orderInfo.get("titile"));
+            turnBean.setThesisName(thesisName);
+
+            // 调用Socket
+            String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
+                    "02" + JSONObject.toJSONString(turnBean));
+            ResponseTurnitinBean responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
+            log.info("调用Socket Server返回的结果为：\n{}", JSON.toJSONString(responseTurnitinBean, SerializerFeature.PrettyFormat));
+
+            // 输出日志
+            for (String logInfo : responseTurnitinBean.getLogList()) {
+                log.info("turnitin-api>>>>>>" + logInfo);
+            }
+            // 提交失败
+            if (!responseTurnitinBean.getRetcode().equals("0000")) {
+                log.error("提交论文失败");
+            }
+
+            // 论文ID
+            String thesisId = responseTurnitinBean.getThesisId();
+            // 更新论文ID
+            this.updThesisId(orderInfo.get("tradeno"), thesisId);
+        } catch (Exception ex) {
+            log.error("提交国际版论文异常结束，异常信息为：\n{}", ex.getMessage());
+        }
+    }
+
+    /**
+     * 提交UK版.
+     */
+    private void submitUKThesis(Map<String, String> orderInfo) {
 
     }
 
+    /**
+     * 提交Grammarly语法检测.
+     */
+    private void submitGrammarly(Map<String, String> orderInfo) throws Exception {
+
+    }
+
+    /**
+     * 根据支付商户订单号更新论文ID.
+     */
+    private void updThesisId(String tradeNo, String thesisId) {
+
+        Map<String, String> param = new HashMap<>();
+        param.put("tradeno", tradeNo);
+        param.put("thesisid", thesisId);
+        int cnt = this.weixinPayRepository.updThesisIdByTradeNo(param);
+        log.info("更新论文ID的结果为：[{}]", cnt);
+    }
 }
