@@ -99,6 +99,8 @@ public class WeixinPayAsync {
      */
     public void submitThesis(String tradeNo) {
 
+
+
     }
 
 }

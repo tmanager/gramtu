@@ -193,10 +193,11 @@ public class WeixinPayService implements InitializingBean {
 
             // TODO：发起异步检测
 
-            // TODO：增加积分
+
+            // 增加积分
             this.weixinPayAsync.writeOffMark(notifyResult);
 
-            // TODO：消费优惠券
+            // 消费优惠券
             this.weixinPayAsync.writeOffCoupon(notifyResult.getOutTradeNo());
 
         } catch (Exception ex) {
