@@ -108,8 +108,6 @@ public class WeixinPayAsync {
 
     /**
      * 发起提交论文异步任务.
-     *
-     * @param tradeNo 商户订单号.
      */
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -134,6 +132,7 @@ public class WeixinPayAsync {
             this.submitUKThesis(orderInfo);
         } else if (checkType.equals(CheckType.GRAMMARLY.getValue())) {
             // Grammarly
+
         } else {
             log.error("提交类型不符合,无法检测!!!");
         }
@@ -159,7 +158,7 @@ public class WeixinPayAsync {
                 return;
             }
 
-            // 设计参数
+            // 设置参数
             turnBean.setFirstName(orderInfo.get("firstname"));
             turnBean.setLastName(orderInfo.get("lastname"));
             turnBean.setTitle(orderInfo.get("titile"));
@@ -193,7 +192,50 @@ public class WeixinPayAsync {
      * 提交UK版.
      */
     private void submitUKThesis(Map<String, String> orderInfo) {
+        log.info("提交UK版论文开始......................");
 
+        try {
+            RequestTurnitinBean turnBean = JSONObject.parseObject(this.redisService.getStringValue(TurnitinConst.TURN_UK_KEY),
+                    RequestTurnitinBean.class);
+            log.info("查询出的UK版账户信息为：\n{}", JSON.toJSONString(turnBean, SerializerFeature.PrettyFormat));
+
+            // 保存论文信息
+            String thesisName = orderInfo.get("orderid") + "." + orderInfo.get("ext");
+            log.info("保存的论文名称为：[{}]", thesisName);
+            boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
+            if (!dowloadResult) {
+                log.error("从FDFS下载论文时异常");
+                return;
+            }
+
+            // 设计参数
+            turnBean.setFirstName(orderInfo.get("firstname"));
+            turnBean.setLastName(orderInfo.get("lastname"));
+            turnBean.setTitle(orderInfo.get("titile"));
+            turnBean.setThesisName(thesisName);
+
+            // 调用Socket
+            String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
+                    "12" + JSONObject.toJSONString(turnBean));
+            ResponseTurnitinBean responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
+            log.info("调用Socket Server返回的结果为：\n{}", JSON.toJSONString(responseTurnitinBean, SerializerFeature.PrettyFormat));
+
+            // 输出日志
+            for (String logInfo : responseTurnitinBean.getLogList()) {
+                log.info("turnitin-api>>>>>>" + logInfo);
+            }
+            // 提交失败
+            if (!responseTurnitinBean.getRetcode().equals("0000")) {
+                log.error("提交论文失败");
+            }
+
+            // 论文ID
+            String thesisId = responseTurnitinBean.getThesisId();
+            // 更新论文ID
+            this.updThesisId(orderInfo.get("tradeno"), thesisId);
+        } catch (Exception ex) {
+            log.error("提交UK版论文异常结束，异常信息为：\n{}", ex.getMessage());
+        }
     }
 
     /**

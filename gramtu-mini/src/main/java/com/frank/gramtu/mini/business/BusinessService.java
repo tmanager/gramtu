@@ -6,7 +6,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.frank.gramtu.core.bean.RequestTurnitinBean;
 import com.frank.gramtu.core.bean.ResponseTurnitinBean;
 import com.frank.gramtu.core.bean.TurnitinConst;
-import com.frank.gramtu.core.fdfs.FdfsUtil;
 import com.frank.gramtu.core.redis.RedisService;
 import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.WebResponse;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
