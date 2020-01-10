@@ -134,4 +134,9 @@
             LIMIT #{startindex}, #{pagesize};
         </if>
     </select>
+    
+    <!-- 查询个人消费记录 -->
+    <select id="queryConsumeListByOpenId" parameterType="Map" resultType="Map">
+    	
+    </select>
 </mapper>
