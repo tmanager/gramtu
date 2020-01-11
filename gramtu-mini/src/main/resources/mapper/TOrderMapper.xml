@@ -14,29 +14,33 @@
     <!-- 查重列表信息 -->
     <select id="getTurnitinList" parameterType="Map" resultType="Map">
         SELECT
-             orderid
-            ,firstname
-            ,lastname
-            ,titile
-            ,filename
-            ,pagesize
-            ,wordcnt
-            ,charcnt
-            ,filesize
-            ,repetrate
-            ,updtime
-            ,status
-            ,pdfreporturl
-            ,htmlreporturl
+             a.orderid
+            ,a.firstname
+            ,a.lastname
+            ,a.titile
+            ,a.filename
+            ,a.pagesize
+            ,a.wordcnt
+            ,a.charcnt
+            ,a.filesize
+            ,a.repetrate
+            ,a.updtime
+            ,a.status
+            ,a.pdfreporturl
+            ,a.htmlreporturl
+            ,b.email
         FROM
-            g_order
+            g_order a
+        LEFT JOIN
+            g_wx_user b
+         ON b.openid = a.openid
         WHERE
-             openid = #{openid}
-         AND status IN
+             a.openid = #{openid}
+         AND a.status IN
         <foreach item="item" index="index" collection="statusList" open="(" separator="," close=")">
             #{item}
         </foreach>
-        ORDER BY updtime DESC
+        ORDER BY a.updtime DESC
         <if test="pagingOrNot != null and pagingOrNot != ''">
             LIMIT #{startindex}, #{pagesize};
         </if>

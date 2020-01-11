@@ -48,6 +48,7 @@ public class TOrderService {
             status.add("2");
             status.add("3");
             status.add("4");
+            status.add("9");
         }
         param.put("statusList", status);
 
