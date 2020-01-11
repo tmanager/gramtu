@@ -66,7 +66,7 @@ public class WeixinPayAsync {
                 param2.put("couponstatus", "1");
                 param2.put("usetime", DateTimeUtil.getTimeformat());
                 int cnt = this.weixinPayRepository.updCouponStatus(param2);
-                log.info("优惠券[{}]更新为已使用!", result.get("couponid"));
+                log.info("优惠券[{}]更新为已使用,更新结果为:[{}]!", result.get("couponid"), cnt);
             }
 
         } catch (Exception ex) {

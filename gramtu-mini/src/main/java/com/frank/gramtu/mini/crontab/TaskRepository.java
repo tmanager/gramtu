@@ -24,6 +24,11 @@ public interface TaskRepository {
     List<Map<String, String>> getCheckingReports();
 
     /**
+     * 取得UK版最新状态为02(已上传检测中的列表)
+     */
+    List<Map<String, String>> getCheckingReportsUK();
+
+    /**
      * 更新订单状态.
      */
     int updOrderStatusById(Map<String, String> param);

@@ -26,6 +26,21 @@
         limit 0, 10
     </select>
 
+    <!-- 取得UK版最新状态为02(已上传检测中的列表) -->
+    <select id="getCheckingReportsUK" resultType="Map">
+        SELECT
+             id
+            ,thesisid
+        FROM
+            g_order
+        WHERE
+             status = '2'
+         AND checktype = '1'
+         AND thesisid is not null
+        ORDER BY updtime
+        limit 0, 10
+    </select>
+
     <!-- 更新订单状态 -->
     <update id="updOrderStatusById" parameterType="Map">
         UPDATE

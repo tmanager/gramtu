@@ -191,7 +191,7 @@ public class WeixinPayService implements InitializingBean {
             int cnt2 = this.weixinPayRepository.updOrderByTradeNo(param);
             log.info("更新原订单流水结果为：[{}]", cnt2);
 
-            // TODO：发起异步检测
+            // 发起异步检测
             log.info("发起异步检测....................");
             this.weixinPayAsync.submitThesis(notifyResult.getOutTradeNo());
 

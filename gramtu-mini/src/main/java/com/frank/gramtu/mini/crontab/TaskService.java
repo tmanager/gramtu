@@ -120,6 +120,81 @@ public class TaskService {
     }
 
     /**
+     * 异步下载UK版报告.
+     */
+    @Async("taskExecutor")
+    public Future<String> getReportUK(String id, String thesisId) throws Exception {
+
+        log.info("UK版检测报告开始下载,论文ID[{}].....................", thesisId);
+        Map<String, String> param = new HashMap<>();
+
+        // 增加线程名称
+        Thread.currentThread().setName(thesisId);
+        long start = Calendar.getInstance().getTimeInMillis();
+
+        // 将状态更新为3:报告下载中
+        param.put("id", id);
+        param.put("status", "3");
+        param.put("comment", "报告下载中");
+        this.updOrderStatusById(param);
+
+        RequestTurnitinBean turnBean = JSONObject.parseObject(this.redisService.getStringValue(TurnitinConst.TURN_UK_KEY),
+                RequestTurnitinBean.class);
+        log.info("查询出的UK版账户信息为：\n{}", JSON.toJSONString(turnBean, SerializerFeature.PrettyFormat));
+
+        // 设置参数
+        turnBean.setThesisId(thesisId);
+        // 调用Socket
+        String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
+                "13" + JSONObject.toJSONString(turnBean));
+        ResponseTurnitinBean responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
+        log.info("调用Socket Server返回的结果为：\n{}", JSON.toJSONString(responseTurnitinBean, SerializerFeature.PrettyFormat));
+
+        // 输出日志
+        for (String logInfo : responseTurnitinBean.getLogList()) {
+            log.info("turnitin-api>>>>>>" + logInfo);
+        }
+        // 提交失败
+        if (!responseTurnitinBean.getRetcode().equals("0000")) {
+            log.error("下载失败,等待下载次下载!");
+            // 下载失败后状态修改02：检测中等待下次
+            param.put("status", "2");
+            param.put("comment", "下载报告时失败，等待下次下载");
+            this.updOrderStatusById(param);
+            log.info("UK版检测报告下载结束,论文ID[{}].....................", thesisId);
+
+            long end = Calendar.getInstance().getTimeInMillis();
+            return new AsyncResult<>(String.format("UK版检测报告下载,论文ID[%s],共耗时[%s]毫秒", thesisId, end - start));
+        }
+
+        // html报告路径
+        String htmlReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".html";
+        // pdf报告路径
+        String pdfReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".pdf";
+        // 重复率
+        String rate = responseTurnitinBean.getRate();
+
+        log.info("上传html报告至FDFS");
+        String htmlreporturl = this.fdfsUtil.uploadLocalFile(new File(htmlReport));
+
+        log.info("上传pdf报告至FDFS");
+        String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
+
+        // 更新订单状态
+        param.put("status", "4");
+        param.put("comment", "检测完成");
+        param.put("rate", rate);
+        param.put("htmlreporturl", htmlreporturl);
+        param.put("pdfreporturl", pdfreporturl);
+        this.updOrderStatusById(param);
+
+        // TODO:发送小程序模版消息
+
+        long end = Calendar.getInstance().getTimeInMillis();
+        return new AsyncResult<>(String.format("UK版检测报告下载并上传,论文ID[%s],共耗时[%s]毫秒", thesisId, end - start));
+    }
+
+    /**
      * 更新订单报告下载状态
      */
     private void updOrderStatusById(Map<String, String> paramIn) {

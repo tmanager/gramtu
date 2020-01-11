@@ -29,6 +29,7 @@
         WHERE
              a.openid = #{openid}
          AND b.type = #{type}
+         AND a.couponstatus = '0'
         ORDER BY
             a.updtime DESC
         <if test="pagingOrNot != null and pagingOrNot != ''">

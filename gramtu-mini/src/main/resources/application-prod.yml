@@ -53,5 +53,5 @@ fdfs:
   #  height: 150
   tracker-list:
     - 47.111.173.188:22122
-#logging:
-#  file: /home/gramtu/logs/turnin-ac.log
+logging:
+  file: /home/gramtu/logs/turnin-mini.log
