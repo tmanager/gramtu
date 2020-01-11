@@ -76,13 +76,13 @@ public class TaskCrontab {
                 for (Map<String, String> dataMap : dataList) {
                     // 异步执行下载报告并上传
                     if(!dataMap.get("thesisid").isEmpty()) {
-                        Future<String> task = this.taskService.getReport(dataMap.get("id"), dataMap.get("thesisid"));
+                        Future<String> task = this.taskService.getReportUK(dataMap.get("id"), dataMap.get("thesisid"));
                         Thread.sleep(1000L);
                     }
                 }
             }
         } catch (Exception ex) {
-            log.info("..................异常结束执行国际版获取报告定时任务..................");
+            log.info("..................异常结束执行UK版获取报告定时任务..................");
             log.info(ex.getMessage());
         }
     }
