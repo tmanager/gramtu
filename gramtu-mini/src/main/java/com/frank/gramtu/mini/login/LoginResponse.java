@@ -30,4 +30,13 @@ public class LoginResponse extends BaseResponse {
 
     // 积分
     private String mark = "0";
+
+    // 所在留学的国家
+    private String learncountry = "";
+
+    // 专业
+    private String major = "";
+
+    // email
+    private String email = "";
 }

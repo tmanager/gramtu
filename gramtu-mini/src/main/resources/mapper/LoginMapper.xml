@@ -17,6 +17,9 @@
              openid
             ,phonenumber
             ,mark
+            ,learn_country
+            ,major
+            ,email
         FROM
              g_wx_user
         WHERE
@@ -93,4 +96,26 @@
                     ,#{couponsource}
         )
     </insert>
+
+    <!-- 查询个人信息是否完善 -->
+    <select id="getWxUserPerFlagByOpenId" parameterType="Map" resultType="Map">
+        SELECT
+            perflag
+        FROM
+            g_wx_user
+        WHERE
+            openid = #{openid}
+    </select>
+
+    <!-- 完善个人信息 -->
+    <update id="updWxUserPerInfo" parameterType="Map">
+        UPDATE
+            g_wx_user
+        SET
+             learn_country = #{learncountry}
+            ,major = #{major}
+            ,email = #{email}
+        WHERE
+            openid = #{openid}
+    </update>
 </mapper>

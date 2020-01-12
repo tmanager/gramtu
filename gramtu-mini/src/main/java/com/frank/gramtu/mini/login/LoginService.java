@@ -188,4 +188,61 @@ public class LoginService {
         log.info("返回的数据为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
         return JSON.toJSONString(responseData);
     }
+
+    /**
+     * 查询个人其它信息.
+     */
+    public String queryPerInfoService(String openId) {
+
+        // 查询参数
+        Map<String, Object> param = new HashMap<>();
+        param.put("openid", openId);
+        Map<String, String> perInfo = this.loginRepository.getWxUserCnt(param);
+
+        // 返回报文
+        WebResponse<LoginResponse> responseData = new WebResponse<>();
+        LoginResponse loginResponse = new LoginResponse();
+        responseData.setResponse(loginResponse);
+
+        // 返回数据
+        loginResponse.setLearncountry(perInfo.get("learn_country"));
+        loginResponse.setMajor(perInfo.get("major"));
+        loginResponse.setEmail(perInfo.get("email"));
+
+        // 返回
+        log.info("返回的数据为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
+        return JSON.toJSONString(responseData);
+    }
+
+    /**
+     * 保存个人信息.
+     */
+    public String savePerInfoService(LoginRequest requestData) {
+
+        // 参数
+        Map<String, String> param = new HashMap<>();
+        param.put("openid", requestData.getOpenId());
+        param.put("major", requestData.getMajor());
+        param.put("learncountry", requestData.getLearnCountry());
+        param.put("email", requestData.getEmail());
+
+        // 查询是否完善
+        Map<String, String> perFlag = this.loginRepository.getWxUserPerFlagByOpenId(param);
+        log.info("openid[{}]查询出的个人信息是否完善结果为：\n{}", requestData.getOpenId(),
+                JSON.toJSONString(perFlag, SerializerFeature.PrettyFormat));
+
+        // 更新
+        this.loginRepository.updWxUserPerInfo(param);
+
+        if (!perFlag.get("perflag").equals("1")) {
+            log.info("赠送[{}]个免费查重检测优惠券.", requestData.getOpenId());
+            // 赠送1个免费查重检测优惠券
+            this.loginAsync.addTurnitinCoupon(requestData.getOpenId());
+        } else {
+            log.info("[{}]个人信息已完善!", requestData.getOpenId());
+        }
+
+        // 返回
+        return new SysResponse("保存成功").toJsonString();
+    }
 }

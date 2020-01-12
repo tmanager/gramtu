@@ -73,4 +73,14 @@ public class LoginRequest extends BaseRequest {
 
     // 加密算法的初始向量
     private String iv = "";
+
+    // 所在留学的国家
+    @Value("${learncountry}")
+    private String learnCountry = "";
+
+    // 专业
+    private String major = "";
+
+    // email
+    private String email = "";
 }

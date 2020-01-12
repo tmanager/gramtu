@@ -29,6 +29,8 @@
             ,a.pdfreporturl
             ,a.htmlreporturl
             ,b.email
+            ,a.checktype
+            ,b.openid
         FROM
             g_order a
         LEFT JOIN

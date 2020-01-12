@@ -76,7 +76,7 @@ public class LoginController {
     public String queryUserMark(@RequestBody String requestParam) {
         log.info("小程序查询个人积分开始................");
 
-        log.info("更新用户信息请求参数为：{}", requestParam);
+        log.info("小程序查询个人积分请求参数为：{}", requestParam);
         WebRequest<LoginRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<LoginRequest>>() {
         });
 
@@ -85,6 +85,48 @@ public class LoginController {
         log.info("返回小程序查询个人积分的数据为:\n{}", responseData);
 
         log.info("小程序查询个人积分结束................");
+
+        // 返回
+        return responseData;
+    }
+
+    /**
+     * 查询个人信息.
+     */
+    @RequestMapping("/user/perinfo")
+    public String queryPerInfo(@RequestBody String requestParam) {
+        log.info("小程序查询个人信息开始................");
+
+        log.info("小程序查询个人信息请求参数为：{}", requestParam);
+        WebRequest<LoginRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<LoginRequest>>() {
+        });
+
+        // 查询数据
+        String responseData = this.loginService.queryPerInfoService(requestData.getRequest().getOpenId());
+        log.info("返回小程序查询个人信息的数据为:\n{}", responseData);
+
+        log.info("小程序查询个人信息结束................");
+
+        // 返回
+        return responseData;
+    }
+
+    /**
+     * 保存个人信息.
+     */
+    @RequestMapping("/user/saveperinfo")
+    public String savePerInfo(@RequestBody String requestParam) {
+        log.info("小程序保存个人信息开始................");
+
+        log.info("小程序保存个人信息请求参数为：{}", requestParam);
+        WebRequest<LoginRequest> requestData = JSON.parseObject(requestParam, new TypeReference<WebRequest<LoginRequest>>() {
+        });
+
+        // 查询数据
+        String responseData = this.loginService.savePerInfoService(requestData.getRequest());
+        log.info("返回小程序保存个人信息的数据为:\n{}", responseData);
+
+        log.info("小程序保存个人信息结束................");
 
         // 返回
         return responseData;

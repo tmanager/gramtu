@@ -27,7 +27,10 @@ public class LoginAsync {
     private LoginRepository loginRepository;
 
     // 语法查重优惠券ID
-    private String COUPON_ID = "31b6cf012f9911eaa6c300163e0bcfd2";
+    private String GRAMMARLY_ID = "31b6cf012f9911eaa6c300163e0bcfd2";
+
+    // 查重优惠券ID
+    private String TURNITIN_ID = "389e0e772f9911eaa6c300163e0bcfd2";
 
     /**
      * 赠送2个语法免费检测优惠券
@@ -45,7 +48,7 @@ public class LoginAsync {
                 // openid
                 param.put("openid", openId);
                 // 优惠券ID
-                param.put("couponid", COUPON_ID);
+                param.put("couponid", GRAMMARLY_ID);
                 // 更新时间
                 param.put("updtime", DateTimeUtil.getTimeformat());
                 // 来源
@@ -63,5 +66,32 @@ public class LoginAsync {
         }
 
         log.info("新用户赠送2个语法免费检测优惠券结束..............");
+    }
+
+    /**
+     * 赠送1个查重免费检测优惠券
+     */
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    public void addTurnitinCoupon(String openId) {
+        log.info("完善信息后赠送1个查重免费检测优惠券开始..............");
+
+        Map<String, String> param = new HashMap<>();
+        // id
+        param.put("id", CommonUtil.getUUid());
+        // openid
+        param.put("openid", openId);
+        // 优惠券ID
+        param.put("couponid", TURNITIN_ID);
+        // 更新时间
+        param.put("updtime", DateTimeUtil.getTimeformat());
+        // 来源
+        param.put("couponsource", "0");
+        // 状态
+        param.put("couponstatus", "0");
+        int cnt = this.loginRepository.insWxUserCoupon(param);
+        log.info("新增语法免费检测优惠券结果为：{}", cnt);
+
+        log.info("完善信息后赠送1个查重免费检测优惠券结束..............");
     }
 }

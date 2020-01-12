@@ -36,4 +36,14 @@ public interface LoginRepository {
      * 新增优惠券.
      */
     int insWxUserCoupon(Map<String, String> param);
+
+    /**
+     * 查询个人信息是否完善.
+     */
+    Map<String, String> getWxUserPerFlagByOpenId(Map<String, String> param);
+
+    /**
+     * 完善个人信息.
+     */
+    int updWxUserPerInfo(Map<String, String> param);
 }
