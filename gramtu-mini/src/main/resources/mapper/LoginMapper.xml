@@ -115,6 +115,7 @@
              learn_country = #{learncountry}
             ,major = #{major}
             ,email = #{email}
+            ,perflag = '1'
         WHERE
             openid = #{openid}
     </update>

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -111,30 +112,34 @@ public class WeixinPayAsync {
      */
     @Async
     @Transactional(rollbackFor = Exception.class)
-    public void submitThesis(String tradeNo) {
+    public void submitThesis(String tradeNo) throws Exception {
 
         // 查询订单信息
         Map<String, String> param = new HashMap<>();
         param.put("tradeno", tradeNo);
-        Map<String, String> orderInfo = this.weixinPayRepository.getOrderInfoByTradeno(param);
-        if (orderInfo == null) {
+        List<Map<String, String>> orderInfoList = this.weixinPayRepository.getOrderInfoByTradeno(param);
+        if (orderInfoList == null) {
             log.error(">>>>>>>>>>>>>>商户订单号[{}]未找到,请联系管理员!!!>>>>>>>>>>>>>>", tradeNo);
         }
-        log.info("商户订单号[{}]的信息为：\n{}", tradeNo, JSON.toJSONString(orderInfo, SerializerFeature.PrettyFormat));
+        log.info("商户订单号[{}]的信息为：\n{}", tradeNo, JSON.toJSONString(orderInfoList, SerializerFeature.PrettyFormat));
 
-        // 判断提交的类型
-        String checkType = orderInfo.get("checktype");
-        if (checkType.equals(CheckType.TURNITIN.getValue())) {
-            // 国际版
-            this.submitInThesis(orderInfo);
-        } else if (checkType.equals(CheckType.TURNITINUK.getValue())) {
-            // UK版
-            this.submitUKThesis(orderInfo);
-        } else if (checkType.equals(CheckType.GRAMMARLY.getValue())) {
-            // Grammarly
+        for (Map<String, String> orderInfo : orderInfoList) {
+            // 判断提交的类型
+            String checkType = orderInfo.get("checktype");
+            if (checkType.equals(CheckType.TURNITIN.getValue())) {
+                // 国际版
+                this.submitInThesis(orderInfo);
+            } else if (checkType.equals(CheckType.TURNITINUK.getValue())) {
+                // UK版
+                this.submitUKThesis(orderInfo);
+            } else if (checkType.equals(CheckType.GRAMMARLY.getValue())) {
+                // Grammarly
 
-        } else {
-            log.error("提交类型不符合,无法检测!!!");
+            } else {
+                log.error("提交类型不符合,无法检测!!!");
+            }
+
+            Thread.sleep(500);
         }
     }
 
