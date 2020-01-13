@@ -45,6 +45,12 @@ public class ResponseTurnitinBean {
     // 重复率
     private String rate = "";
 
+    // pdf路径
+    private String pdfReportUrl = "";
+
+    // html路径
+    private String htmlReportUrl = "";
+
     /**
      * 构造方法1.
      */

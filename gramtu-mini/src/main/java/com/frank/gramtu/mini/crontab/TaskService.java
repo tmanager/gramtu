@@ -8,6 +8,7 @@ import com.frank.gramtu.core.bean.ResponseTurnitinBean;
 import com.frank.gramtu.core.bean.TurnitinConst;
 import com.frank.gramtu.core.fdfs.FdfsUtil;
 import com.frank.gramtu.core.redis.RedisService;
+import com.frank.gramtu.core.rmq.RmqService;
 import com.frank.gramtu.core.utils.SocketClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class TaskService {
 
     @Autowired
     private FdfsUtil fdfsUtil;
+
+    @Autowired
+    private RmqService rmqService;
 
     @Autowired
     private RedisService redisService;
@@ -70,8 +74,9 @@ public class TaskService {
         // 设置参数
         turnBean.setThesisId(thesisId);
         // 调用Socket
-        String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
-                "03" + JSONObject.toJSONString(turnBean));
+        //String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
+        //        "03" + JSONObject.toJSONString(turnBean));
+        String result = this.rmqService.rpcToTurnitin("03" + JSONObject.toJSONString(turnBean));
         ResponseTurnitinBean responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
         log.info("调用Socket Server返回的结果为：\n{}", JSON.toJSONString(responseTurnitinBean, SerializerFeature.PrettyFormat));
 
@@ -93,24 +98,24 @@ public class TaskService {
         }
 
         // html报告路径
-        String htmlReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".html";
+        //String htmlReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".html";
         // pdf报告路径
-        String pdfReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".pdf";
+        //String pdfReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".pdf";
         // 重复率
         String rate = responseTurnitinBean.getRate();
 
-        log.info("上传html报告至FDFS");
-        String htmlreporturl = this.fdfsUtil.uploadLocalFile(new File(htmlReport));
+        //log.info("上传html报告至FDFS");
+        //String htmlreporturl = this.fdfsUtil.uploadLocalFile(new File(htmlReport));
 
-        log.info("上传pdf报告至FDFS");
-        String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
+        //log.info("上传pdf报告至FDFS");
+        //String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
 
         // 更新订单状态
         param.put("status", "4");
         param.put("comment", "检测完成");
         param.put("rate", rate);
-        param.put("htmlreporturl", htmlreporturl);
-        param.put("pdfreporturl", pdfreporturl);
+        //param.put("htmlreporturl", htmlreporturl);
+        //param.put("pdfreporturl", pdfreporturl);
         this.updOrderStatusById(param);
 
         // TODO:发送小程序模版消息
@@ -145,8 +150,9 @@ public class TaskService {
         // 设置参数
         turnBean.setThesisId(thesisId);
         // 调用Socket
-        String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
-                "13" + JSONObject.toJSONString(turnBean));
+        //String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
+        //        "13" + JSONObject.toJSONString(turnBean));
+        String result = this.rmqService.rpcToTurnitin("13" + JSONObject.toJSONString(turnBean));
         ResponseTurnitinBean responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
         log.info("调用Socket Server返回的结果为：\n{}", JSON.toJSONString(responseTurnitinBean, SerializerFeature.PrettyFormat));
 

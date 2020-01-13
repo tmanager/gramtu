@@ -7,10 +7,10 @@ import com.frank.gramtu.core.bean.RequestTurnitinBean;
 import com.frank.gramtu.core.bean.ResponseTurnitinBean;
 import com.frank.gramtu.core.bean.TurnitinConst;
 import com.frank.gramtu.core.redis.RedisService;
+import com.frank.gramtu.core.rmq.RmqService;
 import com.frank.gramtu.core.utils.CommonUtil;
 import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.core.utils.FileUtils;
-import com.frank.gramtu.core.utils.SocketClient;
 import com.frank.gramtu.mini.constant.CheckType;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +35,9 @@ import java.util.Map;
 @Slf4j
 @Component
 public class WeixinPayAsync {
+
+    @Autowired
+    private RmqService rmqService;
 
     @Autowired
     private RedisService redisService;
@@ -138,8 +141,6 @@ public class WeixinPayAsync {
             } else {
                 log.error("提交类型不符合,无法检测!!!");
             }
-
-            Thread.sleep(500);
         }
     }
 
@@ -157,21 +158,23 @@ public class WeixinPayAsync {
             // 保存论文信息
             String thesisName = orderInfo.get("orderid") + "." + orderInfo.get("ext");
             log.info("保存的论文名称为：[{}]", thesisName);
-            boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
-            if (!dowloadResult) {
-                log.error("从FDFS下载论文时异常");
-                return;
-            }
+            //boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
+            //if (!dowloadResult) {
+            //    log.error("从FDFS下载论文时异常");
+            //    return;
+            //}
 
             // 设置参数
             turnBean.setFirstName(orderInfo.get("firstname"));
             turnBean.setLastName(orderInfo.get("lastname"));
             turnBean.setTitle(orderInfo.get("titile"));
             turnBean.setThesisName(thesisName);
+            turnBean.setOriginalurl(orderInfo.get("originalurl"));
 
             // 调用Socket
-            String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
-                    "02" + JSONObject.toJSONString(turnBean));
+            //String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
+            //        "02" + JSONObject.toJSONString(turnBean));
+            String result = this.rmqService.rpcToTurnitin("02" + JSONObject.toJSONString(turnBean));
             ResponseTurnitinBean responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
             log.info("调用Socket Server返回的结果为：\n{}", JSON.toJSONString(responseTurnitinBean, SerializerFeature.PrettyFormat));
 
@@ -207,21 +210,23 @@ public class WeixinPayAsync {
             // 保存论文信息
             String thesisName = orderInfo.get("orderid") + "." + orderInfo.get("ext");
             log.info("保存的论文名称为：[{}]", thesisName);
-            boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
-            if (!dowloadResult) {
-                log.error("从FDFS下载论文时异常");
-                return;
-            }
+            //boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
+            //if (!dowloadResult) {
+            //    log.error("从FDFS下载论文时异常");
+            //    return;
+            //}
 
             // 设计参数
             turnBean.setFirstName(orderInfo.get("firstname"));
             turnBean.setLastName(orderInfo.get("lastname"));
             turnBean.setTitle(orderInfo.get("titile"));
             turnBean.setThesisName(thesisName);
+            turnBean.setOriginalurl(orderInfo.get("originalurl"));
 
             // 调用Socket
-            String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
-                    "12" + JSONObject.toJSONString(turnBean));
+            //String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
+            //        "12" + JSONObject.toJSONString(turnBean));
+            String result = this.rmqService.rpcToTurnitin("12" + JSONObject.toJSONString(turnBean));
             ResponseTurnitinBean responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
             log.info("调用Socket Server返回的结果为：\n{}", JSON.toJSONString(responseTurnitinBean, SerializerFeature.PrettyFormat));
 

@@ -46,7 +46,7 @@ public class TaskCrontab {
                 log.info("获取的国际版下载报告的信息为：\n{}", JSON.toJSONString(dataList, SerializerFeature.PrettyFormat));
                 for (Map<String, String> dataMap : dataList) {
                     // 异步执行下载报告并上传
-                    if(!dataMap.get("thesisid").isEmpty()) {
+                    if (!dataMap.get("thesisid").isEmpty()) {
                         Future<String> task = this.taskService.getReport(dataMap.get("id"), dataMap.get("thesisid"));
                         Thread.sleep(1000L);
                     }
@@ -75,7 +75,7 @@ public class TaskCrontab {
                 log.info("获取的UK版下载报告的信息为：\n{}", JSON.toJSONString(dataList, SerializerFeature.PrettyFormat));
                 for (Map<String, String> dataMap : dataList) {
                     // 异步执行下载报告并上传
-                    if(!dataMap.get("thesisid").isEmpty()) {
+                    if (!dataMap.get("thesisid").isEmpty()) {
                         Future<String> task = this.taskService.getReportUK(dataMap.get("id"), dataMap.get("thesisid"));
                         Thread.sleep(1000L);
                     }

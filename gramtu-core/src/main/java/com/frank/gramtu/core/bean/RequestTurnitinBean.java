@@ -64,4 +64,7 @@ public class RequestTurnitinBean {
 
 	// 报告在B电脑上的FTP路径
 	private String reportVpnFtpPath = "";
+
+	// FDFS论文路径
+	private String originalurl = "";
 }

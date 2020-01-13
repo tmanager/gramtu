@@ -34,4 +34,19 @@ public class RmqService {
         return response;
         //this.rabbitTemplate.convertAndSend(RmqConst.QUEUE_NAME_GRAMMARLY_CLIENT, msg);
     }
+
+    /**
+     * 发送exchange消息.
+     */
+    public String rpcToTurnitin(String msg) {
+        log.info("*****************发送给grammarly的消息为：[{}]*****************", msg);
+
+        // 发送消息
+        Object response = this.rabbitTemplate.convertSendAndReceive(
+                RmqConst.QUEUE_NAME_TURNITIN_CLIENT,
+                RmqConst.TOPIC_QUEUE, msg);
+        log.info("*****************发送给turnitin的返回消息为：[{}]*****************", response);
+
+        return response.toString();
+    }
 }

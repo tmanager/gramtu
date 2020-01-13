@@ -28,6 +28,9 @@ public class WeixinPayController {
     @Autowired
     private WeixinPayService weixinPayService;
 
+    @Autowired
+    private WeixinPayAsync weixinPayAsync;
+
     /**
      * 统一下单.
      */

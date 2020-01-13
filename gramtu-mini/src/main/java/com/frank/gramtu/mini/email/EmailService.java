@@ -35,6 +35,8 @@ public class EmailService {
     @Autowired
     private EmailRepository emailRepository;
 
+    private String LOCAL_TEMP_PATH = "/home/gramtu/tmp";
+
     /**
      * 发送邮件.
      */
@@ -61,14 +63,14 @@ public class EmailService {
                 RequestTurnitinBean.class);
         String pdfReportFile = requestData.getTitle() + "_report.pdf";
         log.info("下载的报告名称为：{}", pdfReportFile);
-        boolean downLoad = FileUtils.downloadFromHttpUrl(requestData.getPdfReportUrl(), turnUKBean.getReportVpnPath(), pdfReportFile);
+        boolean downLoad = FileUtils.downloadFromHttpUrl(requestData.getPdfReportUrl(), LOCAL_TEMP_PATH, pdfReportFile);
         if (!downLoad) {
             log.error("从FDFS下载PDF报告时出错!");
             return new SysErrResponse("发送异常,请联系客服!").toJsonString();
         }
 
         // 发送邮件
-        String pdfReportFileFullPath = turnUKBean.getReportVpnPath() + File.separator + pdfReportFile;
+        String pdfReportFileFullPath = LOCAL_TEMP_PATH + File.separator + pdfReportFile;
         boolean sendResult = GramtuMailUtil.sendMail(subject, requestData.getEMail(), pdfReportFileFullPath);
         if (!sendResult) {
             log.error("发送邮件时异常!");

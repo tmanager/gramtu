@@ -9,7 +9,11 @@ import com.frank.gramtu.core.bean.TurnitinConst;
 import com.frank.gramtu.core.redis.RedisService;
 import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.core.utils.*;
+import com.frank.gramtu.core.rmq.RmqService;
+import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
+import com.frank.gramtu.core.utils.FileUtils;
+import com.frank.gramtu.core.utils.IdGeneratorUtils;
 import com.frank.gramtu.mini.constant.CheckType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +35,9 @@ import java.util.Map;
 @Slf4j
 @Service
 public class BusinessService {
+
+    @Autowired
+    private RmqService rmqService;
 
     @Autowired
     private RedisService redisService;
@@ -113,30 +120,55 @@ public class BusinessService {
         Map<String, String> feeInfo = this.businessRepository.getFeeInfo();
         log.info("查询出的价格信息为：\n{}", JSON.toJSONString(feeInfo, SerializerFeature.PrettyFormat));
 
-        // 加载turnitin国际版账户信息
-        RequestTurnitinBean turnBean = JSONObject.parseObject(this.redisService.getStringValue(TurnitinConst.TURN_IN_KEY),
-                RequestTurnitinBean.class);
-        log.info("查询出的国际版账户信息为：\n{}", JSON.toJSONString(turnBean, SerializerFeature.PrettyFormat));
+        RequestTurnitinBean turnBean;
+        if (orderInfo.get("checktype").equals(CheckType.TURNITIN.getValue())) {
+            // 加载turnitin国际版账户信息
+            turnBean = JSONObject.parseObject(this.redisService.getStringValue(TurnitinConst.TURN_IN_KEY),
+                    RequestTurnitinBean.class);
+            log.info("查询出的国际版账户信息为：\n{}", JSON.toJSONString(turnBean, SerializerFeature.PrettyFormat));
+        } else {
+            // 加载UK版
+            turnBean = JSONObject.parseObject(this.redisService.getStringValue(TurnitinConst.TURN_UK_KEY),
+                    RequestTurnitinBean.class);
+            log.info("查询出的UK版账户信息为：\n{}", JSON.toJSONString(turnBean, SerializerFeature.PrettyFormat));
+        }
 
         // 保存论文信息
         String thesisName = orderInfo.get("orderid") + "." + orderInfo.get("ext");
         log.info("保存的论文名称为：[{}]", thesisName);
-        boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
-        if (!dowloadResult) {
-            this.removeOrderByOrderId(param);
-            return new SysErrResponse("从FDFS下载论文时异常").toJsonString();
-        }
+        //boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
+        //if (!dowloadResult) {
+        //    this.removeOrderByOrderId(param);
+        //    return new SysErrResponse("从FDFS下载论文时异常").toJsonString();
+        //}
 
         // 设计参数
-        turnBean.setFirstName(orderInfo.get("firstname"));
-        turnBean.setLastName(orderInfo.get("lastname"));
-        turnBean.setTitle(orderInfo.get("titile"));
+        if (orderInfo.get("checktype").equals(CheckType.GRAMMARLY.getValue())) {
+            turnBean.setFirstName("grammarly");
+            turnBean.setLastName("grammarly");
+            turnBean.setTitle("grammarly");
+        } else {
+            turnBean.setFirstName(orderInfo.get("firstname"));
+            turnBean.setLastName(orderInfo.get("lastname"));
+            turnBean.setTitle(orderInfo.get("titile"));
+        }
         turnBean.setThesisName(thesisName);
+        turnBean.setOriginalurl(orderInfo.get("originalurl"));
 
-        // 调用Socket
-        String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
-                "04" + JSONObject.toJSONString(turnBean));
-        ResponseTurnitinBean responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
+        // 调用Socket服务
+        String result;
+        ResponseTurnitinBean responseTurnitinBean;
+
+        if (orderInfo.get("checktype").equals(CheckType.TURNITIN.getValue())) {
+            //result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
+            //        "04" + JSONObject.toJSONString(turnBean));
+            result = this.rmqService.rpcToTurnitin("04" + JSONObject.toJSONString(turnBean));
+        } else {
+            //result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
+            //        "14" + JSONObject.toJSONString(turnBean));
+            result = this.rmqService.rpcToTurnitin("14" + JSONObject.toJSONString(turnBean));
+        }
+        responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
         log.info("调用Socket Server返回的结果为：\n{}", JSON.toJSONString(responseTurnitinBean, SerializerFeature.PrettyFormat));
 
         // 输出日志
