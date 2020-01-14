@@ -149,9 +149,6 @@ public class TaskService {
 
         // 设置参数
         turnBean.setThesisId(thesisId);
-        // 调用Socket
-        //String result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
-        //        "13" + JSONObject.toJSONString(turnBean));
         String result = this.rmqService.rpcToTurnitin("13" + JSONObject.toJSONString(turnBean));
         ResponseTurnitinBean responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);
         log.info("调用Socket Server返回的结果为：\n{}", JSON.toJSONString(responseTurnitinBean, SerializerFeature.PrettyFormat));
@@ -199,6 +196,59 @@ public class TaskService {
 
         long end = Calendar.getInstance().getTimeInMillis();
         return new AsyncResult<>(String.format("UK版检测报告下载,论文ID[%s],共耗时[%s]毫秒", thesisId, end - start));
+    }
+
+    /**
+     * 异步下载Grammarly报告.
+     */
+    @Async("taskExecutor")
+    public Future<String> getReportGrammarly(String id, String orderId) throws Exception {
+        log.info("Grammarly检测报告开始下载,订单ID[{}].....................", orderId);
+        Map<String, String> param = new HashMap<>();
+
+        // 增加线程名称
+        Thread.currentThread().setName(orderId);
+        long start = Calendar.getInstance().getTimeInMillis();
+
+        // 将状态更新为3:报告下载中
+        param.put("id", id);
+        param.put("status", "3");
+        param.put("comment", "报告下载中");
+        this.updOrderStatusById(param);
+
+        // 发送取报告
+        Map<String, String> grammarlyParam = new HashMap<>();
+        grammarlyParam.put("jym", "jy_02");
+        grammarlyParam.put("ddbh", orderId);
+        String result = this.rmqService.rpcToGrammarly(JSON.toJSONString(grammarlyParam));
+        log.info("调用rmq获取grammarly报告的结果为：[{}]", result);
+        if (!result.equals("0000")) {
+            log.error("下载失败,等待下载次下载!");
+            // 下载失败后状态修改02：检测中等待下次
+            param.put("status", "2");
+            param.put("comment", "下载报告时失败，等待下次下载");
+            this.updOrderStatusById(param);
+
+            long end = Calendar.getInstance().getTimeInMillis();
+            return new AsyncResult<>(String.format("Grammarly检测报告下载,订单ID[%s],共耗时[%s]毫秒", orderId, end - start));
+        }
+
+        // PDF报告
+        String pdfReport = "/home/gramtu/tmp/grammarly/" + orderId + ".pdf";
+
+        log.info("上传pdf报告至FDFS");
+        String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
+
+        // 更新订单状态
+        param.put("status", "4");
+        param.put("comment", "检测完成");
+        param.put("pdfreporturl", pdfreporturl);
+        this.updOrderStatusById(param);
+
+        // TODO:发送小程序模版消息
+
+        long end = Calendar.getInstance().getTimeInMillis();
+        return new AsyncResult<>(String.format("Grammarly检测报告下载,订单ID[%s],共耗时[%s]毫秒", orderId, end - start));
     }
 
     /**
