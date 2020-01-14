@@ -218,11 +218,11 @@ public class CouponService {
         }
 
         //获取已使用个数
-        String useNumbers = this.couponRepository.getUseNumbers(requestData.getRequest().getId());
-        if (StringUtils.isEmpty(useNumbers))
+        int chkUseNumbers = this.couponRepository.chkUseNumbers(requestData.getRequest().getId());
+        if (chkUseNumbers == 0)
         {
-            // 使用个数获取不到时，说明使用个数已经达到了发行个数。不能进行赠送
-            return new SysResponse("0002","赠送数量已经超出发行个数！").toJsonString();
+            // 所赠送的优惠券的状态不能进行赠送
+            return new SysResponse("0002","所选优惠券不能进行赠送！").toJsonString();
         }
 
         // 参数

@@ -64,9 +64,9 @@ public interface CouponRepository {
     String getOpenid(String phone);
 
     /**
-     * 获取已使用个数
+     * 校验是否还能赠送
      */
-    String getUseNumbers(String couponid);
+    int chkUseNumbers(String couponid);
 
     /**
      * 更新使用个数.

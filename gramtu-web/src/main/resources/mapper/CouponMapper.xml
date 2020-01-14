@@ -200,15 +200,15 @@
             pure_phone_number = #{phone}
     </select>
 
-    <!-- 获取已使用个数 -->
-    <select id="getUseNumbers" parameterType="String" resultType="String">
+    <!-- 校验是否还能赠送 -->
+    <select id="chkUseNumbers" parameterType="String" resultType="int">
         SELECT
-            usenumbers
+            count(id)
         FROM
             g_coupon
         WHERE
             id = #{couponid}
-            and usenumbers &lt; numbers
+            and status = '0'
     </select>
 
     <!-- 使用个数更新 -->
