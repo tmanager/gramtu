@@ -24,6 +24,11 @@ public interface CouponRepository {
     List<Map<String, String>> getCouponList(Map<String, Object> param);
 
     /**
+     * 根据openid查询可用优惠券数量.
+     */
+    int getCouponListCnt(Map<String, Object> param);
+
+    /**
      * 判断转赠人的手机号是否存在.
      */
     Map<String, String> wxUserPhoneExists(Map<String, String> param);

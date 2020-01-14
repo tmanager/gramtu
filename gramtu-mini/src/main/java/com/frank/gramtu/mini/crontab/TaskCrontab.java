@@ -2,11 +2,13 @@ package com.frank.gramtu.mini.crontab;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.frank.gramtu.core.rmq.RmqService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -22,6 +24,9 @@ import java.util.concurrent.Future;
 @Slf4j
 @Component
 public class TaskCrontab {
+
+    @Autowired
+    private RmqService rmqService;
 
     @Autowired
     private TaskService taskService;
@@ -87,4 +92,36 @@ public class TaskCrontab {
         }
     }
 
+    /**
+     * 将失败的Grammarly
+     */
+    @Scheduled(cron = "0 0/2 * * * ?")
+    public void submitGrammarly() {
+        log.info("..................开始执行获失败的Grammarly订单定时任务..................");
+        List<Map<String, String>> grammarlyList = this.taskRepository.getFailureOrderList();
+        if (grammarlyList.size() == 0) {
+            log.info("没有失败的Grammarly订单!");
+        } else {
+            grammarlyList.forEach(
+                    orderInfo -> {
+                        Map<String, String> param = new HashMap<>();
+                        param.put("jym", "jy_01");
+                        param.put("ddbh", orderInfo.get("orderid"));
+                        param.put("ext", orderInfo.get("ext"));
+                        param.put("file_url", orderInfo.get("originalurl"));
+                        param.put("result_path", "/home/gramtu/tmp/grammarly/" + orderInfo.get("orderid") + ".pdf");
+                        // 调用RabbitMQ
+                        String result = String.valueOf(this.rmqService.rpcToGrammarly(JSON.toJSONString(param)));
+                        log.info("发送Grammarly消息的结果为：[{}]", result);
+
+                        if(result.equals("0000")) {
+                            // 删除失败订单
+                            Map<String, String> param3 = new HashMap<>();
+                            param3.put("orderid", orderInfo.get("orderid"));
+                            this.taskRepository.delFailureOrder(param3);
+                        }
+                    }
+            );
+        }
+    }
 }

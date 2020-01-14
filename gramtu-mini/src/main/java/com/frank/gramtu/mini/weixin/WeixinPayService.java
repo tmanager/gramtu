@@ -3,6 +3,7 @@ package com.frank.gramtu.mini.weixin;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.frank.gramtu.core.response.SysErrResponse;
+import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.CommonUtil;
 import com.frank.gramtu.core.utils.IdGeneratorUtils;
@@ -63,89 +64,115 @@ public class WeixinPayService implements InitializingBean {
     @Transactional(rollbackFor = Exception.class)
     public String unifiedOrderService(WeixinPayRequest requestData) throws Exception {
 
-        // 返回报文.
-        Map<String, String> rspMap = new HashMap<>();
-
-        // 请求参数
-        WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-        // 公众账号ID
-        orderRequest.setAppid(this.wxPayConfigBean.getAppID());
-        // 商户号
-        orderRequest.setMchId(this.wxPayConfigBean.getMchId());
-        // 随机字符串
-        String nonceStr = CommonUtil.getUUid();
-        orderRequest.setNonceStr(nonceStr);
-        // 商品描述
-        orderRequest.setBody("查重费用");
-
-        // 商户订单号
-        IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils(0, 0);
-        String tradeNo = String.valueOf(idGeneratorUtils.nextId());
-        log.info("微信支付下单商户订单号为：" + tradeNo);
-        orderRequest.setOutTradeNo(tradeNo);
-
-        // 金额
+        // 支付金额
         DecimalFormat df = new DecimalFormat("#");
         String amount = String.valueOf(df.format(Double.valueOf(requestData.getAmount()) * 100));
         log.info("支付金额为：{}", amount);
-        // TODO：标价金额
-        //orderRequest.setTotalFee(Integer.valueOf(amount));
-        orderRequest.setTotalFee(Integer.valueOf("1"));
 
-        // 终端IP
-        String ip = "127.0.0.1";
-        log.info("取得的终端IP为：" + ip);
-        orderRequest.setSpbillCreateIp(ip);
-        // 通知地址
-        orderRequest.setNotifyUrl(this.wxPayConfigBean.getNotifyUrl());
-        // 交易类型
-        orderRequest.setTradeType("JSAPI");
-        // 用户标识
-        orderRequest.setOpenid(requestData.getOpenId());
+        // 订单金额为0时直接发起异步检测
+        if (amount.equals("0")) {
+            // 修改原订单状态为2:已支付
+            Map<String, String> param = new HashMap<>();
+            param.put("orderid", requestData.getOrderIdList()[0]);
+            param.put("status", "2");
+            int cnt = this.weixinPayRepository.updOrderByOrderId(param);
+            log.info("更新订单状态为已支付的结果为:[{}]", cnt);
 
-        // 调用服务
-        WxPayService wxPayService = new WxPayServiceImpl();
-        wxPayService.setConfig(this.wxPayConfig);
-        // 后台请求
-        WxPayUnifiedOrderResult orderResult = wxPayService.unifiedOrder(orderRequest);
-        log.info("统一下载返回的信息为：\n{}", JSON.toJSONString(orderRequest, SerializerFeature.PrettyFormat));
+            // 发起异步检测
+            log.info("发起异步检测....................");
+            this.weixinPayAsync.submitThesisByOrderId(requestData.getOrderIdList());
 
-        if (orderResult.getReturnCode().equals("SUCCESS") && orderResult.getResultCode().equals("SUCCESS")) {
-            // 下单成功
-            log.info("微信支付统一下单成功");
+            // 优惠券核销
+            log.info("发起异步优惠券核销................");
+            this.weixinPayAsync.writeOffCouponByCouponId(requestData.getCoupId());
 
-            // 返回值
-            WebResponse<WeixinPayResponse> responseData = new WebResponse<>();
-            WeixinPayResponse weixinPayResponse = new WeixinPayResponse();
-            weixinPayResponse.setNoncestr(nonceStr);
-            // 获取时间戳除以千变字符串
-            Long s = System.currentTimeMillis() / 1000;
-            String timeStamp = String.valueOf(s);
-            weixinPayResponse.setTimestamp(timeStamp);
-            weixinPayResponse.setPaypackage("prepay_id=" + orderResult.getPrepayId());
-
-            // 二次签名
-            Map<String, String> map = new HashMap<>();
-            map.put("appId", this.wxPayConfigBean.getAppID());
-            map.put("timeStamp", timeStamp);
-            map.put("nonceStr", nonceStr);
-            map.put("package", "prepay_id=" + orderResult.getPrepayId());
-            map.put("signType", "MD5");
-            String sign = SignUtils.createSign(map, "MD5", this.wxPayConfigBean.getMchKey(), null);
-            weixinPayResponse.setPaysign(sign);
-
-            // 根据订单号更新支付流程中的商户订单号,订单状态修改为1:待支付
-            this.updOrderByOrderId(requestData.getOrderIdList(), requestData.getCoupId(), tradeNo);
-
-            responseData.setResponse(weixinPayResponse);
-            log.info("返回信息为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
-
-            // 返回
-            return JSON.toJSONString(responseData);
+            // 返回,不支付金额时返回retcode:0001
+            return new SysResponse("0001", "论文开始检测...........").toJsonString();
         } else {
-            // 下单失败
-            log.info("微信支付统一下单失败");
-            return new SysErrResponse("微信支付统一下单失败!").toJsonString();
+            // 返回报文.
+            Map<String, String> rspMap = new HashMap<>();
+
+            // 请求参数
+            WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+            // 公众账号ID
+            orderRequest.setAppid(this.wxPayConfigBean.getAppID());
+            // 商户号
+            orderRequest.setMchId(this.wxPayConfigBean.getMchId());
+            // 随机字符串
+            String nonceStr = CommonUtil.getUUid();
+            orderRequest.setNonceStr(nonceStr);
+            // 商品描述
+            orderRequest.setBody("查重费用");
+
+            // 商户订单号
+            IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils(0, 0);
+            String tradeNo = String.valueOf(idGeneratorUtils.nextId());
+            log.info("微信支付下单商户订单号为：" + tradeNo);
+            orderRequest.setOutTradeNo(tradeNo);
+
+            // 金额
+//            DecimalFormat df = new DecimalFormat("#");
+//            String amount = String.valueOf(df.format(Double.valueOf(requestData.getAmount()) * 100));
+//            log.info("支付金额为：{}", amount);
+            // TODO：标价金额
+            //orderRequest.setTotalFee(Integer.valueOf(amount));
+            orderRequest.setTotalFee(Integer.valueOf("1"));
+
+            // 终端IP
+            String ip = "127.0.0.1";
+            log.info("取得的终端IP为：" + ip);
+            orderRequest.setSpbillCreateIp(ip);
+            // 通知地址
+            orderRequest.setNotifyUrl(this.wxPayConfigBean.getNotifyUrl());
+            // 交易类型
+            orderRequest.setTradeType("JSAPI");
+            // 用户标识
+            orderRequest.setOpenid(requestData.getOpenId());
+
+            // 调用服务
+            WxPayService wxPayService = new WxPayServiceImpl();
+            wxPayService.setConfig(this.wxPayConfig);
+            // 后台请求
+            WxPayUnifiedOrderResult orderResult = wxPayService.unifiedOrder(orderRequest);
+            log.info("统一下载返回的信息为：\n{}", JSON.toJSONString(orderRequest, SerializerFeature.PrettyFormat));
+
+            if (orderResult.getReturnCode().equals("SUCCESS") && orderResult.getResultCode().equals("SUCCESS")) {
+                // 下单成功
+                log.info("微信支付统一下单成功");
+
+                // 返回值
+                WebResponse<WeixinPayResponse> responseData = new WebResponse<>();
+                WeixinPayResponse weixinPayResponse = new WeixinPayResponse();
+                weixinPayResponse.setNoncestr(nonceStr);
+                // 获取时间戳除以千变字符串
+                Long s = System.currentTimeMillis() / 1000;
+                String timeStamp = String.valueOf(s);
+                weixinPayResponse.setTimestamp(timeStamp);
+                weixinPayResponse.setPaypackage("prepay_id=" + orderResult.getPrepayId());
+
+                // 二次签名
+                Map<String, String> map = new HashMap<>();
+                map.put("appId", this.wxPayConfigBean.getAppID());
+                map.put("timeStamp", timeStamp);
+                map.put("nonceStr", nonceStr);
+                map.put("package", "prepay_id=" + orderResult.getPrepayId());
+                map.put("signType", "MD5");
+                String sign = SignUtils.createSign(map, "MD5", this.wxPayConfigBean.getMchKey(), null);
+                weixinPayResponse.setPaysign(sign);
+
+                // 根据订单号更新支付流程中的商户订单号,订单状态修改为1:待支付
+                this.updOrderByOrderId(requestData.getOrderIdList(), requestData.getCoupId(), tradeNo);
+
+                responseData.setResponse(weixinPayResponse);
+                log.info("返回信息为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
+
+                // 返回
+                return JSON.toJSONString(responseData);
+            } else {
+                // 下单失败
+                log.info("微信支付统一下单失败");
+                return new SysErrResponse("微信支付统一下单失败!").toJsonString();
+            }
         }
     }
 
@@ -193,7 +220,7 @@ public class WeixinPayService implements InitializingBean {
 
             // 发起异步检测
             log.info("发起异步检测....................");
-            this.weixinPayAsync.submitThesis(notifyResult.getOutTradeNo());
+            this.weixinPayAsync.submitThesisByTradeNo(notifyResult.getOutTradeNo());
 
             // 增加积分
             log.info("发起异步增加积分..................");
@@ -201,8 +228,7 @@ public class WeixinPayService implements InitializingBean {
 
             // 消费优惠券
             log.info("发起异步优惠券核销................");
-            this.weixinPayAsync.writeOffCoupon(notifyResult.getOutTradeNo());
-
+            this.weixinPayAsync.writeOffCouponByTradeNo(notifyResult.getOutTradeNo());
         } catch (Exception ex) {
             log.info("微信支付异步通知异常：" + ex.getMessage());
         }
@@ -237,9 +263,11 @@ public class WeixinPayService implements InitializingBean {
         Map<String, Object> param = new HashMap<>();
         param.put("openid", requestData.getOpenId());
         // 分页信息
-        param.put("startindex", requestData.getStartindex());
-        param.put("pagesize", requestData.getPagesize());
-        param.put("pagingOrNot", "1");
+        if (requestData.getPagesize() != 0) {
+            param.put("startindex", requestData.getStartindex());
+            param.put("pagesize", requestData.getPagesize());
+            param.put("pagingOrNot", "1");
+        }
 
         // 查询
         List<Map<String, String>> consumeList = this.weixinPayRepository.queryConsumeListByOpenId(param);

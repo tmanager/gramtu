@@ -10,7 +10,6 @@ import com.frank.gramtu.core.redis.RedisService;
 import com.frank.gramtu.core.rmq.RmqService;
 import com.frank.gramtu.core.utils.CommonUtil;
 import com.frank.gramtu.core.utils.DateTimeUtil;
-import com.frank.gramtu.core.utils.FileUtils;
 import com.frank.gramtu.mini.constant.CheckType;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +49,7 @@ public class WeixinPayAsync {
      */
     @Async
     @Transactional(rollbackFor = Exception.class)
-    public void writeOffCoupon(String tradeNo) {
+    public void writeOffCouponByTradeNo(String tradeNo) {
         log.info("商户订单号[{}]核销优惠券开始.................", tradeNo);
 
         try {
@@ -78,6 +77,24 @@ public class WeixinPayAsync {
         }
 
         log.info("商户订单号[{}]核销优惠券结束.................", tradeNo);
+    }
+
+    /**
+     * 根据优惠券ID核销优惠券.
+     */
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    public void writeOffCouponByCouponId(String coupinId) {
+        log.info("优惠券ID[{}]核销开始.................", coupinId);
+
+        Map<String, String> param2 = new HashMap<>();
+        param2.put("couponid", coupinId);
+        param2.put("couponstatus", "1");
+        param2.put("usetime", DateTimeUtil.getTimeformat());
+        int cnt = this.weixinPayRepository.updCouponStatus(param2);
+        log.info("优惠券[{}]更新为已使用,更新结果为:[{}]!", coupinId, cnt);
+
+        log.info("优惠券ID[{}]核销结束.................", coupinId);
     }
 
     /**
@@ -115,7 +132,7 @@ public class WeixinPayAsync {
      */
     @Async
     @Transactional(rollbackFor = Exception.class)
-    public void submitThesis(String tradeNo) throws Exception {
+    public void submitThesisByTradeNo(String tradeNo) throws Exception {
 
         // 查询订单信息
         Map<String, String> param = new HashMap<>();
@@ -137,12 +154,54 @@ public class WeixinPayAsync {
                 this.submitUKThesis(orderInfo);
             } else if (checkType.equals(CheckType.GRAMMARLY.getValue())) {
                 // Grammarly
-
+                this.submitGrammarlyThesis(
+                        orderInfo.get("orderid"),
+                        orderInfo.get("ext"),
+                        orderInfo.get("originalurl"));
             } else {
                 log.error("提交类型不符合,无法检测!!!");
             }
         }
     }
+
+    /**
+     * 发起提交论文异步任务.
+     */
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    public void submitThesisByOrderId(String[] orderIdList) throws Exception {
+
+        // 查询订单信息
+        for (String orderId : orderIdList) {
+            Map<String, String> param = new HashMap<>();
+            param.put("orderid", orderId);
+            Map<String, String> orderInfo = this.weixinPayRepository.getOrderInfoByOrderId(param);
+            if (orderInfo == null) {
+                log.error(">>>>>>>>>>>>>>订单号[{}]未找到,请联系管理员!!!>>>>>>>>>>>>>>", orderId);
+                return;
+            }
+            log.info("订单号[{}]的信息为：\n{}", orderId, JSON.toJSONString(orderInfo, SerializerFeature.PrettyFormat));
+
+            // 判断提交的类型
+            String checkType = orderInfo.get("checktype");
+            if (checkType.equals(CheckType.TURNITIN.getValue())) {
+                // 国际版
+                this.submitInThesis(orderInfo);
+            } else if (checkType.equals(CheckType.TURNITINUK.getValue())) {
+                // UK版
+                this.submitUKThesis(orderInfo);
+            } else if (checkType.equals(CheckType.GRAMMARLY.getValue())) {
+                // Grammarly
+                this.submitGrammarlyThesis(
+                        orderInfo.get("orderid"),
+                        orderInfo.get("ext"),
+                        orderInfo.get("originalurl"));
+            } else {
+                log.error("提交类型不符合,无法检测!!!");
+            }
+        }
+    }
+
 
     /**
      * 提交国际版.
@@ -190,7 +249,7 @@ public class WeixinPayAsync {
             // 论文ID
             String thesisId = responseTurnitinBean.getThesisId();
             // 更新论文ID
-            this.updThesisId(orderInfo.get("tradeno"), thesisId);
+            this.updThesisIdByOrderId(orderInfo.get("orderid"), thesisId);
         } catch (Exception ex) {
             log.error("提交国际版论文异常结束，异常信息为：\n{}", ex.getMessage());
         }
@@ -242,28 +301,55 @@ public class WeixinPayAsync {
             // 论文ID
             String thesisId = responseTurnitinBean.getThesisId();
             // 更新论文ID
-            this.updThesisId(orderInfo.get("tradeno"), thesisId);
+            this.updThesisIdByOrderId(orderInfo.get("orderid"), thesisId);
         } catch (Exception ex) {
             log.error("提交UK版论文异常结束，异常信息为：\n{}", ex.getMessage());
         }
     }
 
     /**
-     * 提交Grammarly语法检测.
+     * 根据支付商户订单号更新论文ID.
      */
-    private void submitGrammarly(Map<String, String> orderInfo) throws Exception {
+    private void updThesisIdByOrderId(String orderid, String thesisId) {
 
+        Map<String, String> param = new HashMap<>();
+        param.put("orderid", orderid);
+        param.put("thesisid", thesisId);
+        int cnt = this.weixinPayRepository.updThesisIdByOrderId(param);
+        log.info("更新论文ID的结果为：[{}]", cnt);
     }
 
     /**
-     * 根据支付商户订单号更新论文ID.
+     * 提交Grammarly语法检测.
      */
-    private void updThesisId(String tradeNo, String thesisId) {
+    private void submitGrammarlyThesis(String orderId, String ext, String originalurl) {
+        log.info("提交Grammarly论文开始......................");
 
-        Map<String, String> param = new HashMap<>();
-        param.put("tradeno", tradeNo);
-        param.put("thesisid", thesisId);
-        int cnt = this.weixinPayRepository.updThesisIdByTradeNo(param);
-        log.info("更新论文ID的结果为：[{}]", cnt);
+        try {
+            Map<String, String> param = new HashMap<>();
+            param.put("jym", "jy_01");
+            param.put("ddbh", orderId);
+            param.put("ext", ext);
+            param.put("file_url", originalurl);
+            param.put("result_path", "/home/gramtu/tmp/grammarly/" + orderId + ".pdf");
+            // 调用RabbitMQ
+            String result = String.valueOf(this.rmqService.rpcToGrammarly(JSON.toJSONString(param)));
+            log.info("发送Grammarly消息的结果为：[{}]", result);
+            if (!result.equals("0000")) {
+                // 记录失败的订单
+                Map<String, String> param2 = new HashMap<>();
+                param2.put("id", CommonUtil.getUUid());
+                param2.put("orderid", orderId);
+                param2.put("updtime", DateTimeUtil.getTimeformat());
+                this.weixinPayRepository.insFailureOrder(param2);
+            } else {
+                // 删除失败订单
+                Map<String, String> param3 = new HashMap<>();
+                param3.put("orderid", orderId);
+                this.weixinPayRepository.delFailureOrder(param3);
+            }
+        } catch (Exception ex) {
+            log.error("提交Grammarly论文异常结束，异常信息为：\n{}", ex.getMessage());
+        }
     }
 }

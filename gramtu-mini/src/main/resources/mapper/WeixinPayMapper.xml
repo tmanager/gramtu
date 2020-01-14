@@ -134,7 +134,7 @@
         </if>
     </select>
     
-    <!-- 查询个人消费记录 -->
+    <!-- 根据支付商户订单号查询订单信息 -->
     <select id="getOrderInfoByTradeno" parameterType="Map" resultType="Map">
     	SELECT
     	     checktype
@@ -150,14 +150,52 @@
     	WHERE
     	    tradeno = #{tradeno}
     </select>
+
+    <!-- 根据订单号查询订单信息 -->
+    <select id="getOrderInfoByOrderId" parameterType="Map" resultType="Map">
+    	SELECT
+    	     checktype
+    	    ,firstname
+    	    ,lastname
+    	    ,titile
+    	    ,originalurl
+    	    ,tradeno
+    	    ,orderid
+    	    ,ext
+    	FROM
+    	    g_order
+    	WHERE
+    	    orderid = #{orderid}
+    </select>
     
     <!-- 据支付商户订单号更新论文ID -->
-    <update id="updThesisIdByTradeNo" parameterType="Map">
+    <update id="updThesisIdByOrderId" parameterType="Map">
         UPDATE
             g_order
         SET
             thesisid = #{thesisid}
         WHERE
-            tradeno = #{tradeno}
+            orderid = #{orderid}
     </update>
+
+    <insert id="insFailureOrder" parameterType="Map">
+        INSERT INTO
+            g_order_failure (
+                 id
+                ,orderid
+                ,updtime
+            )
+        VALUES (
+                 #{id}
+                ,#{orderid}
+                ,#{updtime}
+        )
+    </insert>
+
+    <delete id="delFailureOrder" parameterType="Map">
+        DELETE FROM
+            g_order_failure
+        WHERE
+            orderid = #{orderid}
+    </delete>
 </mapper>

@@ -59,7 +59,22 @@ public interface WeixinPayRepository {
     List<Map<String, String>> getOrderInfoByTradeno(Map<String, String> param);
 
     /**
+     * 根据订单号查询订单信息.
+     */
+    Map<String, String> getOrderInfoByOrderId(Map<String, String> param);
+
+    /**
      * 根据支付商户订单号更新论文ID.
      */
-    int updThesisIdByTradeNo(Map<String, String> param);
+    int updThesisIdByOrderId(Map<String, String> param);
+
+    /**
+     * 增加失败订单.
+     */
+    int insFailureOrder(Map<String, String> param);
+
+    /**
+     * 删除失败订单.
+     */
+    int delFailureOrder(Map<String, String> param);
 }

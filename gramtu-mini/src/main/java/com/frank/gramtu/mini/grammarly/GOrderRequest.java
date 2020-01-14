@@ -1,4 +1,4 @@
-package com.frank.gramtu.mini.torder;
+package com.frank.gramtu.mini.grammarly;
 
 import com.frank.gramtu.core.response.BaseRequest;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class TOrderRequest extends BaseRequest {
+public class GOrderRequest extends BaseRequest {
 
     // 用户openid
     @Value("${openid}")

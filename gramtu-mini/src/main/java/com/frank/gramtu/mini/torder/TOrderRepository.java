@@ -19,4 +19,9 @@ public interface TOrderRepository {
      * 查询价格信息.
      */
     Map<String, String> getFeeInfo();
+
+    /**
+     * 删除订单.
+     */
+    int delTurnitinOrder(Map<String, String> param);
 }

@@ -9,7 +9,6 @@ import com.frank.gramtu.core.bean.TurnitinConst;
 import com.frank.gramtu.core.fdfs.FdfsUtil;
 import com.frank.gramtu.core.redis.RedisService;
 import com.frank.gramtu.core.rmq.RmqService;
-import com.frank.gramtu.core.utils.SocketClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -98,30 +97,31 @@ public class TaskService {
         }
 
         // html报告路径
-        //String htmlReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".html";
+        String htmlReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".html";
         // pdf报告路径
-        //String pdfReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".pdf";
+        String pdfReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".pdf";
         // 重复率
         String rate = responseTurnitinBean.getRate();
 
-        //log.info("上传html报告至FDFS");
-        //String htmlreporturl = this.fdfsUtil.uploadLocalFile(new File(htmlReport));
+        log.info("上传html报告至FDFS");
+        String htmlreporturl = this.fdfsUtil.uploadLocalFile(new File(htmlReport));
 
-        //log.info("上传pdf报告至FDFS");
-        //String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
+        log.info("上传pdf报告至FDFS");
+        String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
+
 
         // 更新订单状态
         param.put("status", "4");
         param.put("comment", "检测完成");
         param.put("rate", rate);
-        //param.put("htmlreporturl", htmlreporturl);
-        //param.put("pdfreporturl", pdfreporturl);
+        param.put("htmlreporturl", htmlreporturl);
+        param.put("pdfreporturl", pdfreporturl);
         this.updOrderStatusById(param);
 
         // TODO:发送小程序模版消息
 
         long end = Calendar.getInstance().getTimeInMillis();
-        return new AsyncResult<>(String.format("国际版检测报告下载并上传,论文ID[%s],共耗时[%s]毫秒", thesisId, end - start));
+        return new AsyncResult<>(String.format("国际版检测报告下载,论文ID[%s],共耗时[%s]毫秒", thesisId, end - start));
     }
 
     /**
@@ -186,6 +186,7 @@ public class TaskService {
         log.info("上传pdf报告至FDFS");
         String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
 
+
         // 更新订单状态
         param.put("status", "4");
         param.put("comment", "检测完成");
@@ -197,7 +198,7 @@ public class TaskService {
         // TODO:发送小程序模版消息
 
         long end = Calendar.getInstance().getTimeInMillis();
-        return new AsyncResult<>(String.format("UK版检测报告下载并上传,论文ID[%s],共耗时[%s]毫秒", thesisId, end - start));
+        return new AsyncResult<>(String.format("UK版检测报告下载,论文ID[%s],共耗时[%s]毫秒", thesisId, end - start));
     }
 
     /**

@@ -29,12 +29,25 @@
         WHERE
              a.openid = #{openid}
          AND b.type = #{type}
-         AND a.couponstatus = '0'
         ORDER BY
             a.updtime DESC
         <if test="pagingOrNot != null and pagingOrNot != ''">
             LIMIT #{startindex}, #{pagesize};
         </if>
+    </select>
+
+    <!-- 查询优惠券 -->
+    <select id="getCouponListCnt" parameterType="Map" resultType="int">
+        SELECT
+            COUNT(*) as cnt
+        FROM
+            g_coupon_his a
+        LEFT JOIN
+            g_coupon b
+         ON b.id = a.couponid
+        WHERE
+            a.openid = #{openid}
+         AND b.type = #{type}
     </select>
 
     <!-- 判断转赠人的手机号是否存在 -->

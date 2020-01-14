@@ -55,4 +55,25 @@
         WHERE
             id = #{id}
     </update>
+
+    <select id="getFailureOrderList" resultType="Map">
+        SELECT
+             a.orderid
+            ,b.ext
+            ,b.originalurl
+        FROM
+            g_order_failure a
+        LEFT JOIN
+            g_order b
+         ON b.orderid = a.orderid
+        ORDER BY a.updtime
+        LIMIT 0, 10
+    </select>
+
+    <delete id="delFailureOrder" parameterType="Map">
+        DELETE FROM
+            g_order_failure
+        WHERE
+            orderid = #{orderid}
+    </delete>
 </mapper>

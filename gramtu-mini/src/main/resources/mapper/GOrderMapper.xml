@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.frank.gramtu.mini.torder.TOrderRepository">
+<mapper namespace="com.frank.gramtu.mini.grammarly.GOrderRepository">
 
     <!--
-         小程序查重列表Mapper.
-         @author 张孝党 2020/01/07.
+         小程序语法检测列表Mapper.
+         @author 张孝党 2020/01/14.
          @version V0.0.1.
          <p>
-         更新履历： V0.0.1 2020/01/07 张孝党 创建.
+         更新履历： V0.0.1 2020/01/14 张孝党 创建.
      -->
 
     <!-- 查重列表信息 -->
-    <select id="getTurnitinList" parameterType="Map" resultType="Map">
+    <select id="getGrammarlyList" parameterType="Map" resultType="Map">
         SELECT
              a.orderid
-            ,a.firstname
-            ,a.lastname
-            ,a.titile
             ,a.filename
             ,a.pagesize
             ,a.wordcnt
@@ -38,7 +35,7 @@
          ON b.openid = a.openid
         WHERE
              a.openid = #{openid}
-         AND a.checktype in ('0', '1')
+         AND a.checktype = '2'
          AND a.status IN
         <foreach item="item" index="index" collection="statusList" open="(" separator="," close=")">
             #{item}
@@ -63,7 +60,7 @@
     </select>
 
     <!-- 删除订单 -->
-    <delete id="delTurnitinOrder" parameterType="Map">
+    <delete id="delGrammarlyOrder" parameterType="Map">
         DELETE FROM
             g_order
         WHERE

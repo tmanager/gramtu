@@ -18,4 +18,11 @@ public class SysErrResponse extends SysResponse {
     public SysErrResponse(String errMsg) {
         super("9999", errMsg);
     }
+
+    /**
+     * 构造方法,默认为异常.
+     */
+    public SysErrResponse(String errCode, String errMsg) {
+        super(errCode, errMsg);
+    }
 }

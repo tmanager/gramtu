@@ -32,4 +32,14 @@ public interface TaskRepository {
      * 更新订单状态.
      */
     int updOrderStatusById(Map<String, String> param);
+
+    /**
+     * 获取失败的订单任务.
+     */
+    List<Map<String, String>> getFailureOrderList();
+
+    /**
+     * 删除失败订单.
+     */
+    int delFailureOrder(Map<String, String> param);
 }

@@ -39,9 +39,11 @@ public class MarkService {
         param.put("openid", requestData.getOpenId());
 
         // 分页信息
-        param.put("startindex", requestData.getStartindex());
-        param.put("pagesize", requestData.getPagesize());
-        param.put("pagingOrNot", "1");
+        if (requestData.getPagesize() != 0) {
+            param.put("startindex", requestData.getStartindex());
+            param.put("pagesize", requestData.getPagesize());
+            param.put("pagingOrNot", "1");
+        }
 
         // 获取积分信息
         Map<String, String> markMap = this.markRepository.getMarkByOpenId(param);

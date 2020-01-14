@@ -12,7 +12,6 @@ import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.rmq.RmqService;
 import com.frank.gramtu.core.utils.CommonUtil;
 import com.frank.gramtu.core.utils.DateTimeUtil;
-import com.frank.gramtu.core.utils.FileUtils;
 import com.frank.gramtu.core.utils.IdGeneratorUtils;
 import com.frank.gramtu.mini.constant.CheckType;
 import lombok.extern.slf4j.Slf4j;
