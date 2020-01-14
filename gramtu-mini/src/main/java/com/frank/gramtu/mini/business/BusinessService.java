@@ -135,11 +135,6 @@ public class BusinessService {
         // 保存论文信息
         String thesisName = orderInfo.get("orderid") + "." + orderInfo.get("ext");
         log.info("保存的论文名称为：[{}]", thesisName);
-        //boolean dowloadResult = FileUtils.downloadFromHttpUrl(orderInfo.get("originalurl"), turnBean.getThesisVpnPath(), thesisName);
-        //if (!dowloadResult) {
-        //    this.removeOrderByOrderId(param);
-        //    return new SysErrResponse("从FDFS下载论文时异常").toJsonString();
-        //}
 
         // 设计参数
         if (orderInfo.get("checktype").equals(CheckType.GRAMMARLY.getValue())) {
@@ -159,12 +154,8 @@ public class BusinessService {
         ResponseTurnitinBean responseTurnitinBean;
 
         if (orderInfo.get("checktype").equals(CheckType.TURNITIN.getValue())) {
-            //result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
-            //        "04" + JSONObject.toJSONString(turnBean));
             result = this.rmqService.rpcToTurnitin("04" + JSONObject.toJSONString(turnBean));
         } else {
-            //result = SocketClient.callServer(TurnitinConst.SOCKET_SERVER, TurnitinConst.SOCKET_PORT,
-            //        "14" + JSONObject.toJSONString(turnBean));
             result = this.rmqService.rpcToTurnitin("14" + JSONObject.toJSONString(turnBean));
         }
         responseTurnitinBean = JSONObject.parseObject(result, ResponseTurnitinBean.class);

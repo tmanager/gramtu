@@ -53,7 +53,7 @@ public class TaskCrontab {
                     // 异步执行下载报告并上传
                     if (!dataMap.get("thesisid").isEmpty()) {
                         Future<String> task = this.taskService.getReport(dataMap.get("id"), dataMap.get("thesisid"));
-                        Thread.sleep(1000L);
+                        Thread.sleep(500L);
                     }
                 }
             }
@@ -82,7 +82,7 @@ public class TaskCrontab {
                     // 异步执行下载报告并上传
                     if (!dataMap.get("thesisid").isEmpty()) {
                         Future<String> task = this.taskService.getReportUK(dataMap.get("id"), dataMap.get("thesisid"));
-                        Thread.sleep(1000L);
+                        Thread.sleep(500L);
                     }
                 }
             }
@@ -93,7 +93,7 @@ public class TaskCrontab {
     }
 
     /**
-     * 将失败的Grammarly
+     * 将失败的Grammarly.
      */
     @Scheduled(cron = "0 0/2 * * * ?")
     public void submitGrammarly() {
@@ -114,7 +114,7 @@ public class TaskCrontab {
                         String result = String.valueOf(this.rmqService.rpcToGrammarly(JSON.toJSONString(param)));
                         log.info("发送Grammarly消息的结果为：[{}]", result);
 
-                        if(result.equals("0000")) {
+                        if (result.equals("0000")) {
                             // 删除失败订单
                             Map<String, String> param3 = new HashMap<>();
                             param3.put("orderid", orderInfo.get("orderid"));
@@ -122,6 +122,35 @@ public class TaskCrontab {
                         }
                     }
             );
+        }
+    }
+
+    /**
+     * 获取Grammarly报告.
+     */
+    @Scheduled(cron = "0 0/4 * * * ?")
+    public void getGrammarlyReport() {
+        log.info("..................开始执行获取Grammarly报告定时任务..................");
+
+        try {
+            // 从数据库中取出10条记录获取报告
+            List<Map<String, String>> dataList = this.taskRepository.getCheckingReportsGrammarly();
+            if (dataList.size() == 0) {
+                log.info("Grammarly没有需要获取报告的论文!");
+            } else {
+                log.info("Grammarly共有{}个论文报告需要下载...........", dataList.size());
+                log.info("获取的Grammarly下载报告的信息为：\n{}", JSON.toJSONString(dataList, SerializerFeature.PrettyFormat));
+                for (Map<String, String> dataMap : dataList) {
+                    // 异步执行下载报告并上传
+                    Future<String> task = this.taskService.getReportGrammarly(dataMap.get("id"), dataMap.get("orderid"));
+                    Thread.sleep(500L);
+                }
+            }
+
+            log.info("..................正常结束执行获取Grammarly报告定时任务..................");
+        } catch (Exception ex) {
+            log.info("..................异常结束执行获取Grammarly报告定时任务..................");
+            log.info(ex.getMessage());
         }
     }
 }
