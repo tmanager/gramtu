@@ -71,6 +71,7 @@
                 ,type
                 ,amount
                 ,status
+                ,usenumbers
             )
         VALUES (
              #{id}
@@ -85,18 +86,23 @@
             ,#{type}
             ,#{amount}
             ,#{status}
+            ,'0'
         )
     </insert>
 
     <!-- 获取优惠券详细内容 -->
     <select id="getCouponDetail" parameterType="Map" resultType="Map">
         SELECT
-              ifnull(a.givedphone,' ') as phone
+              ifnull(b.pure_phone_number,' ') as phone
              ,ifnull(a.updtime,' ') as updtime
              ,ifnull(a.couponsource,' ') as couponsource
              ,ifnull(a.couponstatus,' ') as couponstatus
         FROM
             g_coupon_his a
+        INNER JOIN
+            g_wx_user b
+        ON
+            a.openid = b.openid
         WHERE
             1 = 1
         <if test="couponid != null and couponid != ''">
@@ -172,16 +178,53 @@
             )
         VALUES (
              #{id}
-            ,' '
+            ,#{openid}
             ,#{couponid}
             ,#{updtime}
-            ,' '
             ,'0'
-            ,'3'
-            ,' '
-            ,#{givedphone}
-            ,' '
+            ,'0'
+            ,'1'
+            ,null
+            ,null
+            ,null
         )
     </insert>
+
+    <!-- 获取微信用户openid -->
+    <select id="getOpenid" parameterType="String" resultType="String">
+        SELECT
+            openid
+        FROM
+            g_wx_user
+        WHERE
+            pure_phone_number = #{phone}
+    </select>
+
+    <!-- 获取已使用个数 -->
+    <select id="getUseNumbers" parameterType="String" resultType="String">
+        SELECT
+            usenumbers
+        FROM
+            g_coupon
+        WHERE
+            id = #{couponid}
+            and usenumbers &lt; numbers
+    </select>
+
+    <!-- 使用个数更新 -->
+    <update id="updUseNumbers" parameterType="String">
+        UPDATE
+            g_coupon
+        SET
+             usenumbers = usenumbers + 1
+            ,status =
+             case when usenumbers = numbers then
+                '2'
+             else
+             	status
+              end
+        WHERE
+            id = #{couponid}
+    </update>
 
 </mapper>

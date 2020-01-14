@@ -57,4 +57,19 @@ public interface CouponRepository {
      * 更新优惠券.
      */
     int updCoupon(Map<String, String> param);
+
+    /**
+     * 获取微信用户openid.
+     */
+    String getOpenid(String phone);
+
+    /**
+     * 获取已使用个数
+     */
+    String getUseNumbers(String couponid);
+
+    /**
+     * 更新使用个数.
+     */
+    int updUseNumbers(String couponid);
 }

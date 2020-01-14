@@ -8,6 +8,7 @@ import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.CommonUtil;
 import com.frank.gramtu.core.utils.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +86,12 @@ public class CouponService {
         // 发行个数
         param.put("numbers",requestData.getRequest().getNumbers());
         // 有效结束日期
-        param.put("enddate",requestData.getRequest().getEnddate().replace("-",""));
+        String endDate = requestData.getRequest().getEnddate().replace("-","");
+        if (StringUtils.isEmpty(endDate))
+        {
+            endDate="99999999";
+        }
+        param.put("enddate",endDate);
         // 分类
         param.put("type",requestData.getRequest().getType());
         // 抵用多少钱
@@ -175,7 +181,12 @@ public class CouponService {
         // 发行个数
         param.put("numbers",requestData.getRequest().getNumbers());
         // 有效结束日期
-        param.put("enddate",requestData.getRequest().getEnddate().replace("-",""));
+        String endDate = requestData.getRequest().getEnddate().replace("-","");
+        if (StringUtils.isEmpty(endDate))
+        {
+            endDate="99999999";
+        }
+        param.put("enddate",endDate);
         // 分类
         param.put("type",requestData.getRequest().getType());
         // 抵用多少钱
@@ -198,6 +209,22 @@ public class CouponService {
     @Transactional(rollbackFor = Exception.class)
     public String couponHisAddService(WebRequest<CouponRequest> requestData) {
 
+        //获取微信用户openid
+        String openId = this.couponRepository.getOpenid(requestData.getRequest().getPhone());
+        if (StringUtils.isEmpty(openId))
+        {
+            // 返回
+            return new SysResponse("0001","受赠者不存在，请重新注册！").toJsonString();
+        }
+
+        //获取已使用个数
+        String useNumbers = this.couponRepository.getUseNumbers(requestData.getRequest().getId());
+        if (StringUtils.isEmpty(useNumbers))
+        {
+            // 使用个数获取不到时，说明使用个数已经达到了发行个数。不能进行赠送
+            return new SysResponse("0002","赠送数量已经超出发行个数！").toJsonString();
+        }
+
         // 参数
         Map<String, String> param = new HashMap<>();
         // id主键
@@ -205,7 +232,7 @@ public class CouponService {
         // 优惠券id
         param.put("couponid",requestData.getRequest().getId());
         // 转赠人手机号
-        param.put("givedphone",requestData.getRequest().getPhone());
+        param.put("openid",openId);
         // 更新时间
         param.put("updtime", DateTimeUtil.getTimeformat());
 
@@ -213,7 +240,12 @@ public class CouponService {
         int cnt = this.couponRepository.addCouponHis(param);
         log.info("新增数据条数为：[{}]", cnt);
 
+        //使用个数更新
+        cnt = this.couponRepository.updUseNumbers(requestData.getRequest().getId());
+        log.info("使用个数数据条数为：[{}]", cnt);
+
         // 返回
         return new SysResponse().toJsonString();
     }
+
 }
