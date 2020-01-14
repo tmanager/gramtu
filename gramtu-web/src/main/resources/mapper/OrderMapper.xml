@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.frank.gramtu.web.order.OrderRepository">
+
+    <!--
+         web端订单操作Mapper.
+         @author 张孝党 2020/01/14.
+         @version V0.0.1.
+         <p>
+         更新履历： V0.0.1 2020/01/14 张孝党 创建.
+     -->
+
+    <!-- 查询列表 -->
+    <select id="getOrderList" parameterType="Map" resultType="Map">
+        SELECT
+              a.id
+             ,CASE a.checktype
+                WHEN '0' THEN '国际查重'
+                WHEN '1' THEN 'UK查重'
+                ELSE '语法检测'
+              END as checktype
+             ,a.orderid
+             ,b.pure_phone_number as phonenumber
+             ,a.updtime
+             ,CONCAT(a.firstname, '|', a.lastname) as fullname
+             ,ifnull(a.titile, '　') as title
+             ,a.filename
+             ,CASE a.status
+                WHEN '0' THEN '初始'
+                WHEN '1' THEN '待支付'
+                WHEN '2' THEN '检测中'
+                WHEN '3' THEN '报告下载中'
+                WHEN '4' THEN '检测完成'
+                WHEN '9' THEN '已退款'
+                ELSE '其它'
+              END as status
+        FROM
+            g_order a
+        LEFT JOIN
+            g_wx_user b
+         ON b.openid = a.openid
+        WHERE
+            1 = 1
+        ORDER BY a.updtime DESC
+        <if test="pagingOrNot != null and pagingOrNot != ''">
+            LIMIT #{startindex}, #{pagesize};
+        </if>
+    </select>
+
+    <!-- 查询数据条数 -->
+    <select id="getOrderCnt" parameterType="Map" resultType="int">
+        SELECT
+            count(*) as cnt
+        FROM
+            g_coupon
+        WHERE
+            1 = 1
+    </select>
+
+</mapper>
