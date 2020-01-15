@@ -38,4 +38,4 @@ mybatis:
     call-setters-on-nulls: true
 logging:
   file:
-    name: /home/gramtu/logs/turnin-ac.log
+    name: /home/gramtu/logs/gramtu-ac.log

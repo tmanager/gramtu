@@ -58,4 +58,4 @@ fdfs:
     - 127.0.0.1:22122
 logging:
   file:
-    name: /home/gramtu/logs/turnin-mini.log
+    name: /home/gramtu/logs/gramtu-mini.log

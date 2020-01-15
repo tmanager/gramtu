@@ -54,4 +54,4 @@ fdfs:
     - 127.0.0.1:22122
 logging:
   file:
-    name: /home/gramtu/logs/turnin-web.log
+    name: /home/gramtu/logs/gramtu-web.log

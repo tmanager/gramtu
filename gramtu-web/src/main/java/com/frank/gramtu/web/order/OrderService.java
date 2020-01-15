@@ -55,6 +55,6 @@ public class OrderService {
         log.info("订单查询返回的数据为：\n", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
 
         // 返回
-        return JSON.toJSONString(responseData);
+        return JSON.toJSONString(responseData, SerializerFeature.WriteMapNullValue);
     }
 }

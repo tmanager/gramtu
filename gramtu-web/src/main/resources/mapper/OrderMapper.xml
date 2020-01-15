@@ -22,9 +22,9 @@
              ,CONCAT(a.firstname, '|', a.lastname) as fullname
              ,ifnull(a.titile, '　') as title
              ,a.filename
-             ,a.originalurl
-             ,a.pdfreporturl
-             ,a.htmlreporturl
+             ,ifnull(a.originalurl, '　') as originalurl
+             ,ifnull(a.pdfreporturl, '　') as pdfreporturl
+             ,ifnull(a.htmlreporturl, '　') as htmlreporturl
              ,CASE a.status
                 WHEN '0' THEN '初始'
                 WHEN '1' THEN '待支付'
