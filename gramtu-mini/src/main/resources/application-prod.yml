@@ -57,4 +57,5 @@ fdfs:
   tracker-list:
     - 47.111.173.188:22122
 logging:
-  file: /home/gramtu/logs/turnin-mini.log
+  file:
+    name: /home/gramtu/logs/turnin-mini.log

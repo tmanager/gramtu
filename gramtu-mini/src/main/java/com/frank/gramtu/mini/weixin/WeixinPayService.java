@@ -110,13 +110,9 @@ public class WeixinPayService implements InitializingBean {
             log.info("微信支付下单商户订单号为：" + tradeNo);
             orderRequest.setOutTradeNo(tradeNo);
 
-            // 金额
-//            DecimalFormat df = new DecimalFormat("#");
-//            String amount = String.valueOf(df.format(Double.valueOf(requestData.getAmount()) * 100));
-//            log.info("支付金额为：{}", amount);
             // TODO：标价金额
-            //orderRequest.setTotalFee(Integer.valueOf(amount));
-            orderRequest.setTotalFee(Integer.valueOf("1"));
+            orderRequest.setTotalFee(Integer.valueOf(amount));
+            //orderRequest.setTotalFee(Integer.valueOf("1"));
 
             // 终端IP
             String ip = "127.0.0.1";

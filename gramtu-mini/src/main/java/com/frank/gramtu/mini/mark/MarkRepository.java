@@ -27,4 +27,34 @@ public interface MarkRepository {
      * 根据openid获取积分列表.
      */
     List<Map<String, String>> getMarkListByOpenId(Map<String, Object> param);
+
+    /**
+     * 判断转赠人的手机号是否存在.
+     */
+    Map<String, String> wxUserPhoneExists(Map<String, String> param);
+
+    /**
+     * 新增积分记录.
+     */
+    int insNewMarkHis(Map<String, String> param);
+
+    /**
+     * 查询可用优惠券.
+     */
+    List<Map<String, String>> getCanUseConponList(Map<String, String> param);
+
+    /**
+     * 查询优惠券详情.
+     */
+    Map<String, String> getCouponInfo(Map<String, String> param);
+
+    /**
+     * 更新优惠券信息:状态和数量.
+     */
+    int updCouponInfo(Map<String, String> param);
+
+    /**
+     * 新增个人优惠券记录.
+     */
+    int insNewCouponHis(Map<String, String> param);
 }

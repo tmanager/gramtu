@@ -55,4 +55,100 @@
             LIMIT #{startindex}, #{pagesize};
         </if>
     </select>
+
+    <!-- 判断转赠人的手机号是否存在 -->
+    <select id="wxUserPhoneExists" parameterType="Map" resultType="Map">
+        SELECT
+             openid
+        FROM
+            g_wx_user
+        WHERE
+            pure_phone_number = #{phonenumber}
+    </select>
+
+    <insert id="insNewMarkHis" parameterType="Map">
+        INSERT INTO
+            g_mark_his(
+                 id
+                ,openid
+                ,entry
+                ,givedopenid
+                ,givedphone
+                ,mark
+                ,updtime
+            )
+        VALUES (
+                 #{id}
+                ,#{openid}
+                ,#{entry}
+                ,#{givedopenid}
+                ,#{givedphone}
+                ,#{mark}
+                ,#{updtime}
+        )
+    </insert>
+
+    <select id="getCanUseConponList" resultType="Map">
+        SELECT
+              id
+             ,couponname as name
+             ,upfee
+             ,amount
+             ,enddate
+             ,usemark
+             ,updtime
+        FROM
+             g_coupon
+        WHERE
+             upfee &lt;&gt; '-1'
+         AND enddate &gt; #{currentdate}
+         AND status = '0'
+         AND CAST(numbers AS SIGNED) &gt; CAST(usenumbers AS SIGNED)
+        ORDER BY updtime DESC
+    </select>
+
+    <select id="getCouponInfo" parameterType="Map" resultType="Map">
+        SELECT
+             numbers
+            ,status
+            ,usenumbers
+            ,usemark
+        FROM
+            g_coupon
+        WHERE
+            id = #{id}
+    </select>
+
+    <update id="updCouponInfo" parameterType="Map">
+        UPDATE
+            g_coupon
+        <trim prefix="set" suffixOverrides=",">
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="usenumbers != null and usenumbers != ''">usenumbers = #{usenumbers},</if>
+        </trim>
+        WHERE
+            id = #{id}
+    </update>
+    
+    <insert id="insNewCouponHis" parameterType="Map">
+        INSERT INTO
+            g_coupon_his (
+                  id
+                 ,openid
+                 ,couponid
+                 ,updtime
+                 ,usemark
+                 ,couponstatus
+                 ,couponsource
+            )
+        VALUES (
+                 #{id}
+                ,#{openid}
+                ,#{couponid}
+                ,#{updtime}
+                ,#{usemark}
+                ,'0'
+                ,'2'
+        )
+    </insert>
 </mapper>

@@ -30,7 +30,8 @@
              a.openid = #{openid}
          AND b.type = #{type}
         ORDER BY
-            a.updtime DESC
+             a.updtime DESC
+            ,a.couponstatus
         <if test="pagingOrNot != null and pagingOrNot != ''">
             LIMIT #{startindex}, #{pagesize};
         </if>

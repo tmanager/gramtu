@@ -11,4 +11,13 @@ public class MarkRequest extends BaseRequest {
 
     @Value("${openid}")
     private String openId = "";
+
+    @Value("${givenphone}")
+    private String givenPhone = "";
+
+    @Value("${givenmark}")
+    private String givenMark = "";
+
+    @Value("${coupid}")
+    private String coupId = "";
 }

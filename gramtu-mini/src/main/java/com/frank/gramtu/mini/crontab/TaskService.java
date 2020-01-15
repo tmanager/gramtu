@@ -97,25 +97,25 @@ public class TaskService {
         }
 
         // html报告路径
-        String htmlReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".html";
+        //String htmlReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".html";
         // pdf报告路径
-        String pdfReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".pdf";
+        //String pdfReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".pdf";
         // 重复率
         String rate = responseTurnitinBean.getRate();
 
-        log.info("上传html报告至FDFS");
-        String htmlreporturl = this.fdfsUtil.uploadLocalFile(new File(htmlReport));
+        //log.info("上传html报告至FDFS");
+        //String htmlreporturl = this.fdfsUtil.uploadLocalFile(new File(htmlReport));
 
         log.info("上传pdf报告至FDFS");
-        String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
+        //String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
 
 
         // 更新订单状态
         param.put("status", "4");
         param.put("comment", "检测完成");
         param.put("rate", rate);
-        param.put("htmlreporturl", htmlreporturl);
-        param.put("pdfreporturl", pdfreporturl);
+        param.put("htmlreporturl", responseTurnitinBean.getHtmlReportUrl());
+        param.put("pdfreporturl", responseTurnitinBean.getPdfReportUrl());
         this.updOrderStatusById(param);
 
         // TODO:发送小程序模版消息
@@ -171,25 +171,24 @@ public class TaskService {
         }
 
         // html报告路径
-        String htmlReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".html";
+        //String htmlReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".html";
         // pdf报告路径
-        String pdfReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".pdf";
+        //String pdfReport = turnBean.getReportVpnPath() + File.separator + thesisId + ".pdf";
         // 重复率
         String rate = responseTurnitinBean.getRate();
 
-        log.info("上传html报告至FDFS");
-        String htmlreporturl = this.fdfsUtil.uploadLocalFile(new File(htmlReport));
+        //log.info("上传html报告至FDFS");
+        //String htmlreporturl = this.fdfsUtil.uploadLocalFile(new File(htmlReport));
 
-        log.info("上传pdf报告至FDFS");
-        String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
-
+        //log.info("上传pdf报告至FDFS");
+        //String pdfreporturl = this.fdfsUtil.uploadLocalFile(new File(pdfReport));
 
         // 更新订单状态
         param.put("status", "4");
         param.put("comment", "检测完成");
         param.put("rate", rate);
-        param.put("htmlreporturl", htmlreporturl);
-        param.put("pdfreporturl", pdfreporturl);
+        param.put("htmlreporturl", responseTurnitinBean.getHtmlReportUrl());
+        param.put("pdfreporturl", responseTurnitinBean.getPdfReportUrl());
         this.updOrderStatusById(param);
 
         // TODO:发送小程序模版消息

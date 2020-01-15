@@ -16,4 +16,7 @@ public class MarkResponse extends BaseResponse {
 
     // 积分列表
     private List<Map<String, String>> marklist;
+
+    // 优惠券列表
+    private List<Map<String, String>> couponlist;
 }

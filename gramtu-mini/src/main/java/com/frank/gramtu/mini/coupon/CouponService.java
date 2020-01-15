@@ -96,6 +96,10 @@ public class CouponService {
             return new SysErrResponse("正有正常状态的优惠券才能转赠！").toJsonString();
         }
 
+        if(newOpenId.equals(requestData.getOpenId())) {
+            return new SysErrResponse("不能转赠给自己！").toJsonString();
+        }
+
         // 新增一条优惠券信息
         Map<String, String> paramAdd = new HashMap<>();
         paramAdd.put("id", CommonUtil.getUUid());
