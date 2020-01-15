@@ -15,17 +15,16 @@
     <select id="getOrderList" parameterType="Map" resultType="Map">
         SELECT
               a.id
-             ,CASE a.checktype
-                WHEN '0' THEN '国际查重'
-                WHEN '1' THEN 'UK查重'
-                ELSE '语法检测'
-              END as checktype
+             ,a.checktype
              ,a.orderid
              ,b.pure_phone_number as phonenumber
              ,a.updtime
              ,CONCAT(a.firstname, '|', a.lastname) as fullname
              ,ifnull(a.titile, '　') as title
              ,a.filename
+             ,a.originalurl
+             ,a.pdfreporturl
+             ,a.htmlreporturl
              ,CASE a.status
                 WHEN '0' THEN '初始'
                 WHEN '1' THEN '待支付'
