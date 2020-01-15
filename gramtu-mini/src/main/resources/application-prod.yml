@@ -7,7 +7,7 @@ spring:
     name: gratu-mini
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://47.111.173.188:3306/gramtu?allowMultiQueries=true&characterEncoding=utf8&useSSL=false&useAffectedRows=true&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3306/gramtu?allowMultiQueries=true&characterEncoding=utf8&useSSL=false&useAffectedRows=true&serverTimezone=UTC
     username: root
     password: 123456a?
   servlet:
@@ -55,7 +55,7 @@ fdfs:
   #  width: 150
   #  height: 150
   tracker-list:
-    - 47.111.173.188:22122
+    - 127.0.0.1:22122
 logging:
   file:
     name: /home/gramtu/logs/turnin-mini.log
