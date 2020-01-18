@@ -8,7 +8,7 @@ import com.frank.gramtu.core.bean.ResponseTurnitinBean;
 import com.frank.gramtu.core.bean.TurnitinConst;
 import com.frank.gramtu.core.fdfs.FdfsUtil;
 import com.frank.gramtu.core.redis.RedisService;
-import com.frank.gramtu.core.rmq.RmqService;
+import com.frank.gramtu.mini.core.rmq.RmqService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

@@ -2,7 +2,7 @@ package com.frank.gramtu.mini.crontab;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.frank.gramtu.core.rmq.RmqService;
+import com.frank.gramtu.mini.core.rmq.RmqService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;

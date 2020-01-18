@@ -1,6 +1,6 @@
 package com.frank.gramtu.mini;
 
-import com.frank.gramtu.core.rmq.RmqService;
+import com.frank.gramtu.mini.core.rmq.RmqService;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +35,5 @@ public class GramtuMiniApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(GramtuMiniApplication.class, args);
-    }
-
-    @Autowired
-    private RmqService rmqService;
-
-    @RequestMapping("/index")
-    public String index() {
-
-        Object a = this.rmqService.rpcToTurnitin("XXXXXXXXXXXXX");
-        return a.toString();
     }
 }

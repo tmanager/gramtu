@@ -1,4 +1,4 @@
-package com.frank.gramtu.core.rmq;
+package com.frank.gramtu.mini.core.rmq;
 
 public class RmqConst {
 

@@ -1,4 +1,4 @@
-package com.frank.gramtu.core.rmq;
+package com.frank.gramtu.mini.core.rmq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
