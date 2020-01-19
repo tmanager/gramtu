@@ -142,4 +142,25 @@ public class PortalService {
             return new SysErrResponse("获取订单趋势数据时异常").toJsonString();
         }
     }
+
+    /**
+     * 订单分布.
+     */
+    public String pieService() {
+
+        List<Map<String, String>> statusData = this.portalRepository.getStatusData();
+        List<Map<String, String>> checkTypeData = this.portalRepository.getCheckTypeData();
+
+        WebResponse<PortalResponse> responseData = new WebResponse<>();
+        PortalResponse portalResponse = new PortalResponse();
+        responseData.setResponse(portalResponse);
+
+        portalResponse.setStatussort(statusData);
+        portalResponse.setChecktypesort(checkTypeData);
+
+        log.info("首页订单分布查询返回的数据为：\n{}", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
+
+        // 返回
+        return JSON.toJSONString(responseData);
+    }
 }

@@ -52,4 +52,8 @@ public interface PortalRepository {
      * 获取订单趋势数据.
      */
     List<Map<String, String>> getLineData(Map<String, String> param);
+
+    List<Map<String, String>> getStatusData();
+
+    List<Map<String, String>> getCheckTypeData();
 }

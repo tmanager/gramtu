@@ -61,4 +61,8 @@ public class PortalResponse extends BaseResponse {
 
     // 订单趋势
     private List<Map<String, String>> orderlist;
+
+    private List<Map<String, String>> statussort;
+
+    private List<Map<String, String>> checktypesort;
 }

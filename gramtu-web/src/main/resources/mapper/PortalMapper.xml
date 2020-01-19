@@ -118,4 +118,36 @@
         ORDER BY
             c.updtime
     </select>
+    
+    <select id="getStatusData" resultType="Map">
+        SELECT
+            CASE
+                WHEN status = '2' THEN '检测中'
+                WHEN status = '3' THEN '报告下载中'
+                WHEN status = '4' THEN '检测完成'
+            END AS status
+           ,COUNT(*) AS value
+        FROM
+            g_order
+        WHERE
+            status in ('2', '3', '4')
+        GROUP BY
+            status
+    </select>
+
+    <select id="getCheckTypeData" resultType="Map">
+        SELECT
+            CASE
+                WHEN checktype = '0' THEN 'Turnitin国际'
+                WHEN checktype = '1' THEN 'TurnitinUK'
+                WHEN checktype = '2' THEN 'Grammarly'
+            END AS checktype
+           ,COUNT(*) AS value
+        FROM
+            g_order
+        WHERE
+            status in ('2', '3', '4')
+        GROUP BY
+            checktype
+    </select>
 </mapper>

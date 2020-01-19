@@ -56,4 +56,19 @@ public class PortalContronller {
         log.info("首页订单趋势数据查询返回值为:{}", responseData);
         return responseData;
     }
+
+    /**
+     * 订单分布数据查询.
+     */
+    @RequestMapping("query/distribute")
+    public String pie() {
+        log.info("首页订单分布数据查询开始..................");
+
+        // 查询数据
+        String responseData = this.portalService.pieService();
+
+        log.info("首页订单分布数据查询结束..................");
+        log.info("首页订单分布数据查询返回值为:{}", responseData);
+        return responseData;
+    }
 }
