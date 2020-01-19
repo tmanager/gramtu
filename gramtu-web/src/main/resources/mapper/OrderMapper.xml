@@ -40,7 +40,7 @@
             g_wx_user b
          ON b.openid = a.openid
         WHERE
-            1 = 1
+            a.status in ('1', '2', '3', '4', '9')
         ORDER BY a.updtime DESC
         <if test="pagingOrNot != null and pagingOrNot != ''">
             LIMIT #{startindex}, #{pagesize};
@@ -52,9 +52,9 @@
         SELECT
             count(*) as cnt
         FROM
-            g_coupon
+            g_order
         WHERE
-            1 = 1
+            status in ('1', '2', '3', '4', '9')
     </select>
 
 </mapper>

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.CommonUtil;
+import com.frank.gramtu.core.utils.DateTimeUtil;
 import com.frank.gramtu.mini.mark.MarkRepository;
 import com.frank.gramtu.mini.weixin.WeixinApi;
 import com.frank.gramtu.mini.weixin.WeixinDecryptDataUtil;
@@ -59,7 +60,6 @@ public class LoginService {
         if (!result.containsKey("errcode")) {
             openId = result.getString("openid");
             sessionKey = result.getString("session_key");
-            //unionid = result.getString("unionid");
 
             // 判断用户是否注册
             Map<String, Object> param = new HashMap<>();
@@ -126,6 +126,7 @@ public class LoginService {
             param.put("phonenumber", jsonPhoneInfo.getString("phoneNumber"));
             param.put("pure_phone_number", jsonPhoneInfo.getString("purePhoneNumber"));
             param.put("country_code", jsonPhoneInfo.getString("countryCode"));
+            param.put("updtime", DateTimeUtil.getTimeformat());
 
             // 新增
             param.put("id", CommonUtil.getUUid());

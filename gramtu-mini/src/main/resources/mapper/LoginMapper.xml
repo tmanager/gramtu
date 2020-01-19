@@ -41,6 +41,7 @@
                 ,city
                 ,province
                 ,country
+                ,updtime
             )
         VALUES (
                  #{id}
@@ -54,6 +55,7 @@
                 ,#{city}
                 ,#{province}
                 ,#{country}
+                ,#{updtime}
         )
     </insert>
 
