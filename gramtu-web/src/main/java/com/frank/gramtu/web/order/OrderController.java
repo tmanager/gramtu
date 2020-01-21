@@ -2,14 +2,15 @@ package com.frank.gramtu.web.order;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.frank.gramtu.core.request.WebRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 订单查询Controller.
@@ -45,4 +46,33 @@ public class OrderController {
         log.info("返回值为:{}", responseData);
         return responseData;
     }
+
+    /**
+     * 手动上传报告.
+     */
+    @RequestMapping(value = "/upload", headers = "content-type=multipart/form-data")
+    public String upload(@RequestParam("pdfreport") MultipartFile pdfReport, @RequestParam("htmlreport") MultipartFile htmlReport, HttpServletRequest request) {
+        log.info("上传报告开始.....................");
+
+        String orderId = request.getParameter("orderid");
+        log.info("order id = [{}]", orderId);
+        String repetRate = request.getParameter("repetrate");
+
+        JSONObject result = new JSONObject();
+        try {
+            // 更新
+            this.orderService.uploadService(pdfReport, htmlReport, orderId, repetRate);
+            result.put("retcode", "0000");
+            result.put("retmsg", "更新成功");
+        } catch (Exception ex) {
+            log.error("上传报告异常:{}", ex.getMessage());
+            result.put("retcode", "0004");
+            result.put("retmsg", ex.getMessage());
+        }
+
+        log.info("上传报告结束.....................");
+        // 上传报告结束
+        return result.toJSONString();
+    }
+
 }

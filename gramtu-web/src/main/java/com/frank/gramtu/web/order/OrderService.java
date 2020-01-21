@@ -2,12 +2,13 @@ package com.frank.gramtu.web.order;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.frank.gramtu.core.fdfs.FdfsUtil;
 import com.frank.gramtu.core.response.WebResponse;
-import com.frank.gramtu.web.coupon.CouponReponse;
-import com.frank.gramtu.web.coupon.CouponRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,9 @@ import java.util.Map;
 public class OrderService {
 
     @Autowired
+    private FdfsUtil fdfsUtil;
+
+    @Autowired
     private OrderRepository orderRepository;
 
     /**
@@ -38,6 +42,22 @@ public class OrderService {
         param.put("startindex", requestData.getStartindex());
         param.put("pagesize", requestData.getPagesize());
         param.put("pagingOrNot", "1");
+        param.put("orderid", requestData.getOrderId());
+        if (!requestData.getCheckType().equals("-1")) {
+            param.put("checktype", requestData.getCheckType());
+        }
+        if (!requestData.getStatus().equals("-1")) {
+            param.put("status", requestData.getStatus());
+        }
+        param.put("phone", requestData.getPhone());
+        // 开始日期
+        if (!StringUtils.isEmpty(requestData.getStartDate())) {
+            param.put("startdate", requestData.getStartDate() + "000000");
+        }
+        // 结束日期
+        if (!StringUtils.isEmpty(requestData.getEndDate())) {
+            param.put("enddate", requestData.getEndDate() + "999999");
+        }
 
         // 查询结果
         List<Map<String, String>> dataList = this.orderRepository.getOrderList(param);
@@ -56,5 +76,37 @@ public class OrderService {
 
         // 返回
         return JSON.toJSONString(responseData, SerializerFeature.WriteMapNullValue);
+    }
+
+    /**
+     * 上传报告.
+     */
+    public void uploadService(MultipartFile pdfReport,
+                              MultipartFile htmlReport,
+                              String orderId,
+                              String repetRate) throws Exception {
+
+        // 更新参数
+        Map<String, String> param = new HashMap<>();
+        param.put("orderid", orderId);
+
+        log.info("上传PDF报告开始..........");
+        String pdfUrl = this.fdfsUtil.uploadFile(pdfReport);
+        log.info("PDF报告上传后的路径为:[{}]", pdfUrl);
+        param.put("pdfreporturl", pdfUrl);
+
+        if (!htmlReport.getOriginalFilename().equals(pdfReport.getOriginalFilename())) {
+            log.info("上传HTML报告开始..........");
+            String htmlUrl = this.fdfsUtil.uploadFile(htmlReport);
+            log.info("HTML报告上传后的路径为:[{}]", pdfUrl);
+            param.put("htmlreporturl", htmlUrl);
+
+            param.put("repetrate", repetRate);
+        }
+        param.put("status", "4");
+
+        // 更新订单状态
+        int cnt = this.orderRepository.updOrderReport(param);
+        log.info("更新订单报告的结果为：[{}]", cnt);
     }
 }
