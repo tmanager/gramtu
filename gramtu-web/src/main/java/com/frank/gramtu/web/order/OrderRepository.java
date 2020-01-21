@@ -28,4 +28,9 @@ public interface OrderRepository {
      * 查询订单数量.
      */
     int getOrderCnt(Map<String, Object> param);
+
+    /**
+     * 更新订单报告及状态.
+     */
+    int updOrderReport(Map<String, String> param);
 }
