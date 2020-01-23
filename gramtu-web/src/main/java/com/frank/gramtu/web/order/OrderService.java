@@ -33,7 +33,7 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     /**
-     * 查询优惠券一览.
+     * 订单一览.
      */
     public String queryService(OrderRequest requestData) {
 
