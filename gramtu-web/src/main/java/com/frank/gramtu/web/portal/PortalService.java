@@ -47,6 +47,17 @@ public class PortalService {
         // 总注册人数
         int totalUser = this.portalRepository.getTotalUserCnt();
         portalResponse.setTotaluser(String.valueOf(totalUser));
+        // 完善信息用户数
+        int perUser = this.portalRepository.getPerUserCnt();
+        portalResponse.setPeruser(String.valueOf(perUser));
+
+        // 今日订单数
+        int todayCount = this.portalRepository.getTodayOrderCnt(param);
+        portalResponse.setTodayordercount(String.valueOf(todayCount));
+        // 今日订单金额
+        int todayAmount = this.portalRepository.getTodayOrderCnt(param);
+        portalResponse.setTodayorderamount(String.valueOf(todayAmount));
+
         // 全部订单数
         int totalCount = this.portalRepository.getTotalOrderCnt(param);
         portalResponse.setTotalordercount(String.valueOf(totalCount));

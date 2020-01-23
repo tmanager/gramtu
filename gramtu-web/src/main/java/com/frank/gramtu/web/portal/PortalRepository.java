@@ -29,6 +29,11 @@ public interface PortalRepository {
     int getTotalUserCnt();
 
     /**
+     * 获取完善信息用户数.
+     */
+    int getPerUserCnt();
+
+    /**
      * 获取订单数.
      */
     int getTotalOrderCnt(Map<String, String> param);

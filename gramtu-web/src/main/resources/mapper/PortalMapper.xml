@@ -27,6 +27,15 @@
             g_wx_user
     </select>
 
+    <select id="getPerUserCnt" resultType="int">
+        SELECT
+            COUNT(*) AS cnt
+        FROM
+            g_wx_user
+        WHERE
+            perflag = '1'
+    </select>
+
     <select id="getTotalOrderCnt" parameterType="Map" resultType="int">
         SELECT
             COUNT(*) AS cnt

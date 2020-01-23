@@ -14,8 +14,17 @@ public class PortalResponse extends BaseResponse {
     // 今日注册用户
     private String todayuser = "0";
 
-    // 总用户
+    // 总用户数
     private String totaluser = "0";
+
+    // 完善信息用户数
+    private String peruser = "0";
+
+    // 今日订单数
+    private String todayordercount = "0";
+
+    // 今日订单金额
+    private String todayorderamount = "0";
 
     // 总订单数
     private String totalordercount = "0";
