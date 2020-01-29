@@ -67,7 +67,7 @@
              id as artid
             ,title
             ,cover as coverimage
-            ,'0' as readcount
+            ,readcount
         FROM
             g_article
         ORDER BY updtime DESC

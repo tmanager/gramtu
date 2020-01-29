@@ -93,6 +93,7 @@ public class ArticleService {
     /**
      * 根据文章ID获取文章内容.
      */
+    @Transactional(rollbackFor = Exception.class)
     public String artDetailService(String artId) {
 
         // 查询参数
@@ -101,6 +102,9 @@ public class ArticleService {
 
         // 获取文章详细内容
         Map<String, String> artDetail = this.articleRepository.getArtDetail(param);
+        // 更新文章阅读次数
+        int cnt = this.articleRepository.updReadCount(param);
+        log.info("更新文章阅读次数结果为：[{}]", cnt);
 
         WebResponse<ArticleReponse> responseData = new WebResponse<>();
         ArticleReponse articleReponse = new ArticleReponse();
@@ -124,7 +128,7 @@ public class ArticleService {
     @Transactional(rollbackFor = Exception.class)
     public String delArticleService(String[] artidList) {
 
-        for (String artId :artidList) {
+        for (String artId : artidList) {
             Map<String, String> param = new HashMap<>();
             param.put("artid", artId);
             this.articleRepository.deleteArticle(param);
@@ -146,13 +150,13 @@ public class ArticleService {
         // ID
         param.put("artid", requestData.getRequest().getArtid());
         // 标题
-        param.put("title",requestData.getRequest().getTitle());
+        param.put("title", requestData.getRequest().getTitle());
         // 封面
-        if(!requestData.getRequest().getCoverimage().equals(requestData.getRequest().getOldimage())) {
+        if (!requestData.getRequest().getCoverimage().equals(requestData.getRequest().getOldimage())) {
             param.put("cover", requestData.getRequest().getCoverimage());
         }
         // 内容
-        param.put("article",requestData.getRequest().getContent());
+        param.put("article", requestData.getRequest().getContent());
         // 更新时间
         param.put("updtime", DateTimeUtil.getTimeformat());
         // 更新人

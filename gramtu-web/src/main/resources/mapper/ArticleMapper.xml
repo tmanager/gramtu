@@ -112,4 +112,13 @@
             id = #{artid}
     </update>
 
+    <update id="updReadCount" parameterType="Map">
+        UPDATE
+            g_article
+        SET
+            readcount = readcount + 1
+        WHERE
+            id = #{artid}
+    </update>
+
 </mapper>

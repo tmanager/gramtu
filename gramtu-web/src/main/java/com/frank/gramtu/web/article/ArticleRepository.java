@@ -47,4 +47,9 @@ public interface ArticleRepository {
      * 更新文章.
      */
     int updArticle(Map<String, String> param);
+
+    /**
+     * 更新阅读次数.
+     */
+    int updReadCount(Map<String, String> param);
 }
