@@ -13,16 +13,16 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 10MB
-      max-request-size: 20MB
+      max-file-size: 30MB
+      max-request-size: 50MB
   rabbitmq:
     host: 127.0.0.1
     port: 5672
     username: yfdev
     password: yfdev
     template:
-      receive-timeout: 300000
-      reply-timeout: 300000
+      receive-timeout: 1200000
+      reply-timeout: 1200000
   redis:
     host: 127.0.0.1
     port: 6379
@@ -51,7 +51,7 @@ fdfs:
   # 连接超时
   connect-timeout: 601
   # 生成缩略图
-  #thumb-image:
+  thumb-image:
     width: 150
     height: 150
   tracker-list:

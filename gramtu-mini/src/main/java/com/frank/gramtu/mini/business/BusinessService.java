@@ -30,6 +30,7 @@ import java.util.Map;
  * @version V1.00.
  * <p>
  * 更新履历： V1.00 2020/01/02. 张孝党 创建.
+ * 　　　　　 V1.01 2020/02/03. 张孝党 增加Grammarly字数校验.
  */
 @Slf4j
 @Service
@@ -149,7 +150,7 @@ public class BusinessService {
         turnBean.setThesisName(thesisName);
         turnBean.setOriginalurl(orderInfo.get("originalurl"));
 
-        // 调用Socket服务
+        // 调用Rmq服务计算文档字数
         String result;
         ResponseTurnitinBean responseTurnitinBean;
 
@@ -183,6 +184,20 @@ public class BusinessService {
         // 状态
         param.put("status", "1");
         this.updOrderByOrderId(param);
+
+        // ADD BY zhangxd ON 20200203 START
+        // Grammarly时,如果字数大于14000或小于40时删除订单信息
+        if (orderInfo.get("checktype").equals(CheckType.GRAMMARLY.getValue())) {
+            int wordCnt = Integer.valueOf(responseTurnitinBean.getWordCount());
+            log.info("字符数为：[{}]", wordCnt);
+            if (wordCnt > 14000 || wordCnt < 50) {
+                // 删除订单信息
+                this.removeOrderByOrderId(param);
+                log.info("Grammarly删除订单信息成功!");
+                return new SysErrResponse("字数必须大于50并且小于14000字。").toJsonString();
+            }
+        }
+        // ADD BY zhangxd ON 20200203 END
 
         // 返回值
         WebResponse<BusinessResponse> responseData = new WebResponse<>();
