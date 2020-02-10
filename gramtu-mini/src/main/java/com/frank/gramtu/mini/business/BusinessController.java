@@ -43,6 +43,8 @@ public class BusinessController {
     @Autowired
     private BusinessService businessService;
 
+    private static final String LOCAL_TXT_PATH  = "/home/gramtu/tmp/gramtu/thesistxt";
+
     /**
      * 上传文件.
      */
@@ -130,7 +132,7 @@ public class BusinessController {
             String saveFileName = String.valueOf(id.nextId()) + ".txt";
             requestData.getRequest().setOrgFileName(saveFileName);
             log.info("保存的论文文件为：[{}]", saveFileName);
-            File localFile = new File(turnBean.getThesisVpnPath() + File.separator + saveFileName);
+            File localFile = new File(BusinessController.LOCAL_TXT_PATH + File.separator + saveFileName);
             FileWriter fileWriter = new FileWriter(localFile);
             fileWriter.write(requestData.getRequest().getContent());
             fileWriter.flush();
