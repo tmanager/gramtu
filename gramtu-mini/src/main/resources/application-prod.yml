@@ -13,8 +13,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 30MB
-      max-request-size: 50MB
+      max-file-size: 100MB
+      max-request-size: 500MB
   rabbitmq:
     host: 127.0.0.1
     port: 5672
