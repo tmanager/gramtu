@@ -169,7 +169,7 @@ public class BusinessService {
         // 提交失败
         if (!responseTurnitinBean.getRetcode().equals("0000")) {
             this.removeOrderByOrderId(param);
-            return new SysErrResponse("计算文字字数时异常").toJsonString();
+            return new SysErrResponse("计算文字字数时异常，请重新提交!").toJsonString();
         }
 
         // 保存文字信息

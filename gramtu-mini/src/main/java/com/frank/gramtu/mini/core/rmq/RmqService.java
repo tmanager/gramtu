@@ -29,7 +29,7 @@ public class RmqService {
 
         // 发送消息
         Object result = this.rabbitTemplate.convertSendAndReceive(RmqConst.QUEUE_NAME_GRAMMARLY_CLIENT, msg);
-        String response = new String((byte[])result);
+        String response = new String((byte[]) result);
         log.info("*****************发送给grammarly的返回消息为：[{}]*****************", response);
 
         // 返回
@@ -45,7 +45,8 @@ public class RmqService {
         // 发送消息
         Object response = this.rabbitTemplate.convertSendAndReceive(
                 RmqConst.QUEUE_NAME_TURNITIN_CLIENT,
-                RmqConst.TOPIC_QUEUE, msg);
+                RmqConst.TOPIC_ROUTING_KEY,
+                msg);
         log.info("*****************发送给turnitin的返回消息为：[{}]*****************", response);
 
         return response.toString();
