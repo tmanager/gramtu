@@ -45,7 +45,11 @@ public class GOrderService {
         List<String> status = new ArrayList<>();
         // 待支付
         if (requestData.getType().equals("0")) {
+            // ADD BY zhangxd ON 202002113 START
+            // 待支付列表中增加新建状态的数据，小程序端显示为正在解析中
+            status.add("0");
             status.add("1");
+            // ADD BY zhangxd ON 202002113 END
         } else {
             status.add("2");
             status.add("3");
