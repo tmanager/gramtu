@@ -1,8 +1,10 @@
 package com.frank.gramtu.mini.crontab;
 
 import com.alibaba.fastjson.JSONObject;
+import com.frank.gramtu.core.redis.RedisService;
 import com.frank.gramtu.core.utils.HttpUtil;
 import com.frank.gramtu.mini.config.WeixinMiniConfigBean;
+import com.frank.gramtu.mini.constant.GramtuMiniConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +23,9 @@ import java.text.MessageFormat;
 @Slf4j
 @Component
 public class AccessTokenCrontab {
+
+    @Autowired
+    private RedisService redisService;
 
     @Autowired
     private WeixinMiniConfigBean weixinMiniConfigBean;
@@ -44,6 +49,9 @@ public class AccessTokenCrontab {
 
             if (!result.containsKey("errcode")) {
                 accessToken = result.getString("access_token");
+                log.info("获取的accessToken为：[{}]", accessToken);
+                // 保存到redis
+                this.redisService.setStringValue(GramtuMiniConst.KEY_ACCESS_TOKEN, accessToken);
             } else {
                 log.info("返回异常，信息为：{}", result.getString("errmsg"));
             }

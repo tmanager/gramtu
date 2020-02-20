@@ -55,7 +55,7 @@ public class PortalService {
         int todayCount = this.portalRepository.getTodayOrderCnt(param);
         portalResponse.setTodayordercount(String.valueOf(todayCount));
         // 今日订单金额
-        int todayAmount = this.portalRepository.getTodayOrderCnt(param);
+        int todayAmount = this.portalRepository.getTodayOrderAmount(param);
         portalResponse.setTodayorderamount(String.valueOf(todayAmount));
 
         // 全部订单数
