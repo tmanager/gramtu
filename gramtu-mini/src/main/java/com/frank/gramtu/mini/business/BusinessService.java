@@ -31,6 +31,7 @@ import java.util.Map;
  * <p>
  * 更新履历： V1.00 2020/01/02. 张孝党 创建.
  * 　　　　　 V1.01 2020/02/03. 张孝党 增加Grammarly字数校验.
+ * 　　　　　 V1.02 2020/03/01. 张孝党 增加turnitin返回字数的校验.
  */
 @Slf4j
 @Service
@@ -185,10 +186,23 @@ public class BusinessService {
         param.put("status", "1");
         this.updOrderByOrderId(param);
 
+        // 字数
+        int wordCnt = Integer.valueOf(responseTurnitinBean.getWordCount());
+        // 页数
+        int pageSize = Integer.valueOf(responseTurnitinBean.getPageCount());
+
+        // ADD BY zhangxd ON 20200301 START
+        if (wordCnt <= 0) {
+            // 删除订单信息
+            this.removeOrderByOrderId(param);
+            log.info("解析的字数为0,订单删除!");
+            return new SysErrResponse("解析的字数为0，请检查文章格式!").toJsonString();
+        }
+        // ADD BY zhangxd ON 20200301 END
+
         // ADD BY zhangxd ON 20200203 START
         // Grammarly时,如果字数大于14000或小于40时删除订单信息
         if (orderInfo.get("checktype").equals(CheckType.GRAMMARLY.getValue())) {
-            int wordCnt = Integer.valueOf(responseTurnitinBean.getWordCount());
             log.info("字符数为：[{}]", wordCnt);
             if (wordCnt > 14000 || wordCnt < 50) {
                 // 删除订单信息
