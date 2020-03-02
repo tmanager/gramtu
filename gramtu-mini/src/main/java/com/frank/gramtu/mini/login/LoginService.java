@@ -25,6 +25,7 @@ import java.util.Map;
  * @version V1.00.
  * <p>
  * 更新履历： V1.00 2019/12/27. 张孝党 创建.
+ * 　　　　　 V1.01 2020/03/02. 张孝党 118行增加判断该用户的openid是否已存在.
  */
 @Slf4j
 @Service
@@ -116,6 +117,23 @@ public class LoginService {
         param.put("province", requestData.getProvince());
         param.put("country", requestData.getCountry());
 
+        // ADD BY zhangxd ON 20200302 START
+        // 先判断openid是否存在
+        log.info("先行判断一下用户是否已注册...............");
+        Map<String, Object> param2 = new HashMap<>();
+        param2.put("openid", requestData.getOpenId());
+        Map<String, String> wxUserInfo = this.loginRepository.getWxUserCnt(param2);
+        if (wxUserInfo == null || wxUserInfo.isEmpty()) {
+            // 未注册
+            requestData.setRegister("0");
+            log.info("该用户openid[{}]未注册.", requestData.getOpenId());
+        } else {
+            // 已注册
+            requestData.setRegister("1");
+            log.info("该用户openid[{}]已注册.", requestData.getOpenId());
+        }
+        // ADD BY zhangxd ON 20200302 END
+
         // 用户未注册时
         if (requestData.getRegister().equals("0")) {
             // 手机号数据解密
@@ -135,7 +153,6 @@ public class LoginService {
 
             // 赠送2个语法免费检测优惠券
             this.loginAsync.addGrammarlyCoupon(requestData.getOpenId());
-
         } else {
             // 已注册时更新
             int cnt = this.loginRepository.updWxUserInfo(param);
