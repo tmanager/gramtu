@@ -16,7 +16,7 @@
         SELECT
               IFNULL(a.nick_name, ' ') as nickname
              ,IFNULL(a.avatarurl, ' ') as avatarurl
-             ,IFNULL(a.phonenumber, ' ') as phonenumber
+             ,IFNULL(a.pure_phone_number, ' ') as phonenumber
              ,IFNULL(e.mark, '0') as mark
              ,IFNULL(a.learn_country, ' ') as learncountry
              ,IFNULL(a.major, ' ') as major
@@ -68,7 +68,7 @@
             AND nick_name LIKE "%"#{nickname}"%"
         </if>
         <if test="phonenumber != null and phonenumber != ''">
-            AND phonenumber = #{phonenumber}
+            AND pure_phone_number = #{phonenumber}
         </if>
         <if test="pagingOrNot != null and pagingOrNot != ''">
             LIMIT #{startindex}, #{pagesize};
