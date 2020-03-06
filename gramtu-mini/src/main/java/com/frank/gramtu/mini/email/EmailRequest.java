@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 public class EmailRequest extends BaseRequest {
 
     @Value("${openid}")
-    private String opendId = "";
+    private String openId = "";
 
     @Value("${orderid}")
     private String orderId = "";

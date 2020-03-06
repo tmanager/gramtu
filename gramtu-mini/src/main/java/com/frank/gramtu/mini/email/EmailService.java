@@ -79,10 +79,10 @@ public class EmailService {
 
         // 将邮箱保存到个人信息中
         Map<String, String> param = new HashMap<>();
-        param.put("openid", requestData.getOpendId());
+        param.put("openid", requestData.getOpenId());
         param.put("email", requestData.getEMail());
         int cnt = this.emailRepository.updEmailByOpenId(param);
-        log.info("更新openid[{}]邮箱的结果为[{}]", requestData.getOpendId(), cnt);
+        log.info("更新openid[{}]邮箱的结果为[{}]", requestData.getOpenId(), cnt);
 
         // 返回
         return new SysResponse("发送成功!").toJsonString();
