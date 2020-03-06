@@ -59,9 +59,7 @@ public class EmailService {
         }
 
         // 下载PDF报告到本地
-        RequestTurnitinBean turnUKBean = JSONObject.parseObject(this.redisService.getStringValue(TurnitinConst.TURN_UK_KEY),
-                RequestTurnitinBean.class);
-        String pdfReportFile = requestData.getTitle() + "_report.pdf";
+        String pdfReportFile = requestData.getOrderId() + "_report.pdf";
         log.info("下载的报告名称为：{}", pdfReportFile);
         boolean downLoad = FileUtils.downloadFromHttpUrl(requestData.getPdfReportUrl(), LOCAL_TEMP_PATH, pdfReportFile);
         if (!downLoad) {
