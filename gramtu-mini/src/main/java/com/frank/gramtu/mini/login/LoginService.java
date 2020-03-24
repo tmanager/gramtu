@@ -3,6 +3,7 @@ package com.frank.gramtu.mini.login;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.frank.gramtu.core.response.SysErrResponse;
 import com.frank.gramtu.core.response.SysResponse;
 import com.frank.gramtu.core.response.WebResponse;
 import com.frank.gramtu.core.utils.CommonUtil;
@@ -116,6 +117,12 @@ public class LoginService {
         param.put("city", requestData.getCity());
         param.put("province", requestData.getProvince());
         param.put("country", requestData.getCountry());
+
+        // ADD BY zhangxd ON 20200324 START
+        if(requestData.getOpenId().equals("")) {
+            return new SysErrResponse("获取个人信息失败,请联系客服!").toJsonString();
+        }
+        // ADD BY zhangxd ON 20200324 END
 
         // ADD BY zhangxd ON 20200302 START
         // 先判断openid是否存在
