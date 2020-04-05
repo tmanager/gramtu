@@ -25,6 +25,7 @@ spring:
       reply-timeout: 1200000
   redis:
     host: 127.0.0.1
+    password: uPfel2NbpmHvAoDq
     port: 6379
     # 连接超时时间（毫秒）
     timeout: 10000
