@@ -72,7 +72,7 @@ public class OrderService {
         orderResponse.setTotalcount(cnt);
         orderResponse.setOrderlist(dataList);
         responseData.setResponse(orderResponse);
-        log.info("订单查询返回的数据为：\n", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
+        //log.info("订单查询返回的数据为：\n", JSON.toJSONString(responseData, SerializerFeature.PrettyFormat));
 
         // 返回
         return JSON.toJSONString(responseData, SerializerFeature.WriteMapNullValue);

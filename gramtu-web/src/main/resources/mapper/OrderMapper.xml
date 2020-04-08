@@ -14,10 +14,14 @@
     <!-- 查询列表 -->
     <select id="getOrderList" parameterType="Map" resultType="Map">
         SELECT
+             tt.*
+            ,b.pure_phone_number AS phonenumber
+        FROM(
+        SELECT
               a.id
+             ,a.openid
              ,a.checktype
              ,a.orderid
-             ,b.pure_phone_number as phonenumber
              ,a.updtime
              ,CONCAT(a.firstname, '|', a.lastname) as fullname
              ,ifnull(a.titile, '　') as title
@@ -38,16 +42,10 @@
               END as status
         FROM
             g_order a
-        LEFT JOIN
-            g_wx_user b
-         ON b.openid = a.openid
         WHERE
              a.status in ('1', '2', '3', '4', '9')
         <if test="orderid != null and orderid != ''">
          AND a.orderid = #{orderid}
-        </if>
-        <if test="phone != null and phone != ''">
-         AND b.pure_phone_number = #{phone}
         </if>
         <if test="checktype != null and checktype != ''">
          AND a.checktype = #{checktype}
@@ -63,7 +61,14 @@
         </if>
         ORDER BY a.updtime DESC
         <if test="pagingOrNot != null and pagingOrNot != ''">
-            LIMIT #{startindex}, #{pagesize}
+            LIMIT ${startindex}, ${pagesize}
+        </if>
+        ) tt
+        LEFT JOIN
+            g_wx_user b
+        ON b.openid = tt.openid
+        <if test="phone != null and phone != ''">
+            AND b.pure_phone_number = #{phone}
         </if>
     </select>
 
