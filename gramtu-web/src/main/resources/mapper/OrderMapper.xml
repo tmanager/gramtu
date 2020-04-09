@@ -70,6 +70,7 @@
         <if test="phone != null and phone != ''">
             AND b.pure_phone_number = #{phone}
         </if>
+        ORDER BY tt.updtime DESC
     </select>
 
     <!-- 查询数据条数 -->
